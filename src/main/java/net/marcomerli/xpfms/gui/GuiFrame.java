@@ -16,28 +16,30 @@
  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.marcomerli.xpfms;
+package net.marcomerli.xpfms.gui;
 
-import javax.swing.SwingUtilities;
-
-import net.marcomerli.xpfms.gui.GuiFrame;
+import javax.swing.JFrame;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public class XPlaneFms {
+public class GuiFrame extends JFrame {
 
-	public static void main(String[] args) throws Exception
-	{
-		SwingUtilities.invokeLater(new Runnable() {
+	private static final long serialVersionUID = 109257433124133997L;
 
-			@Override
-			public void run()
-			{
-				final GuiFrame gui = new GuiFrame();
-				gui.setVisible(true);
-			}
-		});
+	public GuiFrame() {
+
+		super("X-Plane FMS");
+
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		add(new UploadPanel());
+
+		// FlightPlanPanel fp = new FlightPlanPanel();
+		// fp.setOpaque(true);
+		// setContentPane(fp);
+
+		pack();
+		setVisible(true);
 	}
 }
