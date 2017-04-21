@@ -27,12 +27,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import net.marcomerli.xpfms.file.read.FPLReader;
+import net.marcomerli.xpfms.file.write.FMSWriter;
+import net.marcomerli.xpfms.fn.GuiFn;
 import net.marcomerli.xpfms.model.FlightPlan;
 
 /**
@@ -101,16 +100,21 @@ public class MenuBar extends JMenuBar {
 			int returnVal = fcFPL.showOpenDialog(menuItem);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-				File file = fcFPL.getSelectedFile();
-				FPLReader fplReader = new FPLReader(file);
+				File fpl = fcFPL.getSelectedFile();
+				FPLReader fplReader = new FPLReader(fpl);
 
 				try {
 					FlightPlan flightPlan = fplReader.read();
-					System.out.println(flightPlan.size());
+
+					// TODO: load flight plan table without exporting yet
+					File fms = new File(new File(System.getProperty("java.io.tmpdir")),
+						flightPlan.getFilename());
+
+					new FMSWriter(fms).write(flightPlan);
+					GuiFn.infoPopup("Export completed", gui);
 				}
 				catch (Exception ee) {
-					JOptionPane.showMessageDialog(gui, ExceptionUtils.getRootCauseMessage(ee),
-						"X-Plane FMS :: Error", JOptionPane.ERROR_MESSAGE);
+					GuiFn.errorPopup(ee, gui);
 				}
 			}
 		}

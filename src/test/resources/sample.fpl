@@ -38,8 +38,8 @@
       <identifier>SV001</identifier>
       <type>USER WAYPOINT</type>
       <country-code />
-      <lat>45.108373</lat>
-      <lon>8.057707</lon>
+      <lat>45.000000</lat>
+      <lon>7.000000</lon>
       <comment />
     </waypoint>
     <waypoint>

@@ -16,28 +16,30 @@
  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.marcomerli.xpfms.gui;
+package net.marcomerli.xpfms.fn;
 
-import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import net.marcomerli.xpfms.gui.Gui;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public class Gui extends JFrame {
+public class GuiFn {
 
-	private static final long serialVersionUID = 109257433124133997L;
-	public static final String TITLE = "X-Plane FMS";
-
-	public Gui() {
-
-		super(TITLE);
-
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setJMenuBar(new MenuBar(this).init());
-
-		pack();
-		setSize(450, 260);
-		setVisible(true);
+	public static void infoPopup(String message, Gui gui)
+	{
+		JOptionPane.showMessageDialog(gui, message,
+			Gui.TITLE + " :: Information", JOptionPane.INFORMATION_MESSAGE);
 	}
+
+	public static void errorPopup(Throwable e, Gui gui)
+	{
+		JOptionPane.showMessageDialog(gui, ExceptionUtils.getRootCauseMessage(e),
+			Gui.TITLE + " :: Error", JOptionPane.ERROR_MESSAGE);
+	}
+	private GuiFn() {}
 }

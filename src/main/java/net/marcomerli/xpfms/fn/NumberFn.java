@@ -39,7 +39,7 @@ public class NumberFn {
 		DecimalFormat df = formatters.get(precision);
 		if (df == null)
 			formatters.put(precision,
-				(df = new DecimalFormat("#." + StringUtils.repeat('#', precision),
+				(df = new DecimalFormat("#." + StringUtils.repeat('0', precision),
 					new DecimalFormatSymbols(Locale.US))));
 
 		return df.format(number);
