@@ -31,6 +31,7 @@ public class Waypoint implements Serializable {
 	private String identifier;
 	private WaypointType type;
 	private Location location;
+	private String country;
 
 	public String getIdentifier()
 	{
@@ -60,5 +61,15 @@ public class Waypoint implements Serializable {
 	public void setLocation(Location location)
 	{
 		this.location = location;
+	}
+
+	public String getCountry()
+	{
+		return country;
+	}
+
+	public void setCountry(String country)
+	{
+		this.country = country;
 	}
 }

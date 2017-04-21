@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<flight-plan xmlns="http://www8.garmin.com/xmlschemas/FlightPlan/v1">
+  <created>2017-04-20T14:51:59Z</created>
+  <waypoint-table>
+    <waypoint>
+      <identifier>LIMA</identifier>
+      <type>AIRPORT</type>
+      <country-code>LI</country-code>
+      <lat>45.084444</lat>
+      <lon>7.603056</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>CSL</identifier>
+      <type>VOR</type>
+      <country-code>LI</country-code>
+      <lat>45.219722</lat>
+      <lon>7.649583</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>TOP</identifier>
+      <type>NDB</type>
+      <country-code>LI</country-code>
+      <lat>44.924722</lat>
+      <lon>7.860444</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>SIRLO</identifier>
+      <type>INT</type>
+      <country-code>LI</country-code>
+      <lat>45.154444</lat>
+      <lon>7.992778</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>SV001</identifier>
+      <type>USER WAYPOINT</type>
+      <country-code />
+      <lat>45.108373</lat>
+      <lon>8.057707</lon>
+      <comment />
+    </waypoint>
+  </waypoint-table>
+  <route>
+    <route-name>LIMA SV001</route-name>
+    <flight-plan-index>1</flight-plan-index>
+    <route-point>
+      <waypoint-identifier>LIMA</waypoint-identifier>
+      <waypoint-type>AIRPORT</waypoint-type>
+      <waypoint-country-code>LI</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>CSL</waypoint-identifier>
+      <waypoint-type>VOR</waypoint-type>
+      <waypoint-country-code>LI</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>TOP</waypoint-identifier>
+      <waypoint-type>NDB</waypoint-type>
+      <waypoint-country-code>LI</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>SIRLO</waypoint-identifier>
+      <waypoint-type>INT</waypoint-type>
+      <waypoint-country-code>LI</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>SV001</waypoint-identifier>
+      <waypoint-type>USER WAYPOINT</waypoint-type>
+      <waypoint-country-code />
+    </route-point>
+  </route>
+</flight-plan>

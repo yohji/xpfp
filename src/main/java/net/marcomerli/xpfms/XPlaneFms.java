@@ -20,7 +20,7 @@ package net.marcomerli.xpfms;
 
 import javax.swing.SwingUtilities;
 
-import net.marcomerli.xpfms.gui.GuiFrame;
+import net.marcomerli.xpfms.gui.Gui;
 
 /**
  * @author Marco Merli
@@ -35,7 +35,7 @@ public class XPlaneFms {
 			@Override
 			public void run()
 			{
-				final GuiFrame gui = new GuiFrame();
+				final Gui gui = new Gui();
 				gui.setVisible(true);
 			}
 		});

@@ -16,45 +16,24 @@
  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.marcomerli.xpfms.model;
+package net.marcomerli.xpfms.file.read;
+
+import java.io.File;
+
+import net.marcomerli.xpfms.model.FlightPlan;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public enum WaypointType {
+public abstract class Reader {
 
-	ICAO("AIRPORT", 1),
-	VOR("VOR", 3),
-	NDB("NDB", 2),
-	INT("INT", 11),
-	POS("USER WAYPOINT", 28);
+	protected File file;
 
-	public static WaypointType get(String fplCode)
-	{
-		for (WaypointType t : values())
-			if (t.fplCode.equals(fplCode))
-				return t;
+	public Reader(File file) {
 
-		throw new IllegalArgumentException("No such type: " + fplCode);
+		this.file = file;
 	}
 
-	private String fplCode;
-	private int fmsCode;
-
-	private WaypointType(String fplCode, int fmsCode) {
-
-		this.fplCode = fplCode;
-		this.fmsCode = fmsCode;
-	}
-
-	public String getFplCode()
-	{
-		return fplCode;
-	}
-
-	public int getFmsCode()
-	{
-		return fmsCode;
-	}
+	public abstract FlightPlan read() throws Exception;
 }

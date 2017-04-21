@@ -30,6 +30,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import net.marcomerli.xpfms.file.read.FPLReader;
+import net.marcomerli.xpfms.model.FlightPlan;
+
 /**
  * @author Marco Merli
  * @since 1.0
@@ -38,14 +43,15 @@ public class MenuBar extends JMenuBar {
 
 	private static final long serialVersionUID = - 2425410924278164802L;
 
-	private GuiFrame guiFrame;
-	private JFileChooser importFPL;
+	private Gui gui;
+	private JFileChooser fcFPL;
 
-	public MenuBar(GuiFrame guiFrame) {
+	public MenuBar(Gui guiFrame) {
 
-		this.guiFrame = guiFrame;
-		importFPL = new JFileChooser();
-		importFPL.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		this.gui = guiFrame;
+
+		fcFPL = new JFileChooser();
+		fcFPL.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 	}
 
 	public JMenuBar init()
@@ -54,9 +60,9 @@ public class MenuBar extends JMenuBar {
 		menu.setMnemonic(KeyEvent.VK_F);
 		add(menu);
 
-		JMenuItem menuItem = new JMenuItem("Import Garmin FPL", KeyEvent.VK_G);
+		JMenuItem menuItem = new JMenuItem("Import Garmin FPL", KeyEvent.VK_O);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
-			KeyEvent.VK_G, ActionEvent.ALT_MASK));
+			KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new ImportFPL(menuItem));
 		menu.add(menuItem);
 
@@ -64,14 +70,16 @@ public class MenuBar extends JMenuBar {
 
 		menuItem = new JMenuItem("Settings", KeyEvent.VK_S);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
-			KeyEvent.VK_S, ActionEvent.ALT_MASK));
+			KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+		// TODO: implement settings panel
+		// menuItem.addActionListener(null);
 		menu.add(menuItem);
 
 		menu.addSeparator();
 
-		menuItem = new JMenuItem("Exit", KeyEvent.VK_E);
+		menuItem = new JMenuItem("Exit", KeyEvent.VK_Q);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
-			KeyEvent.VK_E, ActionEvent.ALT_MASK));
+			KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new Exit());
 		menu.add(menuItem);
 
@@ -90,12 +98,20 @@ public class MenuBar extends JMenuBar {
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			int returnVal = importFPL.showOpenDialog(menuItem);
+			int returnVal = fcFPL.showOpenDialog(menuItem);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-				File file = importFPL.getSelectedFile();
-				JOptionPane.showMessageDialog(guiFrame, file.getAbsolutePath(),
-					"X-Plane FMS", JOptionPane.INFORMATION_MESSAGE);
+				File file = fcFPL.getSelectedFile();
+				FPLReader fplReader = new FPLReader(file);
+
+				try {
+					FlightPlan flightPlan = fplReader.read();
+					System.out.println(flightPlan.size());
+				}
+				catch (Exception ee) {
+					JOptionPane.showMessageDialog(gui, ExceptionUtils.getRootCauseMessage(ee),
+						"X-Plane FMS :: Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
 	}
@@ -105,7 +121,7 @@ public class MenuBar extends JMenuBar {
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			guiFrame.dispose();
+			gui.dispose();
 		}
 	}
 }

@@ -32,8 +32,14 @@ public class FlightPlan extends LinkedList<Waypoint> {
 
 	private static final long serialVersionUID = 1776920015546695648L;
 
+	private String name;
 	private Double distance;
 	private Long ete;
+
+	public FlightPlan(String name) {
+
+		this.name = name;
+	}
 
 	public Waypoint getDeparture() throws NoSuchWaypointException
 	{
@@ -53,9 +59,24 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		return wp;
 	}
 
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setDistance(Double distance)
+	{
+		this.distance = distance;
+	}
+
 	public Double getDistance()
 	{
 		return distance;
+	}
+
+	public void setEte(Long ete)
+	{
+		this.ete = ete;
 	}
 
 	public String getEte()

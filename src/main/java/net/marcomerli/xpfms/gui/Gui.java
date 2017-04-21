@@ -24,11 +24,11 @@ import javax.swing.JFrame;
  * @author Marco Merli
  * @since 1.0
  */
-public class GuiFrame extends JFrame {
+public class Gui extends JFrame {
 
 	private static final long serialVersionUID = 109257433124133997L;
 
-	public GuiFrame() {
+	public Gui() {
 
 		super("X-Plane FMS");
 
