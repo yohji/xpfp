@@ -36,8 +36,10 @@ public class Gui extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(new MenuBar(this).init());
 
-		pack();
+		// pack();
 		setSize(450, 260);
+
+		setLocationByPlatform(true);
 		setVisible(true);
 	}
 }

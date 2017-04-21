@@ -62,7 +62,7 @@ public class MenuBar extends JMenuBar {
 		JMenuItem menuItem = new JMenuItem("Import Garmin FPL", KeyEvent.VK_O);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
 			KeyEvent.VK_O, ActionEvent.CTRL_MASK));
-		menuItem.addActionListener(new ImportFPL(menuItem));
+		menuItem.addActionListener(new OnImportFPL(menuItem));
 		menu.add(menuItem);
 
 		menu.addSeparator();
@@ -70,8 +70,7 @@ public class MenuBar extends JMenuBar {
 		menuItem = new JMenuItem("Settings", KeyEvent.VK_S);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
 			KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-		// TODO: implement settings panel
-		// menuItem.addActionListener(null);
+		menuItem.addActionListener(new OnSettings());
 		menu.add(menuItem);
 
 		menu.addSeparator();
@@ -79,17 +78,17 @@ public class MenuBar extends JMenuBar {
 		menuItem = new JMenuItem("Exit", KeyEvent.VK_Q);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
 			KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
-		menuItem.addActionListener(new Exit());
+		menuItem.addActionListener(new OnExit());
 		menu.add(menuItem);
 
 		return this;
 	}
 
-	private class ImportFPL implements ActionListener {
+	private class OnImportFPL implements ActionListener {
 
 		private JMenuItem menuItem;
 
-		public ImportFPL(JMenuItem menuItem) {
+		public OnImportFPL(JMenuItem menuItem) {
 
 			this.menuItem = menuItem;
 		}
@@ -120,7 +119,16 @@ public class MenuBar extends JMenuBar {
 		}
 	}
 
-	private class Exit implements ActionListener {
+	private class OnSettings implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			new Settings();
+		}
+	}
+
+	private class OnExit implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e)
