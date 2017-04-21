@@ -23,6 +23,7 @@ import java.io.File;
 import org.junit.Test;
 
 import net.marcomerli.xpfms.UnitTestSupport;
+import net.marcomerli.xpfms.error.NoSuchWaypointException;
 import net.marcomerli.xpfms.model.FlightPlan;
 import net.marcomerli.xpfms.model.Location;
 import net.marcomerli.xpfms.model.Waypoint;
@@ -30,17 +31,27 @@ import net.marcomerli.xpfms.model.WaypointType;
 
 public class FPLReaderTest extends UnitTestSupport {
 
+	private static FlightPlan flightPlan;
+
 	@Test
 	public void read() throws Exception
 	{
 		File file = new File(this.getClass().getClassLoader().getResource("sample.fpl").getPath());
-		FlightPlan fp = new FPLReader(file).read();
+		flightPlan = new FPLReader(file).read();
 
-		assertNotNull(fp);
-		assertStringNotBlank(fp.getName());
-		assertNotEmpty(fp);
+		assertNotNull(flightPlan);
+		assertStringNotBlank(flightPlan.getName());
+		assertStringNotBlank(flightPlan.getFilename());
 
-		for (Waypoint wp : fp) {
+		try {
+			flightPlan.getDeparture();
+			flightPlan.getDestination();
+		}
+		catch (NoSuchWaypointException e) {
+			failWhenExceptionNotExpected(e);
+		}
+		assertNotEmpty(flightPlan);
+		for (Waypoint wp : flightPlan) {
 
 			assertStringNotBlank(wp.getIdentifier());
 			assertNotNull(wp.getType());
@@ -53,5 +64,10 @@ public class FPLReaderTest extends UnitTestSupport {
 			assertNumberNotZero(loc.lat);
 			assertNumberNotZero(loc.lng);
 		}
+	}
+
+	public static FlightPlan getFlightPlan()
+	{
+		return flightPlan;
 	}
 }

@@ -42,9 +42,17 @@
       <lon>8.057707</lon>
       <comment />
     </waypoint>
+    <waypoint>
+      <identifier>LIMA</identifier>
+      <type>AIRPORT</type>
+      <country-code>LI</country-code>
+      <lat>45.084444</lat>
+      <lon>7.603056</lon>
+      <comment />
+    </waypoint>
   </waypoint-table>
   <route>
-    <route-name>LIMA SV001</route-name>
+    <route-name>LIMA LIMA</route-name>
     <flight-plan-index>1</flight-plan-index>
     <route-point>
       <waypoint-identifier>LIMA</waypoint-identifier>
@@ -70,6 +78,11 @@
       <waypoint-identifier>SV001</waypoint-identifier>
       <waypoint-type>USER WAYPOINT</waypoint-type>
       <waypoint-country-code />
+    </route-point>
+    <route-point>
+      <waypoint-identifier>LIMA</waypoint-identifier>
+      <waypoint-type>AIRPORT</waypoint-type>
+      <waypoint-country-code>LI</waypoint-country-code>
     </route-point>
   </route>
 </flight-plan>

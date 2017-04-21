@@ -59,6 +59,12 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		return wp;
 	}
 
+	public String getFilename()
+	{
+		return String.format("%s.fms",
+			name.replaceAll("\\W+", "_"));
+	}
+
 	public String getName()
 	{
 		return name;

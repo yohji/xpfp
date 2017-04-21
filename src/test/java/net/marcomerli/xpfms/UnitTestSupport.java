@@ -28,6 +28,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 /**
  * @author Marco Merli
@@ -37,6 +39,15 @@ public abstract class UnitTestSupport extends Assert {
 
 	private static final DateFormat df = new SimpleDateFormat("yyyyMMdd");
 	protected Logger logger = Logger.getLogger(getClass());
+
+	//
+	// Support
+	//
+
+	protected final Result run(Class<? extends UnitTestSupport> test)
+	{
+		return new JUnitCore().run(test);
+	}
 
 	//
 	// Asserts

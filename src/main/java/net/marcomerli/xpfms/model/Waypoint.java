@@ -20,6 +20,8 @@ package net.marcomerli.xpfms.model;
 
 import java.io.Serializable;
 
+import net.marcomerli.xpfms.fn.NumberFn;
+
 /**
  * @author Marco Merli
  * @since 1.0
@@ -32,6 +34,18 @@ public class Waypoint implements Serializable {
 	private WaypointType type;
 	private Location location;
 	private String country;
+
+	public String getFMSIdentifier()
+	{
+		if (type.equals(WaypointType.POS))
+			return String.format("%s%s_%s%s",
+				(location.lat > 0 ? "+" : "-"),
+				NumberFn.format(location.lat, 3),
+				(location.lng > 0 ? "+" : "-"),
+				NumberFn.format(location.lng, 3));
+
+		return identifier;
+	}
 
 	public String getIdentifier()
 	{
