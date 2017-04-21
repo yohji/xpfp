@@ -22,6 +22,8 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 
+import org.apache.sis.distance.DistanceUtils;
+
 import com.google.maps.ElevationApi;
 import com.google.maps.GeoApiContext;
 
@@ -42,13 +44,20 @@ public class GeoApiFn {
 
 	public static double elevationOf(Location location) throws Exception
 	{
-		return ElevationApi.getByPoint(context, location)
+		double elev = ElevationApi.getByPoint(context, location)
 			.await().elevation;
+
+		location.alt = elev;
+		return elev;
 	}
 
-	public static double distanceOf(Location a, Location b) throws Exception
+	public static double distanceOf(Location a, Location b)
 	{
-		return - 1.0; // TODO: continue...
+		double dist = DistanceUtils.getHaversineDistance(
+			a.lat, a.lng,
+			b.lat, b.lng);
+
+		return dist * 1000;
 	}
 
 	private GeoApiFn() {}

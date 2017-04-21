@@ -16,49 +16,23 @@
  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.marcomerli.xpfms.model;
-
-import java.io.Serializable;
+package net.marcomerli.xpfms.error;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public class Waypoint implements Serializable {
+public class NoSuchWaypointException extends Exception {
 
-	private static final long serialVersionUID = 5152303308237206301L;
+	private static final long serialVersionUID = - 6565089515708887605L;
 
-	private String identifier;
-	private WaypointType type;
-	private Location location;
+	public NoSuchWaypointException(String message) {
 
-	public String getIdentifier()
-	{
-		return identifier;
+		super(message);
 	}
 
-	public void setIdentifier(String identifier)
-	{
-		this.identifier = identifier;
-	}
+	public NoSuchWaypointException(Throwable cause) {
 
-	public WaypointType getType()
-	{
-		return type;
-	}
-
-	public void setType(WaypointType type)
-	{
-		this.type = type;
-	}
-
-	public Location getLocation()
-	{
-		return location;
-	}
-
-	public void setLocation(Location location)
-	{
-		this.location = location;
+		super(cause);
 	}
 }

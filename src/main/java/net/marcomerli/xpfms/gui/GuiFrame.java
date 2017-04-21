@@ -33,13 +33,10 @@ public class GuiFrame extends JFrame {
 		super("X-Plane FMS");
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		add(new UploadPanel());
-
-		// FlightPlanPanel fp = new FlightPlanPanel();
-		// fp.setOpaque(true);
-		// setContentPane(fp);
+		setJMenuBar(new MenuBar(this).init());
 
 		pack();
+		setSize(450, 260);
 		setVisible(true);
 	}
 }

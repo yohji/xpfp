@@ -18,55 +18,48 @@
 
 package net.marcomerli.xpfms.model;
 
-import java.io.Serializable;
+import java.util.LinkedList;
 
-import org.apache.sis.measure.Latitude;
-import org.apache.sis.measure.Longitude;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
-import com.google.maps.model.LatLng;
-
-import net.marcomerli.xpfms.fn.UnitFn;
+import net.marcomerli.xpfms.error.NoSuchWaypointException;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public class Location extends LatLng implements Serializable {
+public class FlightPlan extends LinkedList<Waypoint> {
 
-	private static final long serialVersionUID = - 5324412533678066003L;
+	private static final long serialVersionUID = 1776920015546695648L;
 
-	public double alt;
+	private Double distance;
+	private Long ete;
 
-	private Latitude latitude;
-	private Longitude longiture;
-
-	public Location(double lat, double lng, double alt) {
-
-		super(lat, lng);
-		this.alt = alt;
-
-		latitude = new Latitude(lat);
-		longiture = new Longitude(lng);
-	}
-
-	public Location(double lat, double lng) {
-
-		this(lat, lng, 0);
-	}
-
-	public String getLatitude()
+	public Waypoint getDeparture() throws NoSuchWaypointException
 	{
-		return latitude.toString();
+		Waypoint wp = getFirst();
+		if (! wp.getType().equals(WaypointType.ICAO))
+			throw new NoSuchWaypointException("Departure not specified.");
+
+		return wp;
 	}
 
-	public String getLongitude()
+	public Waypoint getDestination() throws NoSuchWaypointException
 	{
-		return longiture.toString();
+		Waypoint wp = getLast();
+		if (! wp.getType().equals(WaypointType.ICAO))
+			throw new NoSuchWaypointException("Destination not specified.");
+
+		return wp;
 	}
 
-	public String getAltitude()
+	public Double getDistance()
 	{
-		return String.format("%d ft",
-			UnitFn.mToFt(alt));
+		return distance;
+	}
+
+	public String getEte()
+	{
+		return DurationFormatUtils.formatDurationHMS(ete);
 	}
 }

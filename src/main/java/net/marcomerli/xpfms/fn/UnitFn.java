@@ -24,12 +24,12 @@ package net.marcomerli.xpfms.fn;
  */
 public class UnitFn {
 
-	public static double mToNM(double unit) throws Exception
+	public static double mToNM(double unit)
 	{
 		return unit / 1852;
 	}
 
-	public static double mTof(double unit) throws Exception
+	public static double mToFt(double unit)
 	{
 		return unit / 0.3048;
 	}

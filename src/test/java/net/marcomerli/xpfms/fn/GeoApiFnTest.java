@@ -16,49 +16,23 @@
  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.marcomerli.xpfms.model;
+package net.marcomerli.xpfms.fn;
 
-import java.io.Serializable;
+import org.junit.Test;
 
-/**
- * @author Marco Merli
- * @since 1.0
- */
-public class Waypoint implements Serializable {
+import net.marcomerli.xpfms.UnitTestSupport;
+import net.marcomerli.xpfms.model.Location;
 
-	private static final long serialVersionUID = 5152303308237206301L;
+public class GeoApiFnTest extends UnitTestSupport {
 
-	private String identifier;
-	private WaypointType type;
-	private Location location;
-
-	public String getIdentifier()
+	@Test
+	public void distance()
 	{
-		return identifier;
-	}
+		Location a = new Location(45.0, 7.5);
+		Location b = new Location(45.0, 8.5);
+		double dist = GeoApiFn.distanceOf(a, b);
 
-	public void setIdentifier(String identifier)
-	{
-		this.identifier = identifier;
-	}
-
-	public WaypointType getType()
-	{
-		return type;
-	}
-
-	public void setType(WaypointType type)
-	{
-		this.type = type;
-	}
-
-	public Location getLocation()
-	{
-		return location;
-	}
-
-	public void setLocation(Location location)
-	{
-		this.location = location;
+		assertNumberNotZero(dist);
+		assertNumberBetween(dist, 78000, 79000);
 	}
 }
