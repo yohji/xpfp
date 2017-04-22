@@ -18,6 +18,9 @@
 
 package net.marcomerli.xpfp.core;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Properties;
 
 /**
@@ -28,10 +31,28 @@ public class Settings extends Properties {
 
 	private static final long serialVersionUID = 511605731858765879L;
 
+	private static final File FILE = new File(new File(".")
+		+ File.separator + "etc" + File.separator + "settings.properties");
+
 	private static final String FMS_DIRECTORY = "fms.directory";
 	private static final String PROXY_ACTIVE = "proxy.active";
 	private static final String PROXY_HOSTNAME = "proxy.hostname";
 	private static final String PROXY_PORT = "proxy.port";
+
+	public Settings load() throws Exception
+	{
+		if (! FILE.exists())
+			FILE.createNewFile();
+
+		load(new FileReader(FILE));
+		return this;
+	}
+
+	public Settings save() throws Exception
+	{
+		store(new FileWriter(FILE), "");
+		return this;
+	}
 
 	public String getFMSDirectory()
 	{
@@ -43,14 +64,14 @@ public class Settings extends Properties {
 		setProperty(FMS_DIRECTORY, value);
 	}
 
-	public Boolean isProxyHostname()
+	public Boolean isProxyActive()
 	{
 		return new Boolean(getProperty(PROXY_ACTIVE));
 	}
 
-	public void setProxyHostname(Boolean value)
+	public void setProxyActive(Boolean value)
 	{
-		setProperty(PROXY_HOSTNAME, value.toString());
+		setProperty(PROXY_ACTIVE, value.toString());
 	}
 
 	public String getProxyHostname()

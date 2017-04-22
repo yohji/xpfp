@@ -30,8 +30,15 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
+import net.java.dev.designgridlayout.DesignGridLayout;
+import net.marcomerli.xpfp.core.Context;
+import net.marcomerli.xpfp.core.Settings;
+import net.marcomerli.xpfp.fn.GuiFn;
 
 /**
  * @author Marco Merli
@@ -44,35 +51,17 @@ public class SettingsWindow extends JFrame {
 	private JTextField fmsDirText;
 	private JButton fmsDirBtn;
 	private JFileChooser fmsDirFileChooser;
+	private JTextField proxyHostnameText;
+	private JTextField proxyPortText;
+	private JRadioButton proxyActive;
 
 	public SettingsWindow() {
 
-		super(MainWindow.TITLE + " :: Settings");
+		super(MainWindow.TITLE_COMPACT + " :: Settings");
 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-		// FMS Directory
-		JPanel fmsDirPanel = new JPanel(new BorderLayout());
-		fmsDirPanel.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createTitledBorder("FMS Directory"),
-			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-
-		fmsDirText = new JTextField();
-		fmsDirText.setEnabled(false);
-		fmsDirPanel.add(fmsDirText);
-
-		fmsDirBtn = new JButton("Choose");
-		fmsDirBtn.addActionListener(new OnChooseDir());
-		fmsDirPanel.add(fmsDirBtn);
-
 		fmsDirFileChooser = new JFileChooser();
 		fmsDirFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-		// Proxy
-		JPanel proxyPanel = new JPanel(new BorderLayout());
-		proxyPanel.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createTitledBorder("Proxy"),
-			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
 		// Save
 		JPanel savePanel = new JPanel();
@@ -83,23 +72,67 @@ public class SettingsWindow extends JFrame {
 		// Main
 		JPanel mainPane = new JPanel();
 		mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.PAGE_AXIS));
-
 		mainPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
 		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
-		mainPane.add(fmsDirPanel);
+		mainPane.add(fmsDirPanel());
 		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
-		mainPane.add(proxyPanel);
+		mainPane.add(proxyPanel());
 		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
 		mainPane.add(savePanel);
 		mainPane.add(Box.createGlue());
 
 		setContentPane(mainPane);
-		// pack();
-		// setPreferredSize(new Dimension(450, 250));
-		setSize(450, 260);
+		pack();
 
 		setLocationByPlatform(true);
 		setVisible(true);
+	}
+
+	private JPanel fmsDirPanel()
+	{
+		JPanel fmsDirPanel = new JPanel(new BorderLayout());
+		fmsDirPanel.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createTitledBorder("FMS Directory"),
+			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+		DesignGridLayout layout = new DesignGridLayout(fmsDirPanel);
+
+		fmsDirText = new JTextField();
+		fmsDirText.setEnabled(false);
+		fmsDirText.setText(Context.getSettings().getFMSDirectory());
+
+		fmsDirBtn = new JButton("Choose");
+		fmsDirBtn.addActionListener(new OnChooseDir());
+
+		layout.row().grid().add(fmsDirText, 2).add(fmsDirBtn);
+
+		return fmsDirPanel;
+	}
+
+	private JPanel proxyPanel()
+	{
+		JPanel proxyPanel = new JPanel(new BorderLayout());
+		proxyPanel.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createTitledBorder("Proxy"),
+			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+		DesignGridLayout layout = new DesignGridLayout(proxyPanel);
+		Settings settings = Context.getSettings();
+
+		proxyActive = new JRadioButton();
+		proxyActive.setSelected(settings.isProxyActive());
+		layout.row().grid(new JLabel("Active", JLabel.TRAILING)).add(proxyActive);
+
+		proxyHostnameText = new JTextField();
+		proxyHostnameText.setText(settings.getProxyHostname());
+		layout.row().grid(new JLabel("Hostname", JLabel.TRAILING)).add(proxyHostnameText);
+
+		proxyPortText = new JTextField();
+		proxyPortText.setText(settings.getProxyPort());
+		layout.row().grid(new JLabel("Port", JLabel.TRAILING)).add(proxyPortText);
+
+		return proxyPanel;
 	}
 
 	private class OnChooseDir implements ActionListener {
@@ -121,9 +154,21 @@ public class SettingsWindow extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			// TODO: save settings
+			try {
+				Settings settings = Context.getSettings();
+				settings.setFMSDirectory(fmsDirText.getText());
+				settings.setProxyActive(proxyActive.isSelected());
+				settings.setProxyHostname(proxyHostnameText.getText());
+				settings.setProxyPort(proxyPortText.getText());
 
-			dispose();
+				settings.save();
+			}
+			catch (Exception ee) {
+				GuiFn.errorPopup(ee, SettingsWindow.this);
+			}
+			finally {
+				dispose();
+			}
 		}
 	}
 }

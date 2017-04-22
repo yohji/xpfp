@@ -18,6 +18,8 @@
 
 package net.marcomerli.xpfp.fn;
 
+import java.awt.Component;
+
 import javax.swing.JOptionPane;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -30,16 +32,17 @@ import net.marcomerli.xpfp.gui.MainWindow;
  */
 public class GuiFn {
 
-	public static void infoPopup(String message, MainWindow gui)
+	public static void infoPopup(String message, Component gui)
 	{
 		JOptionPane.showMessageDialog(gui, message,
-			MainWindow.TITLE + " :: Information", JOptionPane.INFORMATION_MESSAGE);
+			MainWindow.TITLE_COMPACT + " :: Information", JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	public static void errorPopup(Throwable e, MainWindow gui)
+	public static void errorPopup(Throwable e, Component gui)
 	{
 		JOptionPane.showMessageDialog(gui, ExceptionUtils.getRootCauseMessage(e),
-			MainWindow.TITLE + " :: Error", JOptionPane.ERROR_MESSAGE);
+			MainWindow.TITLE_COMPACT + " :: Error", JOptionPane.ERROR_MESSAGE);
 	}
+
 	private GuiFn() {}
 }

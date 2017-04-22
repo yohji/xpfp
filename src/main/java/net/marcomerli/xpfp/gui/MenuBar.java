@@ -135,7 +135,7 @@ public class MenuBar extends JMenuBar {
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			gui.dispose();
+			System.exit(0);
 		}
 	}
 }

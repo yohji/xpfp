@@ -27,11 +27,13 @@ import javax.swing.JFrame;
 public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 109257433124133997L;
-	public static final String TITLE = "X-Plane Flight Planner";
+
+	public static final String TITLE_FULL = "X-Plane Flight Planner";
+	public static final String TITLE_COMPACT = "XPFP";
 
 	public MainWindow() {
 
-		super(TITLE);
+		super(TITLE_FULL);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(new MenuBar(this).init());
