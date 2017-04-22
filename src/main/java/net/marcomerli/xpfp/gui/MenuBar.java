@@ -43,10 +43,10 @@ public class MenuBar extends JMenuBar {
 
 	private static final long serialVersionUID = - 2425410924278164802L;
 
-	private Gui gui;
+	private MainWindow gui;
 	private JFileChooser fcFPL;
 
-	public MenuBar(Gui guiFrame) {
+	public MenuBar(MainWindow guiFrame) {
 
 		this.gui = guiFrame;
 
@@ -126,7 +126,7 @@ public class MenuBar extends JMenuBar {
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			new Settings();
+			new SettingsWindow();
 		}
 	}
 

@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import net.marcomerli.xpfp.gui.Gui;
+import net.marcomerli.xpfp.gui.MainWindow;
 
 /**
  * @author Marco Merli
@@ -30,16 +30,16 @@ import net.marcomerli.xpfp.gui.Gui;
  */
 public class GuiFn {
 
-	public static void infoPopup(String message, Gui gui)
+	public static void infoPopup(String message, MainWindow gui)
 	{
 		JOptionPane.showMessageDialog(gui, message,
-			Gui.TITLE + " :: Information", JOptionPane.INFORMATION_MESSAGE);
+			MainWindow.TITLE + " :: Information", JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	public static void errorPopup(Throwable e, Gui gui)
+	public static void errorPopup(Throwable e, MainWindow gui)
 	{
 		JOptionPane.showMessageDialog(gui, ExceptionUtils.getRootCauseMessage(e),
-			Gui.TITLE + " :: Error", JOptionPane.ERROR_MESSAGE);
+			MainWindow.TITLE + " :: Error", JOptionPane.ERROR_MESSAGE);
 	}
 	private GuiFn() {}
 }

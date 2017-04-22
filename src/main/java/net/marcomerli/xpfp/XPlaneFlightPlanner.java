@@ -20,7 +20,7 @@ package net.marcomerli.xpfp;
 
 import javax.swing.SwingUtilities;
 
-import net.marcomerli.xpfp.gui.Gui;
+import net.marcomerli.xpfp.gui.MainWindow;
 
 /**
  * @author Marco Merli
@@ -35,8 +35,7 @@ public class XPlaneFlightPlanner {
 			@Override
 			public void run()
 			{
-				final Gui gui = new Gui();
-				gui.setVisible(true);
+				new MainWindow();
 			}
 		});
 	}

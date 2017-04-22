@@ -19,12 +19,13 @@
 package net.marcomerli.xpfp.gui;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -36,53 +37,67 @@ import javax.swing.JTextField;
  * @author Marco Merli
  * @since 1.0
  */
-public class Settings extends JFrame {
+public class SettingsWindow extends JFrame {
 
 	private static final long serialVersionUID = 5454273820569518074L;
 
-	private JTextField fmsDir;
+	private JTextField fmsDirText;
 	private JButton fmsDirBtn;
-	private JFileChooser fmsDirFc;
+	private JFileChooser fmsDirFileChooser;
 
-	public Settings() {
+	public SettingsWindow() {
 
-		super(Gui.TITLE + " :: Settings");
+		super(MainWindow.TITLE + " :: Settings");
 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-
 		// FMS Directory
-		JPanel jFMSDir = new JPanel(new BorderLayout());
-		jFMSDir.setBorder(BorderFactory.createCompoundBorder(
+		JPanel fmsDirPanel = new JPanel(new BorderLayout());
+		fmsDirPanel.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createTitledBorder("FMS Directory"),
 			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
-		fmsDir = new JTextField();
-		fmsDir.setEnabled(false);
-		jFMSDir.add(fmsDir);
+		fmsDirText = new JTextField();
+		fmsDirText.setEnabled(false);
+		fmsDirPanel.add(fmsDirText);
 
 		fmsDirBtn = new JButton("Choose");
 		fmsDirBtn.addActionListener(new OnChooseDir());
-		jFMSDir.add(fmsDirBtn);
+		fmsDirPanel.add(fmsDirBtn);
 
-		fmsDirFc = new JFileChooser();
-		fmsDirFc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fmsDirFileChooser = new JFileChooser();
+		fmsDirFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-		mainPanel.add(jFMSDir, BorderLayout.CENTER);
+		// Proxy
+		JPanel proxyPanel = new JPanel(new BorderLayout());
+		proxyPanel.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createTitledBorder("Proxy"),
+			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
 		// Save
-		JPanel jSave = new JPanel();
+		JPanel savePanel = new JPanel();
 		JButton save = new JButton("Save");
 		save.addActionListener(new OnSave());
-		mainPanel.add(save);
-		mainPanel.add(jSave, BorderLayout.CENTER);
+		savePanel.add(save);
 
-		getContentPane().setLayout(new GridLayout());
-		getContentPane().add(mainPanel);
+		// Main
+		JPanel mainPane = new JPanel();
+		mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.PAGE_AXIS));
 
-		pack();
+		mainPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
+		mainPane.add(fmsDirPanel);
+		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
+		mainPane.add(proxyPanel);
+		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
+		mainPane.add(savePanel);
+		mainPane.add(Box.createGlue());
+
+		setContentPane(mainPane);
+		// pack();
+		// setPreferredSize(new Dimension(450, 250));
+		setSize(450, 260);
+
 		setLocationByPlatform(true);
 		setVisible(true);
 	}
@@ -92,11 +107,11 @@ public class Settings extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			int returnVal = fmsDirFc.showOpenDialog(fmsDirBtn);
+			int returnVal = fmsDirFileChooser.showOpenDialog(fmsDirBtn);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-				File fpl = fmsDirFc.getSelectedFile();
-				fmsDir.setText(fpl.getAbsolutePath());
+				File fpl = fmsDirFileChooser.getSelectedFile();
+				fmsDirText.setText(fpl.getAbsolutePath());
 			}
 		}
 	}

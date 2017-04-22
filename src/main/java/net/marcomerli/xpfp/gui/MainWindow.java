@@ -24,12 +24,12 @@ import javax.swing.JFrame;
  * @author Marco Merli
  * @since 1.0
  */
-public class Gui extends JFrame {
+public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 109257433124133997L;
 	public static final String TITLE = "X-Plane Flight Planner";
 
-	public Gui() {
+	public MainWindow() {
 
 		super(TITLE);
 
