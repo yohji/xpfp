@@ -27,6 +27,8 @@ import org.apache.sis.distance.DistanceUtils;
 import com.google.maps.ElevationApi;
 import com.google.maps.GeoApiContext;
 
+import net.marcomerli.xpfp.core.Context;
+import net.marcomerli.xpfp.core.Settings;
 import net.marcomerli.xpfp.model.Location;
 
 /**
@@ -37,9 +39,16 @@ public class GeoApiFn {
 
 	private static final GeoApiContext context;
 	static {
-		// TODO: move the key and proxy into configuration
-		context = new GeoApiContext().setApiKey("AIzaSyA2dgxtI3wXcuxk8f_T3a_iKPlcpoeev2s")
-			.setProxy(new Proxy(Type.HTTP, new InetSocketAddress("localhost", 3128)));
+		// TODO: move the key into settings
+		context = new GeoApiContext().setApiKey("AIzaSyA2dgxtI3wXcuxk8f_T3a_iKPlcpoeev2s");
+	}
+
+	public static void init()
+	{
+		Settings settings = Context.getSettings();
+		if (settings.isProxyActive())
+			context.setProxy(new Proxy(Type.HTTP, new InetSocketAddress(
+				settings.getProxyHostname(), settings.getProxyPort())));
 	}
 
 	public static double elevationOf(Location location) throws Exception

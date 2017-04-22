@@ -32,15 +32,21 @@ import net.marcomerli.xpfp.gui.MainWindow;
  */
 public class GuiFn {
 
-	public static void infoPopup(String message, Component gui)
+	public static void infoPopup(String message, Component component)
 	{
-		JOptionPane.showMessageDialog(gui, message,
+		JOptionPane.showMessageDialog(component, message,
 			MainWindow.TITLE_COMPACT + " :: Information", JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	public static void errorPopup(Throwable e, Component gui)
+	public static int selectPopup(String message, Component component)
 	{
-		JOptionPane.showMessageDialog(gui, ExceptionUtils.getRootCauseMessage(e),
+		return JOptionPane.showConfirmDialog(component, message,
+			MainWindow.TITLE_COMPACT + " :: Select", JOptionPane.YES_NO_OPTION);
+	}
+
+	public static void errorPopup(Throwable e, Component component)
+	{
+		JOptionPane.showMessageDialog(component, ExceptionUtils.getRootCauseMessage(e),
 			MainWindow.TITLE_COMPACT + " :: Error", JOptionPane.ERROR_MESSAGE);
 	}
 

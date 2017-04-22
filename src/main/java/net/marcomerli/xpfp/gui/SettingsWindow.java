@@ -85,6 +85,7 @@ public class SettingsWindow extends JFrame {
 		setContentPane(mainPane);
 		pack();
 
+		setMinimumSize(getMinimumSize());
 		setLocationByPlatform(true);
 		setVisible(true);
 	}
@@ -100,7 +101,8 @@ public class SettingsWindow extends JFrame {
 
 		fmsDirText = new JTextField();
 		fmsDirText.setEnabled(false);
-		fmsDirText.setText(Context.getSettings().getFMSDirectory());
+		fmsDirText.setText(Context.getSettings()
+			.getFMSDirectory().getAbsolutePath());
 
 		fmsDirBtn = new JButton("Choose");
 		fmsDirBtn.addActionListener(new OnChooseDir());
@@ -129,7 +131,7 @@ public class SettingsWindow extends JFrame {
 		layout.row().grid(new JLabel("Hostname", JLabel.TRAILING)).add(proxyHostnameText);
 
 		proxyPortText = new JTextField();
-		proxyPortText.setText(settings.getProxyPort());
+		proxyPortText.setText(settings.getProxyPort().toString());
 		layout.row().grid(new JLabel("Port", JLabel.TRAILING)).add(proxyPortText);
 
 		return proxyPanel;

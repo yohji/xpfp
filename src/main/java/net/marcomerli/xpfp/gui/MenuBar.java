@@ -31,7 +31,6 @@ import javax.swing.KeyStroke;
 
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.file.read.FPLReader;
-import net.marcomerli.xpfp.file.write.FMSWriter;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.model.FlightPlan;
 
@@ -43,12 +42,12 @@ public class MenuBar extends JMenuBar {
 
 	private static final long serialVersionUID = - 2425410924278164802L;
 
-	private MainWindow gui;
+	private MainWindow win;
 	private JFileChooser fcFPL;
 
-	public MenuBar(MainWindow guiFrame) {
+	public MenuBar(MainWindow win) {
 
-		this.gui = guiFrame;
+		this.win = win;
 
 		fcFPL = new JFileChooser();
 		fcFPL.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -99,23 +98,18 @@ public class MenuBar extends JMenuBar {
 		{
 			int returnVal = fcFPL.showOpenDialog(menuItem);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-
 				File fpl = fcFPL.getSelectedFile();
-				FPLReader fplReader = new FPLReader(fpl);
 
 				try {
+					FPLReader fplReader = new FPLReader(fpl);
 					FlightPlan flightPlan = fplReader.read();
+
 					Context.setFlightPlan(flightPlan);
-
-					// TODO: load flight plan table without exporting yet
-					File fms = new File(new File(System.getProperty("java.io.tmpdir")),
-						flightPlan.getFilename());
-
-					new FMSWriter(fms).write(flightPlan);
-					GuiFn.infoPopup("Export completed", gui);
+					win.setContentPane(new MainContent(win));
+					win.validate();
 				}
 				catch (Exception ee) {
-					GuiFn.errorPopup(ee, gui);
+					GuiFn.errorPopup(ee, win);
 				}
 			}
 		}

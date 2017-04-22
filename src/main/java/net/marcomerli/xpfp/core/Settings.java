@@ -23,6 +23,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @author Marco Merli
  * @since 1.0
@@ -54,9 +56,10 @@ public class Settings extends Properties {
 		return this;
 	}
 
-	public String getFMSDirectory()
+	public File getFMSDirectory()
 	{
-		return getProperty(FMS_DIRECTORY);
+		String dir = getProperty(FMS_DIRECTORY);
+		return (StringUtils.isNotBlank(dir) ? new File(dir) : null);
 	}
 
 	public void setFMSDirectory(String value)
@@ -84,9 +87,10 @@ public class Settings extends Properties {
 		setProperty(PROXY_HOSTNAME, value);
 	}
 
-	public String getProxyPort()
+	public Integer getProxyPort()
 	{
-		return getProperty(PROXY_PORT);
+		String port = getProperty(PROXY_PORT);
+		return (StringUtils.isNotBlank(port) ? new Integer(port) : null);
 	}
 
 	public void setProxyPort(String value)

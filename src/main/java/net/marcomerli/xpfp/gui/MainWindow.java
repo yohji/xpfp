@@ -18,7 +18,14 @@
 
 package net.marcomerli.xpfp.gui;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import net.java.dev.designgridlayout.DesignGridLayout;
+import net.marcomerli.xpfp.core.Context;
 
 /**
  * @author Marco Merli
@@ -37,11 +44,38 @@ public class MainWindow extends JFrame {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(new MenuBar(this).init());
+		setContentPane(new Home());
 
 		// pack();
 		setSize(450, 260);
+		setMinimumSize(getMinimumSize());
 
 		setLocationByPlatform(true);
 		setVisible(true);
+	}
+
+	private class Home extends JPanel {
+
+		private static final long serialVersionUID = - 1307131782278478525L;
+
+		public Home() {
+
+			new BoxLayout(this, BoxLayout.PAGE_AXIS);
+			setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+			DesignGridLayout layout = new DesignGridLayout(this);
+			layout.emptyRow();
+
+			if (Context.getSettings().getFMSDirectory() == null) {
+
+				layout.row().grid().add(
+					new JLabel("No FMS directory. Select it from File -> Settings"));
+
+				layout.emptyRow();
+			}
+
+			layout.row().grid().add(
+				new JLabel("No flight plan; import one from the menu File -> Import..."));
+		}
 	}
 }
