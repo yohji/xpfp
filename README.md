@@ -1,2 +1,1 @@
-# X-Plane FMS
- 
+# X-Plane Flight Planner
