@@ -25,7 +25,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 
 /**
  * @author Marco Merli
@@ -44,11 +43,6 @@ public class NumberFn {
 					new DecimalFormatSymbols(Locale.US))));
 
 		return df.format(number);
-	}
-
-	public static String time(long time)
-	{
-		return DurationFormatUtils.formatDurationHMS(time);
 	}
 
 	private NumberFn() {}

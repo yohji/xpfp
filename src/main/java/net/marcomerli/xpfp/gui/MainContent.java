@@ -27,20 +27,24 @@ import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import net.java.dev.designgridlayout.DesignGridLayout;
+import net.java.dev.designgridlayout.Tag;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.file.write.FMSWriter;
+import net.marcomerli.xpfp.fn.FormatFn;
 import net.marcomerli.xpfp.fn.GuiFn;
-import net.marcomerli.xpfp.fn.NumberFn;
-import net.marcomerli.xpfp.fn.UnitFn;
 import net.marcomerli.xpfp.model.FlightPlan;
 import net.marcomerli.xpfp.model.Location;
 import net.marcomerli.xpfp.model.Waypoint;
@@ -69,18 +73,27 @@ public class MainContent extends JPanel {
 
 		DesignGridLayout layout = new DesignGridLayout(this);
 		layout.row().grid().add(new FlightPlaneTable());
+		layout.row().bar()
+			.add(new JLabel("Distance: " + FormatFn.distance(flightPlan.getDistance())), Tag.RIGHT)
+			.gap()
+			.add(new JLabel("ETE: " + FormatFn.time(flightPlan.getEte())), Tag.RIGHT);
 
 		JButton export = new JButton("Export");
 		export.addActionListener(new OnExport());
 		layout.row().grid().add(export);
 	}
 
-	private static class FlightPlaneTable extends JScrollPane {
+	private class FlightPlaneTable extends JScrollPane {
 
 		private static final long serialVersionUID = - 2408834160839600983L;
 
-		private static final String[] columnNames = new String[] {
-			"-", "Identifier", "Type", "Country", "Latitude", "Longitude", "Elevation", "Distance"
+		private final String[] columnNames = new String[] {
+			"-", "Identifier", "Type", "Country", "Latitude",
+			"Longitude", "Elevation", "Distance", "ETE"
+		};
+
+		private final int[] columnWidths = new int[] {
+			25, 65, 40, 50, 110, 110, 80, 70, 70
 		};
 
 		public FlightPlaneTable() {
@@ -90,26 +103,33 @@ public class MainContent extends JPanel {
 
 			int iRow = 0;
 			for (Iterator<Waypoint> it = flightPlan.iterator(); it.hasNext(); iRow += 1) {
-				Waypoint waypoint = it.next();
+				Waypoint wp = it.next();
 				int iCol = 0;
 
 				data[iRow][iCol++] = String.valueOf(iRow + 1);
-				data[iRow][iCol++] = waypoint.getIdentifier();
-				data[iRow][iCol++] = waypoint.getType().name();
-				data[iRow][iCol++] = waypoint.getCountry();
+				data[iRow][iCol++] = wp.getIdentifier();
+				data[iRow][iCol++] = wp.getType().name();
+				data[iRow][iCol++] = StringUtils.defaultString(wp.getCountry(), "-");
 
-				Location loc = waypoint.getLocation();
+				Location loc = wp.getLocation();
 				data[iRow][iCol++] = loc.getLatitude();
 				data[iRow][iCol++] = loc.getLongitude();
 				data[iRow][iCol++] = loc.getAltitude();
 
-				double distance = UnitFn.mToNM(waypoint.getDistance());
-				data[iRow][iCol++] = (distance > 0 ? NumberFn.format(distance, 2) + " nm" : "-");
+				data[iRow][iCol++] = FormatFn.distance(wp.getDistance());
+				data[iRow][iCol++] = FormatFn.time(wp.getEte());
 			}
 
 			JTable table = new JTable(new DefaultTableModel(data, columnNames));
+			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			table.setFillsViewportHeight(true);
-			table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+			table.setPreferredScrollableViewportSize(new Dimension(630, 100));
+
+			TableColumnModel columnModel = table.getColumnModel();
+			for (int iCol = 0; iCol < columnNames.length; iCol++) {
+				TableColumn column = columnModel.getColumn(iCol);
+				column.setPreferredWidth(columnWidths[iCol]);
+			}
 
 			setViewportView(table);
 		}

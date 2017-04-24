@@ -23,6 +23,7 @@ import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -87,7 +88,7 @@ public class FPLReader extends Reader {
 							waypoint.setType(WaypointType.get(value));
 							break;
 						case "country-code":
-							waypoint.setCountry(value);
+							waypoint.setCountry(StringUtils.stripToNull(value));
 							break;
 						case "lat":
 							lat = new Double(value);

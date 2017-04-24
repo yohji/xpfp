@@ -28,11 +28,11 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.apache.log4j.Logger;
@@ -56,7 +56,7 @@ public class SettingsWindow extends JFrame {
 	private JFileChooser fmsDirFileChooser;
 	private JTextField proxyHostnameText;
 	private JTextField proxyPortText;
-	private JRadioButton proxyActive;
+	private JCheckBox proxyActive;
 
 	public SettingsWindow() {
 
@@ -125,7 +125,7 @@ public class SettingsWindow extends JFrame {
 		DesignGridLayout layout = new DesignGridLayout(proxyPanel);
 		Settings settings = Context.getSettings();
 
-		proxyActive = new JRadioButton();
+		proxyActive = new JCheckBox();
 		proxyActive.setSelected(settings.isProxyActive());
 		layout.row().grid(new JLabel("Active", JLabel.TRAILING)).add(proxyActive);
 
