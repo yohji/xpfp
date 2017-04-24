@@ -88,7 +88,7 @@ public class SettingsWindow extends JFrame {
 		setContentPane(mainPane);
 		pack();
 
-		setMinimumSize(getMinimumSize());
+		setResizable(false);
 		setLocationByPlatform(true);
 		setVisible(true);
 	}

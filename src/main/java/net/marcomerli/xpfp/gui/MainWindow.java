@@ -18,8 +18,6 @@
 
 package net.marcomerli.xpfp.gui;
 
-import java.awt.Dimension;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -48,11 +46,9 @@ public class MainWindow extends JFrame {
 		setJMenuBar(new MenuBar(this).init());
 		setContentPane(new Home());
 
-		setSize(670, 400);
-		setMinimumSize(getSize());
-		setMaximumSize(new Dimension(getSize().width, 1080));
-
+		setSize(400, 200);
 		setLocationByPlatform(true);
+		setResizable(false);
 		setVisible(true);
 	}
 

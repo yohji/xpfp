@@ -74,9 +74,7 @@ public class MainContent extends JPanel {
 		DesignGridLayout layout = new DesignGridLayout(this);
 		layout.row().grid().add(new FlightPlaneTable());
 		layout.row().bar()
-			.add(new JLabel("Distance: " + FormatFn.distance(flightPlan.getDistance())), Tag.RIGHT)
-			.gap()
-			.add(new JLabel("ETE: " + FormatFn.time(flightPlan.getEte())), Tag.RIGHT);
+			.add(new JLabel("Distance: " + FormatFn.distance(flightPlan.getDistance())), Tag.RIGHT);
 
 		JButton export = new JButton("Export");
 		export.addActionListener(new OnExport());
@@ -97,6 +95,9 @@ public class MainContent extends JPanel {
 		};
 
 		public FlightPlaneTable() {
+
+			setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
 			FlightPlan flightPlan = Context.getFlightPlan();
 			String[][] data = new String[flightPlan.size()][columnNames.length];
@@ -122,7 +123,7 @@ public class MainContent extends JPanel {
 			}
 
 			JTable table = new JTable(new DefaultTableModel(data, columnNames));
-			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 			table.setFillsViewportHeight(true);
 			table.setPreferredScrollableViewportSize(new Dimension(630, 100));
 

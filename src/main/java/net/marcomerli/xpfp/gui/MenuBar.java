@@ -62,9 +62,9 @@ public class MenuBar extends JMenuBar {
 		menu.setMnemonic(KeyEvent.VK_F);
 		add(menu);
 
-		JMenuItem menuItem = new JMenuItem("Import Garmin FPL", KeyEvent.VK_O);
+		JMenuItem menuItem = new JMenuItem("Import Garmin FPL", KeyEvent.VK_G);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
-			KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+			KeyEvent.VK_G, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new OnImportFPL(menuItem));
 		menu.add(menuItem);
 
@@ -109,6 +109,7 @@ public class MenuBar extends JMenuBar {
 
 					Context.setFlightPlan(flightPlan);
 					win.setContentPane(new MainContent(win));
+					win.pack();
 					win.validate();
 				}
 				catch (Exception ee) {
