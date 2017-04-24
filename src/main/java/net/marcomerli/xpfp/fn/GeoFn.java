@@ -69,5 +69,15 @@ public class GeoFn {
 		return dist * 1000;
 	}
 
+	public static int bearingOf(Location a, Location b)
+	{
+		double y = Math.sin(b.lng - a.lng) * Math.cos(b.lat);
+		double x = Math.cos(a.lat) * Math.sin(b.lat) -
+			Math.sin(a.lat) * Math.cos(b.lat) * Math.cos(b.lng - a.lng);
+
+		double brng = Math.toDegrees(Math.atan2(y, x));
+		return (int) ((Math.round(brng) + 360) % 360);
+	}
+
 	private GeoFn() {}
 }

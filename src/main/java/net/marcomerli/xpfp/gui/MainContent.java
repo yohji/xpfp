@@ -88,12 +88,12 @@ public class MainContent extends JPanel {
 		private static final long serialVersionUID = - 2408834160839600983L;
 
 		private final String[] columnNames = new String[] {
-			"-", "Identifier", "Type", "Country", "Latitude",
+			"-", "Bearing", "Identifier", "Type", "Country", "Latitude",
 			"Longitude", "Elevation", "Distance", "ETE"
 		};
 
 		private final int[] columnWidths = new int[] {
-			25, 65, 40, 50, 110, 110, 80, 70, 70
+			25, 50, 65, 40, 50, 110, 110, 80, 70, 70
 		};
 
 		public FlightPlaneTable() {
@@ -107,6 +107,7 @@ public class MainContent extends JPanel {
 				int iCol = 0;
 
 				data[iRow][iCol++] = String.valueOf(iRow + 1);
+				data[iRow][iCol++] = FormatFn.degree(wp.getBearing());
 				data[iRow][iCol++] = wp.getIdentifier();
 				data[iRow][iCol++] = wp.getType().name();
 				data[iRow][iCol++] = StringUtils.defaultString(wp.getCountry(), "-");

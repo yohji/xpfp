@@ -47,7 +47,10 @@ public class FlightPlan extends LinkedList<Waypoint> {
 
 		for (; iterator.hasNext();) {
 			Waypoint wp = iterator.next();
+			
 			distance += wp.setDistance(prev);
+			wp.setBearing(prev);
+			
 			prev = wp;
 		}
 	}

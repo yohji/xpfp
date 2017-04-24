@@ -38,10 +38,17 @@ public class Waypoint implements Serializable {
 
 	private Double distance = 0.0;
 	private Long ete = 0L;
+	private Integer bearing;
 
 	public Double setDistance(Waypoint wp)
 	{
 		return (distance = GeoFn.distanceOf(
+			wp.getLocation(), this.getLocation()));
+	}
+
+	public Integer setBearing(Waypoint wp)
+	{
+		return (bearing = GeoFn.bearingOf(
 			wp.getLocation(), this.getLocation()));
 	}
 
@@ -53,6 +60,11 @@ public class Waypoint implements Serializable {
 	public Long getEte()
 	{
 		return ete;
+	}
+
+	public Integer getBearing()
+	{
+		return bearing;
 	}
 
 	public String getFMSIdentifier()
