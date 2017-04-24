@@ -80,20 +80,20 @@ public class FPLReader extends Reader {
 					String value = data.getTextContent();
 
 					switch (data.getNodeName()) {
-					case "identifier":
-						waypoint.setIdentifier(value);
-					break;
-					case "type":
-						waypoint.setType(WaypointType.get(value));
-					break;
-					case "country-code":
-						waypoint.setCountry(value);
-					break;
-					case "lat":
-						lat = new Double(value);
-					break;
-					case "lon":
-						lng = new Double(value);
+						case "identifier":
+							waypoint.setIdentifier(value);
+							break;
+						case "type":
+							waypoint.setType(WaypointType.get(value));
+							break;
+						case "country-code":
+							waypoint.setCountry(value);
+							break;
+						case "lat":
+							lat = new Double(value);
+							break;
+						case "lon":
+							lng = new Double(value);
 					}
 				}
 			}
@@ -101,6 +101,8 @@ public class FPLReader extends Reader {
 			waypoint.setLocation(new Location(lat, lng));
 			flightPlan.add(waypoint);
 		}
+
+		flightPlan.setup();
 
 		return flightPlan;
 	}

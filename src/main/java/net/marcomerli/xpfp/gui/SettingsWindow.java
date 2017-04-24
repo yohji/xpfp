@@ -35,6 +35,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.apache.log4j.Logger;
+
 import net.java.dev.designgridlayout.DesignGridLayout;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.Settings;
@@ -47,6 +49,7 @@ import net.marcomerli.xpfp.fn.GuiFn;
 public class SettingsWindow extends JFrame {
 
 	private static final long serialVersionUID = 5454273820569518074L;
+	private static final Logger logger = Logger.getLogger(SettingsWindow.class);
 
 	private JTextField fmsDirText;
 	private JButton fmsDirBtn;
@@ -166,6 +169,7 @@ public class SettingsWindow extends JFrame {
 				settings.save();
 			}
 			catch (Exception ee) {
+				logger.error("onSave", ee);
 				GuiFn.errorPopup(ee, SettingsWindow.this);
 			}
 			finally {

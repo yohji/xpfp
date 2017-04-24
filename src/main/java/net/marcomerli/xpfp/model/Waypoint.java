@@ -20,6 +20,7 @@ package net.marcomerli.xpfp.model;
 
 import java.io.Serializable;
 
+import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.fn.NumberFn;
 
 /**
@@ -34,6 +35,25 @@ public class Waypoint implements Serializable {
 	private WaypointType type;
 	private Location location;
 	private String country;
+
+	private Double distance = 0.0;
+	private Long ete = 0L;
+
+	public Double setDistance(Waypoint wp)
+	{
+		return (distance = GeoFn.distanceOf(
+			wp.getLocation(), this.getLocation()));
+	}
+
+	public Double getDistance()
+	{
+		return distance;
+	}
+
+	public Long getEte()
+	{
+		return ete;
+	}
 
 	public String getFMSIdentifier()
 	{

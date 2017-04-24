@@ -19,20 +19,31 @@
 package net.marcomerli.xpfp.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+import org.apache.log4j.Logger;
 
 import net.java.dev.designgridlayout.DesignGridLayout;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.file.write.FMSWriter;
 import net.marcomerli.xpfp.fn.GuiFn;
+import net.marcomerli.xpfp.fn.NumberFn;
+import net.marcomerli.xpfp.fn.UnitFn;
 import net.marcomerli.xpfp.model.FlightPlan;
+import net.marcomerli.xpfp.model.Location;
+import net.marcomerli.xpfp.model.Waypoint;
 
 /**
  * @author Marco Merli
@@ -41,6 +52,7 @@ import net.marcomerli.xpfp.model.FlightPlan;
 public class MainContent extends JPanel {
 
 	private static final long serialVersionUID = - 8732614615105930839L;
+	private static final Logger logger = Logger.getLogger(MainContent.class);
 
 	private MainWindow win;
 
@@ -56,15 +68,54 @@ public class MainContent extends JPanel {
 			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
 		DesignGridLayout layout = new DesignGridLayout(this);
-
-		// TODO: build flight plan into table
+		layout.row().grid().add(new FlightPlaneTable());
 
 		JButton export = new JButton("Export");
 		export.addActionListener(new OnExport());
 		layout.row().grid().add(export);
 	}
 
-	public class OnExport implements ActionListener {
+	private static class FlightPlaneTable extends JScrollPane {
+
+		private static final long serialVersionUID = - 2408834160839600983L;
+
+		private static final String[] columnNames = new String[] {
+			"-", "Identifier", "Type", "Country", "Latitude", "Longitude", "Elevation", "Distance"
+		};
+
+		public FlightPlaneTable() {
+
+			FlightPlan flightPlan = Context.getFlightPlan();
+			String[][] data = new String[flightPlan.size()][columnNames.length];
+
+			int iRow = 0;
+			for (Iterator<Waypoint> it = flightPlan.iterator(); it.hasNext(); iRow += 1) {
+				Waypoint waypoint = it.next();
+				int iCol = 0;
+
+				data[iRow][iCol++] = String.valueOf(iRow + 1);
+				data[iRow][iCol++] = waypoint.getIdentifier();
+				data[iRow][iCol++] = waypoint.getType().name();
+				data[iRow][iCol++] = waypoint.getCountry();
+
+				Location loc = waypoint.getLocation();
+				data[iRow][iCol++] = loc.getLatitude();
+				data[iRow][iCol++] = loc.getLongitude();
+				data[iRow][iCol++] = loc.getAltitude();
+
+				double distance = UnitFn.mToNM(waypoint.getDistance());
+				data[iRow][iCol++] = (distance > 0 ? NumberFn.format(distance, 2) + " nm" : "-");
+			}
+
+			JTable table = new JTable(new DefaultTableModel(data, columnNames));
+			table.setFillsViewportHeight(true);
+			table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+
+			setViewportView(table);
+		}
+	}
+
+	private class OnExport implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e)
@@ -85,6 +136,7 @@ public class MainContent extends JPanel {
 				GuiFn.infoPopup("Export completed", win);
 			}
 			catch (Exception ee) {
+				logger.error("onError", ee);
 				GuiFn.errorPopup(ee, win);
 			}
 		}

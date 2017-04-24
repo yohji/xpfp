@@ -21,17 +21,17 @@ package net.marcomerli.xpfp.fn;
 import org.junit.Test;
 
 import net.marcomerli.xpfp.UnitTestSupport;
-import net.marcomerli.xpfp.fn.GeoApiFn;
+import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.model.Location;
 
-public class GeoApiFnTest extends UnitTestSupport {
+public class GeoFnTest extends UnitTestSupport {
 
 	@Test
 	public void distance()
 	{
 		Location a = new Location(45.0, 7.5);
 		Location b = new Location(45.0, 8.5);
-		double dist = GeoApiFn.distanceOf(a, b);
+		double dist = GeoFn.distanceOf(a, b);
 
 		assertNumberNotZero(dist);
 		assertNumberBetween(dist, 78000, 79000);

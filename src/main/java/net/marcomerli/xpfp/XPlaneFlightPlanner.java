@@ -22,7 +22,7 @@ import javax.swing.SwingUtilities;
 
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.Settings;
-import net.marcomerli.xpfp.fn.GeoApiFn;
+import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.gui.MainWindow;
 
 /**
@@ -34,7 +34,7 @@ public class XPlaneFlightPlanner {
 	public static void main(String[] args) throws Exception
 	{
 		Context.setSettings(new Settings().load());
-		GeoApiFn.init();
+		GeoFn.init();
 
 		SwingUtilities.invokeLater(new Runnable() {
 

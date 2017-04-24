@@ -18,9 +18,8 @@
 
 package net.marcomerli.xpfp.model;
 
+import java.util.Iterator;
 import java.util.LinkedList;
-
-import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import net.marcomerli.xpfp.error.NoSuchWaypointException;
 
@@ -33,12 +32,24 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	private static final long serialVersionUID = 1776920015546695648L;
 
 	private String name;
-	private Double distance;
-	private Long ete;
+	private Double distance = 0.0;
+	private Long ete = 0L;
 
 	public FlightPlan(String name) {
 
 		this.name = name;
+	}
+
+	public void setup()
+	{
+		Iterator<Waypoint> iterator = iterator();
+		Waypoint prev = iterator.next();
+
+		for (; iterator.hasNext();) {
+			Waypoint wp = iterator.next();
+			distance += wp.setDistance(prev);
+			prev = wp;
+		}
 	}
 
 	public Waypoint getDeparture() throws NoSuchWaypointException
@@ -80,13 +91,8 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		return distance;
 	}
 
-	public void setEte(Long ete)
+	public Long getEte()
 	{
-		this.ete = ete;
-	}
-
-	public String getEte()
-	{
-		return DurationFormatUtils.formatDurationHMS(ete);
+		return ete;
 	}
 }

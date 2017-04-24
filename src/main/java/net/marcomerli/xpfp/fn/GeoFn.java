@@ -35,7 +35,7 @@ import net.marcomerli.xpfp.model.Location;
  * @author Marco Merli
  * @since 1.0
  */
-public class GeoApiFn {
+public class GeoFn {
 
 	private static final GeoApiContext context;
 	static {
@@ -69,5 +69,5 @@ public class GeoApiFn {
 		return dist * 1000;
 	}
 
-	private GeoApiFn() {}
+	private GeoFn() {}
 }
