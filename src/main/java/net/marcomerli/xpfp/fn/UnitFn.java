@@ -24,14 +24,34 @@ package net.marcomerli.xpfp.fn;
  */
 public class UnitFn {
 
-	public static double mToNM(double unit)
+	public static double mToNn(double unit)
 	{
 		return unit / 1852;
+	}
+
+	public static double nmToM(double unit)
+	{
+		return unit * 1852;
 	}
 
 	public static double mToFt(double unit)
 	{
 		return unit / 0.3048;
+	}
+
+	public static double ftToM(double unit)
+	{
+		return unit * 0.3048;
+	}
+
+	public static double msTKn(double unit)
+	{
+		return unit / 0.514;
+	}
+
+	public static double knToMs(double unit)
+	{
+		return unit * 0.514;
 	}
 
 	private UnitFn() {}

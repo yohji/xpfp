@@ -60,16 +60,28 @@ public class GeoFn {
 		return elev;
 	}
 
-	public static double distanceOf(Location a, Location b)
+	public static double distance(Location from, Location to)
 	{
 		double dist = DistanceUtils.getHaversineDistance(
-			a.lat, a.lng,
-			b.lat, b.lng);
+			from.lat, from.lng,
+			to.lat, to.lng);
 
 		return dist * 1000;
 	}
 
-	public static int bearingOf(Location a, Location b)
+	public static int bearing(Location from, Location to)
+	{
+		int ab = _bearing(from, to);
+		int ba = (_bearing(to, from) + 180) % 360;
+
+		return (ab + ba) / 2;
+	}
+
+	//
+	// Internal
+	//
+
+	private static int _bearing(Location a, Location b)
 	{
 		double y = Math.sin(b.lng - a.lng) * Math.cos(b.lat);
 		double x = Math.cos(a.lat) * Math.sin(b.lat) -

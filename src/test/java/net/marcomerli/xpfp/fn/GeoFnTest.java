@@ -31,7 +31,7 @@ public class GeoFnTest extends UnitTestSupport {
 	{
 		Location a = new Location(45.0, 7.5);
 		Location b = new Location(45.0, 8.5);
-		double dist = GeoFn.distanceOf(a, b);
+		double dist = GeoFn.distance(a, b);
 
 		assertNumberNotZero(dist);
 		assertNumberBetween(dist, 78000, 79000);

@@ -28,7 +28,7 @@ public class FormatFn {
 
 	public static String distance(double distance)
 	{
-		double d = UnitFn.mToNM(distance);
+		double d = UnitFn.mToNn(distance);
 		return (d > 0 ? NumberFn.format(d, 2) + " nm" : "-");
 	}
 

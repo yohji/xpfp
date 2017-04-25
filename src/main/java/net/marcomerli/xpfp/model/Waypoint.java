@@ -42,13 +42,13 @@ public class Waypoint implements Serializable {
 
 	public Double setDistance(Waypoint wp)
 	{
-		return (distance = GeoFn.distanceOf(
+		return (distance = GeoFn.distance(
 			wp.getLocation(), this.getLocation()));
 	}
 
 	public Integer setBearing(Waypoint wp)
 	{
-		return (bearing = GeoFn.bearingOf(
+		return (bearing = GeoFn.bearing(
 			wp.getLocation(), this.getLocation()));
 	}
 
