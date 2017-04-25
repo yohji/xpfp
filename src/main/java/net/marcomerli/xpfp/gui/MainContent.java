@@ -64,13 +64,14 @@ public class MainContent extends JPanel {
 	private static final Logger logger = Logger.getLogger(MainContent.class);
 
 	private MainWindow win;
+	private FlightPlaneTable table;
 
 	public MainContent(MainWindow win) {
 
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.win = win;
 
-		add(new FlightPlaneTable());
+		add(table = new FlightPlaneTable());
 		add(new FlightPlaneProcessor());
 	}
 
@@ -96,6 +97,23 @@ public class MainContent extends JPanel {
 				BorderFactory.createTitledBorder(flightPlan.getName()),
 				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 
+			pane(flightPlan);
+		}
+
+		public void refresh()
+		{
+			// TODO: refresh table
+
+			revalidate();
+			repaint();
+
+			win.repaint();
+			win.revalidate();
+			win.pack();
+		}
+
+		private void pane(FlightPlan flightPlan)
+		{
 			JScrollPane pane = new JScrollPane();
 			pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -181,27 +199,6 @@ public class MainContent extends JPanel {
 				.add(calc).add(export);
 		}
 
-		private class NumberInput extends JTextField {
-
-			private static final long serialVersionUID = - 3400518930083189803L;
-
-			public NumberInput(int maxSize) {
-
-				super(maxSize);
-
-				addKeyListener(new KeyAdapter() {
-
-					@Override
-					public void keyReleased(KeyEvent e)
-					{
-						String text = NumberInput.this.getText();
-						if ((e.getKeyChar() < 48 || e.getKeyChar() > 57) || text.length() > maxSize)
-							setText(text.substring(0, text.length() - 1));
-					}
-				});
-			}
-		}
-
 		private class OnCalculate implements ActionListener {
 
 			@Override
@@ -214,6 +211,7 @@ public class MainContent extends JPanel {
 						UnitFn.knToMs(Integer.valueOf(cs.getText())),
 						UnitFn.ftToM(Integer.valueOf(vs.getText())));
 
+					table.refresh();
 					export.setEnabled(true);
 				}
 				catch (Exception ee) {
@@ -246,6 +244,27 @@ public class MainContent extends JPanel {
 					logger.error("onError", ee);
 					GuiFn.errorPopup(ee, win);
 				}
+			}
+		}
+
+		private class NumberInput extends JTextField {
+
+			private static final long serialVersionUID = - 3400518930083189803L;
+
+			public NumberInput(int maxSize) {
+
+				super(maxSize);
+
+				addKeyListener(new KeyAdapter() {
+
+					@Override
+					public void keyReleased(KeyEvent e)
+					{
+						String text = NumberInput.this.getText();
+						if ((e.getKeyChar() < 48 || e.getKeyChar() > 57) || text.length() > maxSize)
+							setText(text.substring(0, text.length() - 1));
+					}
+				});
 			}
 		}
 	}

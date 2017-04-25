@@ -40,9 +40,26 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		this.name = name;
 	}
 
-	public void calculate(double altitude, double speed, double vertical)
+	public void calculate(double fl, double cs, double vs)
 	{
-		// TODO: continue...
+		Iterator<Waypoint> iterator = iterator();
+		Waypoint prev = iterator.next();
+
+		double climb = fl - prev.getLocation().alt;
+		double sec = climb / vs;
+		double dist = (cs * 0.6) * sec;
+
+		for (; iterator.hasNext();) {
+			Waypoint wp = iterator.next();
+
+			if (! iterator.hasNext()) // Destination
+				break;
+
+			wp.getLocation().alt = fl;
+			// TODO: continue...
+
+			prev = wp;
+		}
 	}
 
 	public void setup()

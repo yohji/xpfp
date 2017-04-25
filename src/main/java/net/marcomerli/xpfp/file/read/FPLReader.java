@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.model.FlightPlan;
 import net.marcomerli.xpfp.model.Location;
 import net.marcomerli.xpfp.model.Waypoint;
@@ -99,7 +100,11 @@ public class FPLReader extends Reader {
 				}
 			}
 
-			waypoint.setLocation(new Location(lat, lng));
+			Location loc = new Location(lat, lng);
+			if (waypoint.getType().equals(WaypointType.ICAO))
+				loc.alt = GeoFn.elevationOf(loc);
+
+			waypoint.setLocation(loc);
 			flightPlan.add(waypoint);
 		}
 

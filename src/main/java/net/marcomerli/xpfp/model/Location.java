@@ -25,7 +25,6 @@ import org.apache.sis.measure.Longitude;
 
 import com.google.maps.model.LatLng;
 
-import net.marcomerli.xpfp.fn.NumberFn;
 import net.marcomerli.xpfp.fn.UnitFn;
 
 /**
@@ -67,6 +66,6 @@ public class Location extends LatLng implements Serializable {
 
 	public String getAltitude()
 	{
-		return (alt > 0 ? NumberFn.format(UnitFn.mToFt(alt), 2) + " ft" : "-");
+		return (alt >= 0 ? String.format("%d ft", (long) UnitFn.mToFt(alt)) : "-");
 	}
 }
