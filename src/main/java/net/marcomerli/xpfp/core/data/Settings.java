@@ -16,12 +16,9 @@
  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.marcomerli.xpfp.core;
+package net.marcomerli.xpfp.core.data;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,42 +26,51 @@ import org.apache.commons.lang3.StringUtils;
  * @author Marco Merli
  * @since 1.0
  */
-public class Settings extends Properties {
+public class Settings extends Data {
 
 	private static final long serialVersionUID = 511605731858765879L;
 
-	private static final File FILE = new File(new File(".")
-		+ File.separator + "etc" + File.separator + "settings.properties");
-
-	private static final String FMS_DIRECTORY = "fms.directory";
+	private static final String EXPORT_DIRECTORY = "export.directory";
+	private static final String GEOAPI_KEY = "geoapi.key";
 	private static final String PROXY_ACTIVE = "proxy.active";
 	private static final String PROXY_HOSTNAME = "proxy.hostname";
 	private static final String PROXY_PORT = "proxy.port";
 
-	public Settings load() throws Exception
+	@Override
+	protected File file()
 	{
-		if (! FILE.exists())
-			FILE.createNewFile();
-
-		load(new FileReader(FILE));
-		return this;
+		return new File(dataDir, "settings.properties");
 	}
 
-	public Settings save() throws Exception
+	@Override
+	protected void init()
 	{
-		store(new FileWriter(FILE), "");
-		return this;
+		setExportDirectory(System.getProperty("user.home"));
+		setGeoApiKey("");
+		setProxyActive(false);
+		setProxyHostname("127.0.0.1");
+		setProxyPort("3128");
 	}
 
-	public File getFMSDirectory()
+	public File getExportDirectory()
 	{
-		String dir = getProperty(FMS_DIRECTORY);
+		String dir = getProperty(EXPORT_DIRECTORY);
 		return (StringUtils.isNotBlank(dir) ? new File(dir) : null);
 	}
 
-	public void setFMSDirectory(String value)
+	public void setExportDirectory(String value)
 	{
-		setProperty(FMS_DIRECTORY, value);
+		setProperty(EXPORT_DIRECTORY, value);
+	}
+
+	public String getGeoApiKey()
+	{
+		return getProperty(GEOAPI_KEY);
+	}
+
+	public void setGeoApiKey(String value)
+	{
+		setProperty(GEOAPI_KEY, value);
 	}
 
 	public Boolean isProxyActive()

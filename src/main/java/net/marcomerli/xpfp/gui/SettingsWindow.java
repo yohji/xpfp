@@ -39,7 +39,8 @@ import org.apache.log4j.Logger;
 
 import net.java.dev.designgridlayout.DesignGridLayout;
 import net.marcomerli.xpfp.core.Context;
-import net.marcomerli.xpfp.core.Settings;
+import net.marcomerli.xpfp.core.data.Settings;
+import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.fn.GuiFn;
 
 /**
@@ -54,6 +55,7 @@ public class SettingsWindow extends JFrame {
 	private JTextField fmsDirText;
 	private JButton fmsDirBtn;
 	private JFileChooser fmsDirFileChooser;
+	private JTextField geoApiText;
 	private JTextField proxyHostnameText;
 	private JTextField proxyPortText;
 	private JCheckBox proxyActive;
@@ -80,13 +82,15 @@ public class SettingsWindow extends JFrame {
 		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
 		mainPane.add(fmsDirPanel());
 		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
+		mainPane.add(geoApiKey());
+		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
 		mainPane.add(proxyPanel());
 		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
 		mainPane.add(savePanel);
 		mainPane.add(Box.createGlue());
 
 		setContentPane(mainPane);
-		pack();
+		setSize(360, 430);
 
 		setResizable(false);
 		setLocationByPlatform(true);
@@ -95,34 +99,49 @@ public class SettingsWindow extends JFrame {
 
 	private JPanel fmsDirPanel()
 	{
-		JPanel fmsDirPanel = new JPanel(new BorderLayout());
-		fmsDirPanel.setBorder(BorderFactory.createCompoundBorder(
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createTitledBorder("FMS Directory"),
 			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
-		DesignGridLayout layout = new DesignGridLayout(fmsDirPanel);
+		DesignGridLayout layout = new DesignGridLayout(panel);
 
 		fmsDirText = new JTextField();
 		fmsDirText.setEnabled(false);
-		fmsDirText.setText(Context.getSettings()
-			.getFMSDirectory().getAbsolutePath());
+		fmsDirText.setText(Context.getSettings().getExportDirectory().getAbsolutePath());
 
 		fmsDirBtn = new JButton("Choose");
 		fmsDirBtn.addActionListener(new OnChooseDir());
 
 		layout.row().grid().add(fmsDirText, 2).add(fmsDirBtn);
 
-		return fmsDirPanel;
+		return panel;
+	}
+
+	private JPanel geoApiKey()
+	{
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createTitledBorder("Google GeoApi"),
+			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+		geoApiText = new JTextField();
+		geoApiText.setText(Context.getSettings().getGeoApiKey());
+
+		DesignGridLayout layout = new DesignGridLayout(panel);
+		layout.row().grid(new JLabel("Key", JLabel.TRAILING)).add(geoApiText);
+
+		return panel;
 	}
 
 	private JPanel proxyPanel()
 	{
-		JPanel proxyPanel = new JPanel(new BorderLayout());
-		proxyPanel.setBorder(BorderFactory.createCompoundBorder(
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createTitledBorder("Proxy"),
 			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
-		DesignGridLayout layout = new DesignGridLayout(proxyPanel);
+		DesignGridLayout layout = new DesignGridLayout(panel);
 		Settings settings = Context.getSettings();
 
 		proxyActive = new JCheckBox();
@@ -137,7 +156,7 @@ public class SettingsWindow extends JFrame {
 		proxyPortText.setText(settings.getProxyPort().toString());
 		layout.row().grid(new JLabel("Port", JLabel.TRAILING)).add(proxyPortText);
 
-		return proxyPanel;
+		return panel;
 	}
 
 	private class OnChooseDir implements ActionListener {
@@ -161,12 +180,14 @@ public class SettingsWindow extends JFrame {
 		{
 			try {
 				Settings settings = Context.getSettings();
-				settings.setFMSDirectory(fmsDirText.getText());
+				settings.setExportDirectory(fmsDirText.getText());
+				settings.setGeoApiKey(geoApiText.getText());
 				settings.setProxyActive(proxyActive.isSelected());
 				settings.setProxyHostname(proxyHostnameText.getText());
 				settings.setProxyPort(proxyPortText.getText());
 
 				settings.save();
+				GeoFn.init();
 			}
 			catch (Exception ee) {
 				logger.error("onSave", ee);

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import net.marcomerli.xpfp.error.NoSuchWaypointException;
+import net.marcomerli.xpfp.fn.GeoFn;
 
 /**
  * @author Marco Merli
@@ -40,20 +41,25 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		this.name = name;
 	}
 
-	public void calculate(double fl, double cs, double vs)
+	public void calculate(double fl, double cs, double vs) throws Exception
 	{
 		Iterator<Waypoint> iterator = iterator();
 		Waypoint prev = iterator.next();
+		Location loc = prev.getLocation();
+		loc.alt = GeoFn.elevationOf(loc);
 
-		double climb = fl - prev.getLocation().alt;
-		double sec = climb / vs;
-		double dist = (cs * 0.6) * sec;
+		double dAlt = fl - loc.alt;
+		double secAlt = dAlt / vs;
+		double nmAlt = (cs * 0.6) * secAlt;
 
 		for (; iterator.hasNext();) {
 			Waypoint wp = iterator.next();
 
-			if (! iterator.hasNext()) // Destination
+			loc = wp.getLocation();
+			if (wp.getType().equals(WaypointType.ICAO)) {
+				loc.alt = GeoFn.elevationOf(loc);
 				break;
+			}
 
 			wp.getLocation().alt = fl;
 			// TODO: continue...

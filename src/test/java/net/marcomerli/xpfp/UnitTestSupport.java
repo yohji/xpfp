@@ -83,7 +83,7 @@ public abstract class UnitTestSupport extends Assert {
 	protected final void assertNumberBetween(Number number, Number low, Number high, String format, Object... args)
 	{
 		assertTrue(parseMessage(format, args),
-			number != null && number.longValue() > low.longValue() && number.longValue() < high.longValue());
+			number != null && number.longValue() >= low.longValue() && number.longValue() <= high.longValue());
 	}
 
 	protected final void assertNotEmpty(Object[] arr)

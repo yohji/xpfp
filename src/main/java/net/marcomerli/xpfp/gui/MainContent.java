@@ -64,18 +64,18 @@ public class MainContent extends JPanel {
 	private static final Logger logger = Logger.getLogger(MainContent.class);
 
 	private MainWindow win;
-	private FlightPlaneTable table;
+	private FlightPlaneData data;
 
 	public MainContent(MainWindow win) {
 
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.win = win;
 
-		add(table = new FlightPlaneTable());
+		add(data = new FlightPlaneData());
 		add(new FlightPlaneProcessor());
 	}
 
-	private class FlightPlaneTable extends JPanel {
+	private class FlightPlaneData extends JPanel {
 
 		private static final long serialVersionUID = - 2408834160839600983L;
 
@@ -88,7 +88,9 @@ public class MainContent extends JPanel {
 			25, 50, 65, 40, 50, 110, 110, 80, 70, 70
 		};
 
-		public FlightPlaneTable() {
+		private JTable table;
+
+		public FlightPlaneData() {
 
 			super(new BorderLayout());
 
@@ -97,36 +99,28 @@ public class MainContent extends JPanel {
 				BorderFactory.createTitledBorder(flightPlan.getName()),
 				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 
-			pane(flightPlan);
-		}
+			table = new JTable();
+			table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			table.setFillsViewportHeight(true);
+			table.setPreferredScrollableViewportSize(new Dimension(600, 100));
 
-		public void refresh()
-		{
-			// TODO: refresh table
-
-			revalidate();
-			repaint();
-
-			win.repaint();
-			win.revalidate();
-			win.pack();
-		}
-
-		private void pane(FlightPlan flightPlan)
-		{
 			JScrollPane pane = new JScrollPane();
 			pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-			pane.setViewportView(table(flightPlan));
+			pane.setViewportView(table);
+
+			draw();
 
 			DesignGridLayout layout = new DesignGridLayout(this);
 			layout.row().grid().add(pane);
 			layout.row().bar()
-				.add(new JLabel("Distance: " + FormatFn.distance(flightPlan.getDistance())), Tag.RIGHT);
+				.add(new JLabel("Distance: " + FormatFn.distance(flightPlan.getDistance())), Tag.RIGHT).gap()
+				.add(new JLabel("ETE: " + FormatFn.time(flightPlan.getEte())), Tag.RIGHT);
 		}
 
-		private JTable table(FlightPlan flightPlan)
+		private void draw()
 		{
+			FlightPlan flightPlan = Context.getFlightPlan();
 			String[][] data = new String[flightPlan.size()][columnNames.length];
 
 			int iRow = 0;
@@ -149,18 +143,20 @@ public class MainContent extends JPanel {
 				data[iRow][iCol++] = FormatFn.time(wp.getEte());
 			}
 
-			JTable table = new JTable(new DefaultTableModel(data, columnNames));
-			table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			table.setFillsViewportHeight(true);
-			table.setPreferredScrollableViewportSize(new Dimension(600, 100));
+			table.setModel(new TableModel(data, columnNames));
 
 			TableColumnModel columnModel = table.getColumnModel();
 			for (int iCol = 0; iCol < columnNames.length; iCol++) {
 				TableColumn column = columnModel.getColumn(iCol);
 				column.setPreferredWidth(columnWidths[iCol]);
 			}
+		}
 
-			return table;
+		public void refresh()
+		{
+			draw();
+			revalidate();
+			repaint();
 		}
 	}
 
@@ -177,7 +173,7 @@ public class MainContent extends JPanel {
 			super(new BorderLayout());
 
 			setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder("Processor"),
+				BorderFactory.createTitledBorder("Flight Data"),
 				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 
 			DesignGridLayout layout = new DesignGridLayout(this);
@@ -211,7 +207,7 @@ public class MainContent extends JPanel {
 						UnitFn.knToMs(Integer.valueOf(cs.getText())),
 						UnitFn.ftToM(Integer.valueOf(vs.getText())));
 
-					table.refresh();
+					data.refresh();
 					export.setEnabled(true);
 				}
 				catch (Exception ee) {
@@ -228,7 +224,7 @@ public class MainContent extends JPanel {
 			{
 				try {
 					FlightPlan flightPlan = Context.getFlightPlan();
-					File fms = new File(Context.getSettings().getFMSDirectory(),
+					File fms = new File(Context.getSettings().getExportDirectory(),
 						flightPlan.getFilename());
 
 					if (fms.exists()) {
@@ -246,26 +242,42 @@ public class MainContent extends JPanel {
 				}
 			}
 		}
+	}
 
-		private class NumberInput extends JTextField {
+	private class NumberInput extends JTextField {
 
-			private static final long serialVersionUID = - 3400518930083189803L;
+		private static final long serialVersionUID = - 3400518930083189803L;
 
-			public NumberInput(int maxSize) {
+		public NumberInput(int maxSize) {
 
-				super(maxSize);
+			super(maxSize);
 
-				addKeyListener(new KeyAdapter() {
+			addKeyListener(new KeyAdapter() {
 
-					@Override
-					public void keyReleased(KeyEvent e)
-					{
-						String text = NumberInput.this.getText();
-						if ((e.getKeyChar() < 48 || e.getKeyChar() > 57) || text.length() > maxSize)
-							setText(text.substring(0, text.length() - 1));
-					}
-				});
-			}
+				@Override
+				public void keyReleased(KeyEvent e)
+				{
+					String text = NumberInput.this.getText();
+					if ((e.getKeyChar() < 48 || e.getKeyChar() > 57) || text.length() > maxSize)
+						setText(text.substring(0, text.length() - 1));
+				}
+			});
 		}
+	}
+
+	private class TableModel extends DefaultTableModel {
+
+		private static final long serialVersionUID = - 7234273051637878221L;
+
+		public TableModel(String[][] data, String[] columnNames) {
+
+			super(data, columnNames);
+		}
+
+		public boolean isCellEditable(int row, int column)
+		{
+			return false;
+		}
+
 	}
 }

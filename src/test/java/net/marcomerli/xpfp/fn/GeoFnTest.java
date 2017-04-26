@@ -21,7 +21,6 @@ package net.marcomerli.xpfp.fn;
 import org.junit.Test;
 
 import net.marcomerli.xpfp.UnitTestSupport;
-import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.model.Location;
 
 public class GeoFnTest extends UnitTestSupport {
@@ -35,5 +34,15 @@ public class GeoFnTest extends UnitTestSupport {
 
 		assertNumberNotZero(dist);
 		assertNumberBetween(dist, 78000, 79000);
+	}
+
+	@Test
+	public void declination()
+	{
+		Location loc = new Location(45.0, 7.5);
+		double decl = GeoFn.declination(loc);
+
+		assertNumberNotZero(decl);
+		assertNumberBetween(decl, 2, 3);
 	}
 }

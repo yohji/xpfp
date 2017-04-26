@@ -16,37 +16,39 @@
  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.marcomerli.xpfp.core;
+package net.marcomerli.xpfp.core.data;
 
-import net.marcomerli.xpfp.core.data.Settings;
-import net.marcomerli.xpfp.model.FlightPlan;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.Properties;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public class Context {
+public abstract class Data extends Properties {
 
-	private static Settings settings;
-	private static FlightPlan flightPlan;
+	private static final long serialVersionUID = 8603751824062874788L;
 
-	public static Settings getSettings()
+	protected final File dataDir = new File(new File(".") + File.separator + "etc");
+
+	public void load() throws Exception
 	{
-		return settings;
+		if (! file().exists()) {
+			init();
+			save();
+		}
+		else
+			load(new FileReader(file()));
 	}
 
-	public static void setSettings(Settings settings)
+	public void save() throws Exception
 	{
-		Context.settings = settings;
+		store(new FileWriter(file()), "");
 	}
 
-	public static FlightPlan getFlightPlan()
-	{
-		return flightPlan;
-	}
+	protected abstract File file();
 
-	public static void setFlightPlan(FlightPlan flightPlan)
-	{
-		Context.flightPlan = flightPlan;
-	}
+	protected abstract void init();
 }

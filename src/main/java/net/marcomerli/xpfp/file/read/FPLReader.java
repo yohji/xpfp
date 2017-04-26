@@ -29,7 +29,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.model.FlightPlan;
 import net.marcomerli.xpfp.model.Location;
 import net.marcomerli.xpfp.model.Waypoint;
@@ -82,29 +81,25 @@ public class FPLReader extends Reader {
 					String value = data.getTextContent();
 
 					switch (data.getNodeName()) {
-						case "identifier":
-							waypoint.setIdentifier(value);
-							break;
-						case "type":
-							waypoint.setType(WaypointType.get(value));
-							break;
-						case "country-code":
-							waypoint.setCountry(StringUtils.stripToNull(value));
-							break;
-						case "lat":
-							lat = new Double(value);
-							break;
-						case "lon":
-							lng = new Double(value);
+					case "identifier":
+						waypoint.setIdentifier(value);
+					break;
+					case "type":
+						waypoint.setType(WaypointType.get(value));
+					break;
+					case "country-code":
+						waypoint.setCountry(StringUtils.stripToNull(value));
+					break;
+					case "lat":
+						lat = new Double(value);
+					break;
+					case "lon":
+						lng = new Double(value);
 					}
 				}
 			}
 
-			Location loc = new Location(lat, lng);
-			if (waypoint.getType().equals(WaypointType.ICAO))
-				loc.alt = GeoFn.elevationOf(loc);
-
-			waypoint.setLocation(loc);
+			waypoint.setLocation(new Location(lat, lng));
 			flightPlan.add(waypoint);
 		}
 

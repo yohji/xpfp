@@ -19,9 +19,10 @@
 package net.marcomerli.xpfp;
 
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import net.marcomerli.xpfp.core.Context;
-import net.marcomerli.xpfp.core.Settings;
+import net.marcomerli.xpfp.core.data.Settings;
 import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.gui.MainWindow;
 
@@ -33,8 +34,14 @@ public class XPlaneFlightPlanner {
 
 	public static void main(String[] args) throws Exception
 	{
-		Context.setSettings(new Settings().load());
+		Settings settings = new Settings();
+		settings.load();
+		Context.setSettings(settings);
+
 		GeoFn.init();
+
+		UIManager.setLookAndFeel(
+			UIManager.getSystemLookAndFeelClassName());
 
 		SwingUtilities.invokeLater(new Runnable() {
 

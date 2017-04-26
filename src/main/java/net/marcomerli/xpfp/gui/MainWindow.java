@@ -18,13 +18,17 @@
 
 package net.marcomerli.xpfp.gui;
 
+import java.awt.Dimension;
+
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.java.dev.designgridlayout.DesignGridLayout;
+import org.apache.commons.lang3.StringUtils;
+
 import net.marcomerli.xpfp.core.Context;
 
 /**
@@ -61,19 +65,12 @@ public class MainWindow extends JFrame {
 			new BoxLayout(this, BoxLayout.PAGE_AXIS);
 			setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-			DesignGridLayout layout = new DesignGridLayout(this);
-			layout.emptyRow();
+			add(Box.createRigidArea(new Dimension(0, 100)));
+			add(new JLabel("No flight plan; import one from the menu File -> Import..."));
+			add(Box.createGlue());
 
-			if (Context.getSettings().getFMSDirectory() == null) {
-
-				layout.row().grid().add(
-					new JLabel("No FMS directory. Select it from File -> Settings"));
-
-				layout.emptyRow();
-			}
-
-			layout.row().grid().add(
-				new JLabel("No flight plan; import one from the menu File -> Import..."));
+			if (StringUtils.isBlank(Context.getSettings().getGeoApiKey()))
+				new SettingsWindow();
 		}
 	}
 }

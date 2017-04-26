@@ -11,7 +11,7 @@
 	</appender>
 
 	<category name="net.marcomerli.xpfp">
-		<priority value="TRACE" />
+		<priority value="DEBUG" />
 	</category>
 
 	<category name="org.apache">
