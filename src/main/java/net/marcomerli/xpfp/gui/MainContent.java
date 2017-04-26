@@ -46,6 +46,8 @@ import org.apache.log4j.Logger;
 import net.java.dev.designgridlayout.DesignGridLayout;
 import net.java.dev.designgridlayout.Tag;
 import net.marcomerli.xpfp.core.Context;
+import net.marcomerli.xpfp.core.data.Preferences;
+import net.marcomerli.xpfp.core.data.Settings;
 import net.marcomerli.xpfp.file.write.FMSWriter;
 import net.marcomerli.xpfp.fn.FormatFn;
 import net.marcomerli.xpfp.fn.GuiFn;
@@ -176,11 +178,15 @@ public class MainContent extends JPanel {
 				BorderFactory.createTitledBorder("Flight Data"),
 				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 
+			Preferences prefs = Context.getPreferences();
 			DesignGridLayout layout = new DesignGridLayout(this);
 
 			fl = new NumberInput(3);
+			fl.setText(prefs.getProperty(Preferences.FP_FLIGHT_LEVEL));
 			cs = new NumberInput(3);
+			cs.setText(prefs.getProperty(Preferences.FP_CRUISING_SPEED));
 			vs = new NumberInput(4);
+			vs.setText(prefs.getProperty(Preferences.FP_VERTICAL_SPEED));
 
 			JButton calc = new JButton("Calculate");
 			calc.addActionListener(new OnCalculate());
@@ -207,6 +213,12 @@ public class MainContent extends JPanel {
 						UnitFn.knToMs(Integer.valueOf(cs.getText())),
 						UnitFn.ftToM(Integer.valueOf(vs.getText())));
 
+					Preferences prefs = Context.getPreferences();
+					prefs.setProperty(Preferences.FP_FLIGHT_LEVEL, fl.getText());
+					prefs.setProperty(Preferences.FP_CRUISING_SPEED, cs.getText());
+					prefs.setProperty(Preferences.FP_VERTICAL_SPEED, vs.getText());
+					prefs.save();
+
 					data.refresh();
 					export.setEnabled(true);
 				}
@@ -224,7 +236,7 @@ public class MainContent extends JPanel {
 			{
 				try {
 					FlightPlan flightPlan = Context.getFlightPlan();
-					File fms = new File(Context.getSettings().getExportDirectory(),
+					File fms = new File(Context.getSettings().getProperty(Settings.EXPORT_DIRECTORY, File.class),
 						flightPlan.getFilename());
 
 					if (fms.exists()) {
@@ -258,7 +270,12 @@ public class MainContent extends JPanel {
 				public void keyReleased(KeyEvent e)
 				{
 					String text = NumberInput.this.getText();
-					if ((e.getKeyChar() < 48 || e.getKeyChar() > 57) || text.length() > maxSize)
+					char key = e.getKeyChar();
+
+					if (text.isEmpty() || (key == 127 || key == 8))
+						return;
+
+					if ((key < 48 || key > 57) || text.length() > maxSize)
 						setText(text.substring(0, text.length() - 1));
 				}
 			});
@@ -278,6 +295,5 @@ public class MainContent extends JPanel {
 		{
 			return false;
 		}
-
 	}
 }

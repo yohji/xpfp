@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import net.marcomerli.xpfp.core.Context;
+import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.core.data.Settings;
 import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.gui.MainWindow;
@@ -39,6 +40,10 @@ public class XPlaneFlightPlanner {
 		Context.setSettings(settings);
 
 		GeoFn.init();
+
+		Preferences prefs = new Preferences();
+		prefs.load();
+		Context.setPreferences(prefs);
 
 		UIManager.setLookAndFeel(
 			UIManager.getSystemLookAndFeelClassName());

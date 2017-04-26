@@ -21,7 +21,10 @@ package net.marcomerli.xpfp.core.data;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.lang.reflect.Constructor;
 import java.util.Properties;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Marco Merli
@@ -33,19 +36,52 @@ public abstract class Data extends Properties {
 
 	protected final File dataDir = new File(new File(".") + File.separator + "etc");
 
-	public void load() throws Exception
+	public void load()
 	{
 		if (! file().exists()) {
 			init();
 			save();
 		}
-		else
-			load(new FileReader(file()));
+		else {
+			try {
+				load(new FileReader(file()));
+			}
+			catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
-	public void save() throws Exception
+	public void save()
 	{
-		store(new FileWriter(file()), "");
+		try {
+			store(new FileWriter(file()), "");
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public String getProperty(String key)
+	{
+		return StringUtils.stripToEmpty(super.getProperty(key));
+	}
+
+	public <T> T getProperty(String key, Class<T> type)
+	{
+		try {
+			Constructor<T> constr = type.getConstructor(String.class);
+			return constr.newInstance(getProperty(key));
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public boolean hasProperty(String key)
+	{
+		return StringUtils.isNotBlank(super.getProperty(key));
 	}
 
 	protected abstract File file();

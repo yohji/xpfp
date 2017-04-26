@@ -16,49 +16,33 @@
  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.marcomerli.xpfp.core;
+package net.marcomerli.xpfp.gui;
 
-import net.marcomerli.xpfp.core.data.Preferences;
-import net.marcomerli.xpfp.core.data.Settings;
-import net.marcomerli.xpfp.model.FlightPlan;
+import java.awt.HeadlessException;
+import java.net.URL;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public class Context {
+public abstract class Window extends JFrame {
 
-	private static Settings settings;
-	private static Preferences preferences;
-	private static FlightPlan flightPlan;
+	private static final long serialVersionUID = 7604558040904896370L;
+	protected final Logger logger = Logger.getLogger(getClass());
 
-	public static Settings getSettings()
-	{
-		return settings;
-	}
+	public static final String TITLE_FULL = "X-Plane Flight Planner";
+	public static final String TITLE_COMPACT = "XPFP";
 
-	public static void setSettings(Settings settings)
-	{
-		Context.settings = settings;
-	}
+	public Window(String title) throws HeadlessException {
 
-	public static Preferences getPreferences()
-	{
-		return preferences;
-	}
+		super(title);
 
-	public static void setPreferences(Preferences preferences)
-	{
-		Context.preferences = preferences;
-	}
-
-	public static FlightPlan getFlightPlan()
-	{
-		return flightPlan;
-	}
-
-	public static void setFlightPlan(FlightPlan flightPlan)
-	{
-		Context.flightPlan = flightPlan;
+		URL res = getClass().getClassLoader().getResource("xpfp.jpg");
+		setIconImage(new ImageIcon(res).getImage());
 	}
 }

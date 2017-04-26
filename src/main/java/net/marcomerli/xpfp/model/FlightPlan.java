@@ -46,7 +46,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		Iterator<Waypoint> iterator = iterator();
 		Waypoint prev = iterator.next();
 		Location loc = prev.getLocation();
-		loc.alt = GeoFn.elevationOf(loc);
+		alt(loc);
 
 		double dAlt = fl - loc.alt;
 		double secAlt = dAlt / vs;
@@ -57,7 +57,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 
 			loc = wp.getLocation();
 			if (wp.getType().equals(WaypointType.ICAO)) {
-				loc.alt = GeoFn.elevationOf(loc);
+				alt(loc);
 				break;
 			}
 
@@ -66,6 +66,12 @@ public class FlightPlan extends LinkedList<Waypoint> {
 
 			prev = wp;
 		}
+	}
+
+	private void alt(Location loc) throws Exception
+	{
+		if (loc.alt == 0)
+			loc.alt = GeoFn.elevationOf(loc);
 	}
 
 	public void setup()

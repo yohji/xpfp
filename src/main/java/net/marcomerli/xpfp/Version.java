@@ -29,7 +29,7 @@ public class Version {
 
 	private static final String POM_PROPS = "/META-INF/maven/net.marcomerli/xpfp/pom.properties";
 
-	public static String get() throws Exception
+	public static String get()
 	{
 		try (InputStream in = Version.class.getResourceAsStream(POM_PROPS)) {
 			if (in != null) {
@@ -39,6 +39,9 @@ public class Version {
 
 				return props.getProperty("version");
 			}
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
 		return "?.?";

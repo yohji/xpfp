@@ -32,6 +32,7 @@ import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 
 import net.marcomerli.xpfp.core.Context;
+import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.file.read.FPLReader;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.model.FlightPlan;
@@ -54,10 +55,13 @@ public class MenuBar extends JMenuBar {
 
 		fcFPL = new JFileChooser();
 		fcFPL.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		fcFPL.setCurrentDirectory(Context.getPreferences()
+			.getProperty(Preferences.IMPORT_DIRECTORY, File.class));
 	}
 
 	public JMenuBar init()
 	{
+		// File
 		JMenu menu = new JMenu("File");
 		menu.setMnemonic(KeyEvent.VK_F);
 		add(menu);
@@ -84,6 +88,17 @@ public class MenuBar extends JMenuBar {
 		menuItem.addActionListener(new OnExit());
 		menu.add(menuItem);
 
+		// Help
+		menu = new JMenu("Help");
+		menu.setMnemonic(KeyEvent.VK_H);
+		add(menu);
+
+		menuItem = new JMenuItem("About", KeyEvent.VK_A);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(
+			KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+		menuItem.addActionListener(new OnAbout());
+		menu.add(menuItem);
+
 		return this;
 	}
 
@@ -102,6 +117,11 @@ public class MenuBar extends JMenuBar {
 			int returnVal = fcFPL.showOpenDialog(menuItem);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File fpl = fcFPL.getSelectedFile();
+
+				Preferences preferences = Context.getPreferences();
+				preferences.setProperty(Preferences.IMPORT_DIRECTORY,
+					fcFPL.getCurrentDirectory().getAbsolutePath());
+				preferences.save();
 
 				try {
 					FPLReader fplReader = new FPLReader(fpl);
@@ -135,6 +155,15 @@ public class MenuBar extends JMenuBar {
 		public void actionPerformed(ActionEvent e)
 		{
 			System.exit(0);
+		}
+	}
+
+	public class OnAbout implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			new AboutWindow();
 		}
 	}
 }

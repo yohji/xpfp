@@ -19,7 +19,6 @@
 package net.marcomerli.xpfp.fn;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -60,11 +59,12 @@ public class GeoFn {
 	public static void init()
 	{
 		Settings settings = Context.getSettings();
-		context.setApiKey(settings.getGeoApiKey());
+		context.setApiKey(settings.getProperty(Settings.GEOAPI_KEY));
 
-		if (settings.isProxyActive())
+		if (settings.getProperty(Settings.PROXY_ACTIVE, Boolean.class))
 			context.setProxy(new Proxy(Type.HTTP, new InetSocketAddress(
-				settings.getProxyHostname(), settings.getProxyPort())));
+				settings.getProperty(Settings.PROXY_HOSTNAME),
+				settings.getProperty(Settings.PROXY_PORT, Integer.class))));
 	}
 
 	public static double elevationOf(Location location) throws Exception
@@ -87,8 +87,8 @@ public class GeoFn {
 
 	public static int bearing(Location from, Location to)
 	{
-		return (int) (((_bearing(from, to) + ((_bearing(to, from) + 180) % 360)) / 2)
-			+ ((declination(from) + declination(to)) / 2));
+		// FIXME: resolve for good the bearing problem
+		return (int) (_bearing(from, to) + declination(from));
 	}
 
 	private static double _bearing(Location from, Location to)
@@ -147,118 +147,6 @@ public class GeoFn {
 	 * ////////////////////////////////////////////////////////////////////////////
 	 */
 	public static class TSAGeoMag {
-
-		/**
-		 * A logger for this class. Every class MUST have this field, if you want to log from this class.
-		 * The class name is the fully qualified class name of the class, such as java.lang.String. If you're not going
-		 * to use log4j, then comment all references to the logger, and uncomment the System.***.println statements.
-		 */
-
-		// variables for magnetic calculations ////////////////////////////////////
-		//
-		// Variables were identified in geomag.for, the FORTRAN
-		// version of the geomag calculator.
-
-		/**
-		 * The input string array which contains each line of input for the
-		 * wmm.cof input file. Added so that all data was internal, so that
-		 * applications do not have to mess with carrying around a data file.
-		 * In the TSAGeoMag Class, the columns in this file are as follows:
-		 * n, m, gnm, hnm, dgnm, dhnm
-		 */
-		private String[] input = {
-			"    2015.0            WMM-2015        12/15/2014",
-			"  1  0  -29438.5       0.0       10.7        0.0",
-			"  1  1   -1501.1    4796.2       17.9      -26.8",
-			"  2  0   -2445.3       0.0       -8.6        0.0",
-			"  2  1    3012.5   -2845.6       -3.3      -27.1",
-			"  2  2    1676.6    -642.0        2.4      -13.3",
-			"  3  0    1351.1       0.0        3.1        0.0",
-			"  3  1   -2352.3    -115.3       -6.2        8.4",
-			"  3  2    1225.6     245.0       -0.4       -0.4",
-			"  3  3     581.9    -538.3      -10.4        2.3",
-			"  4  0     907.2       0.0       -0.4        0.0",
-			"  4  1     813.7     283.4        0.8       -0.6",
-			"  4  2     120.3    -188.6       -9.2        5.3",
-			"  4  3    -335.0     180.9        4.0        3.0",
-			"  4  4      70.3    -329.5       -4.2       -5.3",
-			"  5  0    -232.6       0.0       -0.2        0.0",
-			"  5  1     360.1      47.4        0.1        0.4",
-			"  5  2     192.4     196.9       -1.4        1.6",
-			"  5  3    -141.0    -119.4        0.0       -1.1",
-			"  5  4    -157.4      16.1        1.3        3.3",
-			"  5  5       4.3     100.1        3.8        0.1",
-			"  6  0      69.5       0.0       -0.5        0.0",
-			"  6  1      67.4     -20.7       -0.2        0.0",
-			"  6  2      72.8      33.2       -0.6       -2.2",
-			"  6  3    -129.8      58.8        2.4       -0.7",
-			"  6  4     -29.0     -66.5       -1.1        0.1",
-			"  6  5      13.2       7.3        0.3        1.0",
-			"  6  6     -70.9      62.5        1.5        1.3",
-			"  7  0      81.6       0.0        0.2        0.0",
-			"  7  1     -76.1     -54.1       -0.2        0.7",
-			"  7  2      -6.8     -19.4       -0.4        0.5",
-			"  7  3      51.9       5.6        1.3       -0.2",
-			"  7  4      15.0      24.4        0.2       -0.1",
-			"  7  5       9.3       3.3       -0.4       -0.7",
-			"  7  6      -2.8     -27.5       -0.9        0.1",
-			"  7  7       6.7      -2.3        0.3        0.1",
-			"  8  0      24.0       0.0        0.0        0.0",
-			"  8  1       8.6      10.2        0.1       -0.3",
-			"  8  2     -16.9     -18.1       -0.5        0.3",
-			"  8  3      -3.2      13.2        0.5        0.3",
-			"  8  4     -20.6     -14.6       -0.2        0.6",
-			"  8  5      13.3      16.2        0.4       -0.1",
-			"  8  6      11.7       5.7        0.2       -0.2",
-			"  8  7     -16.0      -9.1       -0.4        0.3",
-			"  8  8      -2.0       2.2        0.3        0.0",
-			"  9  0       5.4       0.0        0.0        0.0",
-			"  9  1       8.8     -21.6       -0.1       -0.2",
-			"  9  2       3.1      10.8       -0.1       -0.1",
-			"  9  3      -3.1      11.7        0.4       -0.2",
-			"  9  4       0.6      -6.8       -0.5        0.1",
-			"  9  5     -13.3      -6.9       -0.2        0.1",
-			"  9  6      -0.1       7.8        0.1        0.0",
-			"  9  7       8.7       1.0        0.0       -0.2",
-			"  9  8      -9.1      -3.9       -0.2        0.4",
-			"  9  9     -10.5       8.5       -0.1        0.3",
-			" 10  0      -1.9       0.0        0.0        0.0",
-			" 10  1      -6.5       3.3        0.0        0.1",
-			" 10  2       0.2      -0.3       -0.1       -0.1",
-			" 10  3       0.6       4.6        0.3        0.0",
-			" 10  4      -0.6       4.4       -0.1        0.0",
-			" 10  5       1.7      -7.9       -0.1       -0.2",
-			" 10  6      -0.7      -0.6       -0.1        0.1",
-			" 10  7       2.1      -4.1        0.0       -0.1",
-			" 10  8       2.3      -2.8       -0.2       -0.2",
-			" 10  9      -1.8      -1.1       -0.1        0.1",
-			" 10 10      -3.6      -8.7       -0.2       -0.1",
-			" 11  0       3.1       0.0        0.0        0.0",
-			" 11  1      -1.5      -0.1        0.0        0.0",
-			" 11  2      -2.3       2.1       -0.1        0.1",
-			" 11  3       2.1      -0.7        0.1        0.0",
-			" 11  4      -0.9      -1.1        0.0        0.1",
-			" 11  5       0.6       0.7        0.0        0.0",
-			" 11  6      -0.7      -0.2        0.0        0.0",
-			" 11  7       0.2      -2.1        0.0        0.1",
-			" 11  8       1.7      -1.5        0.0        0.0",
-			" 11  9      -0.2      -2.5        0.0       -0.1",
-			" 11 10       0.4      -2.0       -0.1        0.0",
-			" 11 11       3.5      -2.3       -0.1       -0.1",
-			" 12  0      -2.0       0.0        0.1        0.0",
-			" 12  1      -0.3      -1.0        0.0        0.0",
-			" 12  2       0.4       0.5        0.0        0.0",
-			" 12  3       1.3       1.8        0.1       -0.1",
-			" 12  4      -0.9      -2.2       -0.1        0.0",
-			" 12  5       0.9       0.3        0.0        0.0",
-			" 12  6       0.1       0.7        0.1        0.0",
-			" 12  7       0.5      -0.1        0.0        0.0",
-			" 12  8      -0.4       0.3        0.0        0.0",
-			" 12  9      -0.4       0.2        0.0        0.0",
-			" 12 10       0.2      -0.9        0.0        0.0",
-			" 12 11      -0.9      -0.2        0.0        0.0",
-			" 12 12       0.0       0.7        0.0        0.0",
-		};
 
 		/**
 		 * Geodetic altitude in km. An input,
@@ -502,52 +390,11 @@ public class GeoFn {
 				} // while(true)
 
 				is.close();
-			} // try
-				// version 2, catch FileNotFound and IO exceptions separately,
-				// rather than catching all exceptions.
-				// Version 5.4 add logger support, and comment out System.out.println
-			catch (FileNotFoundException e) {
-				String msg = "\nNOTICE      NOTICE      NOTICE      \n" +
-					"WMMCOF file not found in TSAGeoMag.InitModel()\n" +
-					"The input file WMM.COF was not found in the same\n" +
-					"directory as the application.\n" +
-					"The magnetic field components are set to internal values.\n";
-				logger.warn(msg, e);
-
-				/*
-				 * String message = new String(e.toString());
-				 * 
-				 * System.out.println("\nNOTICE      NOTICE      NOTICE      ");
-				 * System.out.println("Error:  " + message);
-				 * System.out.println("Error in TSAGeoMag.InitModel()");
-				 * System.out.println("The input file WMM.COF was not found in the same");
-				 * System.out.println("directory as the application.");
-				 * System.out.println("The magnetic field components are set to internal values.");
-				 */
-				setCoeff();
+			}
+			catch (Exception e) {
+				throw new RuntimeException(e);
 			}
 
-			catch (IOException e) {
-				String msg = "\nNOTICE      NOTICE      NOTICE      \n" +
-					"Problem reading the WMMCOF file in TSAGeoMag.InitModel()\n" +
-					"The input file WMM.COF was found, but there was a problem \n" +
-					"reading the data.\n" +
-					"The magnetic field components are set to internal values.";
-
-				logger.warn(msg, e);
-
-				/*
-				 * String message = new String(e.toString());
-				 * System.out.println("\nNOTICE      NOTICE      NOTICE      ");
-				 * System.out.println("Error:  " + message);
-				 * System.out.println("Error in TSAGeoMag.InitModel()");
-				 * System.out.println("The input file WMM.COF was found, but there was a problem ");
-				 * System.out.println("reading the data.");
-				 * System.out.println("The magnetic field components are set to internal values.");
-				 * 
-				 */
-				setCoeff();
-			}
 			// CONVERT SCHMIDT NORMALIZED GAUSS COEFFICIENTS TO UNNORMALIZED
 			snorm[0] = 1.0;
 			for (int n = 1; n <= maxord; n++) {
@@ -1106,47 +953,6 @@ public class GeoFn {
 		{
 			calcGeoMag(dlat, dlong, year, altitude);
 			return dip;
-		}
-
-		/**
-		 * This method sets the input data to the internal fit coefficents.
-		 * If there is an exception reading the input file WMM.COF, these values
-		 * are used.
-		 *
-		 * NOTE: This method is not tested by the JUnit test, unless the WMM.COF file
-		 * is missing.
-		 */
-		private void setCoeff()
-		{
-			c[0][0] = 0.0;
-			cd[0][0] = 0.0;
-
-			epoch = Double.parseDouble(input[0].trim().split("[\\s]+")[0]);
-			defaultDate = epoch + 2.5;
-
-			String[] tokens;
-
-			// loop to get data from internal values
-			for (int i = 1; i < input.length; i++) {
-				tokens = input[i].trim().split("[\\s]+");
-
-				int n = Integer.parseInt(tokens[0]);
-				int m = Integer.parseInt(tokens[1]);
-				double gnm = Double.parseDouble(tokens[2]);
-				double hnm = Double.parseDouble(tokens[3]);
-				double dgnm = Double.parseDouble(tokens[4]);
-				double dhnm = Double.parseDouble(tokens[5]);
-
-				if (m <= n) {
-					c[m][n] = gnm;
-					cd[m][n] = dgnm;
-
-					if (m != 0) {
-						c[n][m - 1] = hnm;
-						cd[n][m - 1] = dhnm;
-					}
-				}
-			}
 		}
 
 		/**

@@ -35,8 +35,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.apache.log4j.Logger;
-
 import net.java.dev.designgridlayout.DesignGridLayout;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Settings;
@@ -47,10 +45,9 @@ import net.marcomerli.xpfp.fn.GuiFn;
  * @author Marco Merli
  * @since 1.0
  */
-public class SettingsWindow extends JFrame {
+public class SettingsWindow extends Window {
 
 	private static final long serialVersionUID = 5454273820569518074L;
-	private static final Logger logger = Logger.getLogger(SettingsWindow.class);
 
 	private JTextField fmsDirText;
 	private JButton fmsDirBtn;
@@ -62,7 +59,7 @@ public class SettingsWindow extends JFrame {
 
 	public SettingsWindow() {
 
-		super(MainWindow.TITLE_COMPACT + " :: Settings");
+		super(TITLE_COMPACT + " :: Settings");
 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		fmsDirFileChooser = new JFileChooser();
@@ -90,7 +87,7 @@ public class SettingsWindow extends JFrame {
 		mainPane.add(Box.createGlue());
 
 		setContentPane(mainPane);
-		setSize(360, 430);
+		setSize(360, 425);
 
 		setResizable(false);
 		setLocationByPlatform(true);
@@ -108,7 +105,8 @@ public class SettingsWindow extends JFrame {
 
 		fmsDirText = new JTextField();
 		fmsDirText.setEnabled(false);
-		fmsDirText.setText(Context.getSettings().getExportDirectory().getAbsolutePath());
+		fmsDirText.setText(Context.getSettings()
+			.getProperty(Settings.EXPORT_DIRECTORY, File.class).getAbsolutePath());
 
 		fmsDirBtn = new JButton("Choose");
 		fmsDirBtn.addActionListener(new OnChooseDir());
@@ -126,7 +124,7 @@ public class SettingsWindow extends JFrame {
 			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
 		geoApiText = new JTextField();
-		geoApiText.setText(Context.getSettings().getGeoApiKey());
+		geoApiText.setText(Context.getSettings().getProperty(Settings.GEOAPI_KEY));
 
 		DesignGridLayout layout = new DesignGridLayout(panel);
 		layout.row().grid(new JLabel("Key", JLabel.TRAILING)).add(geoApiText);
@@ -145,15 +143,15 @@ public class SettingsWindow extends JFrame {
 		Settings settings = Context.getSettings();
 
 		proxyActive = new JCheckBox();
-		proxyActive.setSelected(settings.isProxyActive());
+		proxyActive.setSelected(settings.getProperty(Settings.PROXY_ACTIVE, Boolean.class));
 		layout.row().grid(new JLabel("Active", JLabel.TRAILING)).add(proxyActive);
 
 		proxyHostnameText = new JTextField();
-		proxyHostnameText.setText(settings.getProxyHostname());
+		proxyHostnameText.setText(settings.getProperty(Settings.PROXY_HOSTNAME));
 		layout.row().grid(new JLabel("Hostname", JLabel.TRAILING)).add(proxyHostnameText);
 
 		proxyPortText = new JTextField();
-		proxyPortText.setText(settings.getProxyPort().toString());
+		proxyPortText.setText(settings.getProperty(Settings.PROXY_PORT));
 		layout.row().grid(new JLabel("Port", JLabel.TRAILING)).add(proxyPortText);
 
 		return panel;
@@ -180,11 +178,11 @@ public class SettingsWindow extends JFrame {
 		{
 			try {
 				Settings settings = Context.getSettings();
-				settings.setExportDirectory(fmsDirText.getText());
-				settings.setGeoApiKey(geoApiText.getText());
-				settings.setProxyActive(proxyActive.isSelected());
-				settings.setProxyHostname(proxyHostnameText.getText());
-				settings.setProxyPort(proxyPortText.getText());
+				settings.setProperty(Settings.EXPORT_DIRECTORY, fmsDirText.getText());
+				settings.setProperty(Settings.GEOAPI_KEY, geoApiText.getText());
+				settings.setProperty(Settings.PROXY_ACTIVE, String.valueOf(proxyActive.isSelected()));
+				settings.setProperty(Settings.PROXY_HOSTNAME, proxyHostnameText.getText());
+				settings.setProperty(Settings.PROXY_PORT, proxyPortText.getText());
 
 				settings.save();
 				GeoFn.init();

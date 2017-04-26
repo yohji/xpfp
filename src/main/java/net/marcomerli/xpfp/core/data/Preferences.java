@@ -16,49 +16,30 @@
  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.marcomerli.xpfp.core;
+package net.marcomerli.xpfp.core.data;
 
-import net.marcomerli.xpfp.core.data.Preferences;
-import net.marcomerli.xpfp.core.data.Settings;
-import net.marcomerli.xpfp.model.FlightPlan;
+import java.io.File;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public class Context {
+public class Preferences extends Data {
 
-	private static Settings settings;
-	private static Preferences preferences;
-	private static FlightPlan flightPlan;
+	private static final long serialVersionUID = 511605731858765879L;
 
-	public static Settings getSettings()
+	public static final String IMPORT_DIRECTORY = "import.directory";
+	public static final String FP_FLIGHT_LEVEL = "fp.flight.level";
+	public static final String FP_CRUISING_SPEED = "fp.cruising.speed";
+	public static final String FP_VERTICAL_SPEED = "fp.vertical.speed";
+
+	@Override
+	protected File file()
 	{
-		return settings;
+		return new File(dataDir, "preferences.properties");
 	}
 
-	public static void setSettings(Settings settings)
-	{
-		Context.settings = settings;
-	}
-
-	public static Preferences getPreferences()
-	{
-		return preferences;
-	}
-
-	public static void setPreferences(Preferences preferences)
-	{
-		Context.preferences = preferences;
-	}
-
-	public static FlightPlan getFlightPlan()
-	{
-		return flightPlan;
-	}
-
-	public static void setFlightPlan(FlightPlan flightPlan)
-	{
-		Context.flightPlan = flightPlan;
-	}
+	@Override
+	protected void init()
+	{}
 }

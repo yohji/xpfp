@@ -27,20 +27,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.apache.commons.lang3.StringUtils;
-
 import net.marcomerli.xpfp.core.Context;
+import net.marcomerli.xpfp.core.data.Settings;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public class MainWindow extends JFrame {
+public class MainWindow extends Window {
 
 	private static final long serialVersionUID = 109257433124133997L;
-
-	public static final String TITLE_FULL = "X-Plane Flight Planner";
-	public static final String TITLE_COMPACT = "XPFP";
 
 	public MainWindow() {
 
@@ -69,7 +65,7 @@ public class MainWindow extends JFrame {
 			add(new JLabel("No flight plan; import one from the menu File -> Import..."));
 			add(Box.createGlue());
 
-			if (StringUtils.isBlank(Context.getSettings().getGeoApiKey()))
+			if (! Context.getSettings().hasProperty(Settings.GEOAPI_KEY))
 				new SettingsWindow();
 		}
 	}

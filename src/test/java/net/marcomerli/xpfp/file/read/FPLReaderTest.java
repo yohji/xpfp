@@ -24,7 +24,6 @@ import org.junit.Test;
 
 import net.marcomerli.xpfp.UnitTestSupport;
 import net.marcomerli.xpfp.error.NoSuchWaypointException;
-import net.marcomerli.xpfp.file.read.FPLReader;
 import net.marcomerli.xpfp.model.FlightPlan;
 import net.marcomerli.xpfp.model.Location;
 import net.marcomerli.xpfp.model.Waypoint;
@@ -35,9 +34,20 @@ public class FPLReaderTest extends UnitTestSupport {
 	private static FlightPlan flightPlan;
 
 	@Test
-	public void read() throws Exception
+	public void sample01() throws Exception
 	{
-		File file = new File(this.getClass().getClassLoader().getResource("sample.fpl").getPath());
+		_text("sample_01.fpl");
+	}
+
+	@Test
+	public void sample02() throws Exception
+	{
+		_text("sample_02.fpl");
+	}
+
+	private void _text(String filename) throws Exception
+	{
+		File file = new File(this.getClass().getClassLoader().getResource(filename).getPath());
 		flightPlan = new FPLReader(file).read();
 
 		assertNotNull(flightPlan);

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<flight-plan xmlns="http://www8.garmin.com/xmlschemas/FlightPlan/v1">
+  <created>2017-04-26T12:40:17Z</created>
+  <waypoint-table>
+    <waypoint>
+      <identifier>LIMA</identifier>
+      <type>AIRPORT</type>
+      <country-code>LI</country-code>
+      <lat>45.084444</lat>
+      <lon>7.603056</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>TRM</identifier>
+      <type>VOR</type>
+      <country-code>LP</country-code>
+      <lat>38.760250</lat>
+      <lon>-27.091389</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>4460N</identifier>
+      <type>INT</type>
+      <country-code>XX</country-code>
+      <lat>44.000000</lat>
+      <lon>-60.000000</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>HELUX</identifier>
+      <type>INT</type>
+      <country-code>PH</country-code>
+      <lat>21.684728</lat>
+      <lon>-157.713647</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>WB</identifier>
+      <type>VOR</type>
+      <country-code>NZ</country-code>
+      <lat>-41.519675</lat>
+      <lon>173.862681</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>SV001</identifier>
+      <type>USER WAYPOINT</type>
+      <country-code />
+      <lat>62.456011</lat>
+      <lon>130.612507</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>AKVAK</identifier>
+      <type>INT</type>
+      <country-code>SP</country-code>
+      <lat>-4.371111</lat>
+      <lon>-77.593333</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>LIMF</identifier>
+      <type>AIRPORT</type>
+      <country-code>LI</country-code>
+      <lat>45.202500</lat>
+      <lon>7.649444</lon>
+      <comment />
+    </waypoint>
+  </waypoint-table>
+  <route>
+    <route-name>LIMA LIMF</route-name>
+    <flight-plan-index>1</flight-plan-index>
+    <route-point>
+      <waypoint-identifier>LIMA</waypoint-identifier>
+      <waypoint-type>AIRPORT</waypoint-type>
+      <waypoint-country-code>LI</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>TRM</waypoint-identifier>
+      <waypoint-type>VOR</waypoint-type>
+      <waypoint-country-code>LP</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>4460N</waypoint-identifier>
+      <waypoint-type>INT</waypoint-type>
+      <waypoint-country-code>XX</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>HELUX</waypoint-identifier>
+      <waypoint-type>INT</waypoint-type>
+      <waypoint-country-code>PH</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>WB</waypoint-identifier>
+      <waypoint-type>VOR</waypoint-type>
+      <waypoint-country-code>NZ</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>SV001</waypoint-identifier>
+      <waypoint-type>USER WAYPOINT</waypoint-type>
+      <waypoint-country-code />
+    </route-point>
+    <route-point>
+      <waypoint-identifier>AKVAK</waypoint-identifier>
+      <waypoint-type>INT</waypoint-type>
+      <waypoint-country-code>SP</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>LIMF</waypoint-identifier>
+      <waypoint-type>AIRPORT</waypoint-type>
+      <waypoint-country-code>LI</waypoint-country-code>
+    </route-point>
+  </route>
+</flight-plan>
