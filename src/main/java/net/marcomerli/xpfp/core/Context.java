@@ -19,6 +19,11 @@
 package net.marcomerli.xpfp.core;
 
 import java.io.File;
+import java.net.Authenticator;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
+import java.net.Proxy.Type;
 
 import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.core.data.Settings;
@@ -34,6 +39,7 @@ public class Context {
 	private static Settings settings;
 	private static Preferences preferences;
 	private static FlightPlan flightPlan;
+	private static Proxy proxy = Proxy.NO_PROXY;
 
 	public static void init()
 	{
@@ -44,9 +50,38 @@ public class Context {
 					"Failed to create home directory at " + homeDir.getAbsolutePath());
 	}
 
+	public static void refresh()
+	{
+		if (settings.getProperty(Settings.PROXY_ACTIVE, Boolean.class))
+			proxy = new Proxy(Type.HTTP, new InetSocketAddress(
+				settings.getProperty(Settings.PROXY_HOSTNAME),
+				settings.getProperty(Settings.PROXY_PORT, Integer.class)));
+		else
+			proxy = Proxy.NO_PROXY;
+
+		Authenticator auth = null;
+		if (settings.getProperty(Settings.PROXY_AUTH, Boolean.class))
+			auth = new Authenticator() {
+
+				protected PasswordAuthentication getPasswordAuthentication()
+				{
+					return new PasswordAuthentication(
+						settings.getProperty(Settings.PROXY_AUTH_USERNAME),
+						settings.getProperty(Settings.PROXY_AUTH_PASSWORD).toCharArray());
+				}
+			};
+
+		Authenticator.setDefault(auth);
+	}
+
 	public static File getHomedir()
 	{
 		return homeDir;
+	}
+
+	public static Proxy getProxy()
+	{
+		return proxy;
 	}
 
 	public static Settings getSettings()
@@ -57,6 +92,7 @@ public class Context {
 	public static void setSettings(Settings settings)
 	{
 		Context.settings = settings;
+		refresh();
 	}
 
 	public static Preferences getPreferences()

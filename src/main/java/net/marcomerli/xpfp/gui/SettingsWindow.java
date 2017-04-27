@@ -56,6 +56,9 @@ public class SettingsWindow extends Window {
 	private JTextField proxyHostnameText;
 	private JTextField proxyPortText;
 	private JCheckBox proxyActive;
+	private JCheckBox proxyAuth;
+	private JTextField proxyAuthUsername;
+	private JTextField proxyAuthPassword;
 
 	public SettingsWindow() {
 
@@ -87,7 +90,7 @@ public class SettingsWindow extends Window {
 		mainPane.add(Box.createGlue());
 
 		setContentPane(mainPane);
-		setSize(360, 425);
+		setSize(350, 450);
 
 		setResizable(false);
 		setLocationByPlatform(true);
@@ -153,6 +156,18 @@ public class SettingsWindow extends Window {
 		proxyPortText = new JTextField();
 		proxyPortText.setText(settings.getProperty(Settings.PROXY_PORT));
 		layout.row().grid(new JLabel("Port", JLabel.TRAILING)).add(proxyPortText);
+		
+		proxyAuth = new JCheckBox();
+		proxyAuth.setSelected(settings.getProperty(Settings.PROXY_AUTH, Boolean.class));
+		layout.row().grid(new JLabel("Authentication", JLabel.TRAILING)).add(proxyAuth);
+		
+		proxyAuthUsername = new JTextField();
+		proxyAuthUsername.setText(settings.getProperty(Settings.PROXY_AUTH_USERNAME));
+		layout.row().grid(new JLabel("Username", JLabel.TRAILING)).add(proxyAuthUsername);
+		
+		proxyAuthPassword = new JTextField();
+		proxyAuthPassword.setText(settings.getProperty(Settings.PROXY_AUTH_PASSWORD));
+		layout.row().grid(new JLabel("Password", JLabel.TRAILING)).add(proxyAuthPassword);
 
 		return panel;
 	}
@@ -183,8 +198,12 @@ public class SettingsWindow extends Window {
 				settings.setProperty(Settings.PROXY_ACTIVE, String.valueOf(proxyActive.isSelected()));
 				settings.setProperty(Settings.PROXY_HOSTNAME, proxyHostnameText.getText());
 				settings.setProperty(Settings.PROXY_PORT, proxyPortText.getText());
+				settings.setProperty(Settings.PROXY_AUTH, String.valueOf(proxyAuth.isSelected()));
+				settings.setProperty(Settings.PROXY_AUTH_USERNAME, proxyAuthUsername.getText());
+				settings.setProperty(Settings.PROXY_AUTH_PASSWORD, proxyAuthPassword.getText());
 
 				settings.save();
+				Context.refresh();
 				GeoFn.init();
 			}
 			catch (Exception ee) {

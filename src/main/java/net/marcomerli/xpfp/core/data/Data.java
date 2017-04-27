@@ -26,6 +26,8 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.marcomerli.xpfp.Version;
+
 /**
  * @author Marco Merli
  * @since 1.0
@@ -34,15 +36,20 @@ public abstract class Data extends Properties {
 
 	private static final long serialVersionUID = 8603751824062874788L;
 
+	public static final String VERSION = "version";
+
 	public void load()
 	{
 		if (! file().exists()) {
+
 			init();
 			save();
 		}
 		else {
 			try {
 				load(new FileReader(file()));
+				if (! Version.get().equals(getProperty(VERSION)))
+					upgrade();
 			}
 			catch (Exception e) {
 				throw new RuntimeException(e);
@@ -53,6 +60,7 @@ public abstract class Data extends Properties {
 	public void save()
 	{
 		try {
+			setProperty(VERSION, Version.get());
 			store(new FileWriter(file()), "");
 		}
 		catch (Exception e) {
@@ -85,4 +93,6 @@ public abstract class Data extends Properties {
 	protected abstract File file();
 
 	protected abstract void init();
+
+	protected abstract void upgrade();
 }

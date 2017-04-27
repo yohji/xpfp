@@ -19,7 +19,6 @@
 package net.marcomerli.xpfp;
 
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 
@@ -51,9 +50,6 @@ public class XPlaneFlightPlanner {
 			Preferences prefs = new Preferences();
 			prefs.load();
 			Context.setPreferences(prefs);
-
-			UIManager.setLookAndFeel(
-				UIManager.getSystemLookAndFeelClassName());
 
 			SwingUtilities.invokeLater(new Runnable() {
 

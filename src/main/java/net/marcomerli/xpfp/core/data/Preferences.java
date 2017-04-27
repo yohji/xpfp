@@ -22,7 +22,6 @@ import java.io.File;
 
 import net.marcomerli.xpfp.core.Context;
 
-
 /**
  * @author Marco Merli
  * @since 1.0
@@ -44,5 +43,9 @@ public class Preferences extends Data {
 
 	@Override
 	protected void init()
+	{}
+
+	@Override
+	protected void upgrade()
 	{}
 }

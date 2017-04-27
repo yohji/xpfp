@@ -35,6 +35,9 @@ public class Settings extends Data {
 	public static final String PROXY_ACTIVE = "proxy.active";
 	public static final String PROXY_HOSTNAME = "proxy.hostname";
 	public static final String PROXY_PORT = "proxy.port";
+	public static final String PROXY_AUTH = "proxy.auth.active";
+	public static final String PROXY_AUTH_USERNAME = "proxy.auth.username";
+	public static final String PROXY_AUTH_PASSWORD = "proxy.auth.password";
 
 	@Override
 	protected File file()
@@ -49,5 +52,10 @@ public class Settings extends Data {
 		setProperty(PROXY_ACTIVE, "false");
 		setProperty(PROXY_HOSTNAME, "127.0.0.1");
 		setProperty(PROXY_PORT, "3128");
+		setProperty(PROXY_AUTH, "false");
 	}
+
+	@Override
+	protected void upgrade()
+	{}
 }
