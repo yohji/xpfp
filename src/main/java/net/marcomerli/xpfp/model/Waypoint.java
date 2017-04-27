@@ -48,7 +48,7 @@ public class Waypoint implements Serializable {
 
 	public Double setBearing(Waypoint wp)
 	{
-		return (bearing = GeoFn.heading(
+		return (bearing = GeoFn.bearing(
 			wp.getLocation(), this.getLocation()));
 	}
 

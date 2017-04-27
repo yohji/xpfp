@@ -29,9 +29,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.apache.sis.distance.DistanceUtils;
+import org.apache.sis.geometry.DirectPosition2D;
 
 import com.google.maps.ElevationApi;
 import com.google.maps.GeoApiContext;
+import com.google.maps.model.ElevationResult;
 
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Settings;
@@ -45,8 +47,8 @@ import net.marcomerli.xpfp.model.Location;
  */
 public class GeoFn {
 
-	private static final TSAGeoMag geoMag = new TSAGeoMag();
-	private static final GeoApiContext context;
+	protected static final TSAGeoMag geoMag = new TSAGeoMag();
+	protected static final GeoApiContext context;
 	static {
 		context = new GeoApiContext();
 		context.setConnectTimeout(5, TimeUnit.SECONDS);
@@ -59,15 +61,6 @@ public class GeoFn {
 		context.setProxy(Context.getProxy());
 	}
 
-	public static double elevationOf(Location location) throws Exception
-	{
-		double elev = ElevationApi.getByPoint(context, location)
-			.await().elevation;
-
-		location.alt = elev;
-		return elev;
-	}
-
 	public static double distance(Location from, Location to)
 	{
 		double dist = DistanceUtils.getHaversineDistance(
@@ -75,6 +68,14 @@ public class GeoFn {
 			to.lat, to.lng);
 
 		return dist * 1000;
+	}
+
+	public static Location point(Location loc, double distance, double bearing)
+	{
+		DirectPosition2D point = DistanceUtils.getPointOnGreatCircle(
+			loc.lat, loc.lng, distance, bearing);
+
+		return new Location(point.x, point.y);
 	}
 
 	public static double heading(Location from, Location to)
@@ -95,6 +96,28 @@ public class GeoFn {
 			- Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
 
 		return (Math.toDegrees(Math.atan2(y, x)) + 360) % 360;
+	}
+
+	public static void elevation(Location location) throws Exception
+	{
+		double elev = ElevationApi.getByPoint(context, location)
+			.await().elevation;
+
+		location.alt = elev;
+	}
+
+	public static double[] elevations(Location from, Location to) throws Exception
+	{
+		int sample = (int) (distance(from, to) / 750);
+		ElevationResult[] res = ElevationApi.getByPath(context, sample, new Location[] {
+			from, to
+		}).await();
+
+		double[] elevs = new double[res.length];
+		for (int i = 0; i < res.length; i++)
+			elevs[i] = res[i].elevation;
+
+		return elevs;
 	}
 
 	public static double declination(Location loc)
