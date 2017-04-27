@@ -7,4 +7,3 @@ logs/*
 .classpath
 .project
 target/
-etc/

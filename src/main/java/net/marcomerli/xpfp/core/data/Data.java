@@ -34,8 +34,6 @@ public abstract class Data extends Properties {
 
 	private static final long serialVersionUID = 8603751824062874788L;
 
-	protected final File dataDir = new File(new File(".") + File.separator + "etc");
-
 	public void load()
 	{
 		if (! file().exists()) {

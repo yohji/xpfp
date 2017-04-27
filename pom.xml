@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.marcomerli</groupId>
@@ -9,6 +8,7 @@
 	<name>X-Plane Flight Planner</name>
 
 	<build>
+		<finalName>xpfp</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -61,15 +61,22 @@
 			<version>1.2.17</version>
 		</dependency>
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.4</version>
 		</dependency>
+
 		<dependency>
 			<groupId>net.java.dev.designgridlayout</groupId>
 			<artifactId>designgridlayout</artifactId>
 			<version>1.11</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.sis.core</groupId>
 			<artifactId>sis-referencing</artifactId>
@@ -80,6 +87,7 @@
 			<artifactId>google-maps-services</artifactId>
 			<version>0.1.20</version>
 		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

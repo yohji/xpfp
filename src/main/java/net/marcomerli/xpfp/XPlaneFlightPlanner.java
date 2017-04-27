@@ -21,6 +21,8 @@ package net.marcomerli.xpfp;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.apache.log4j.Logger;
+
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.core.data.Settings;
@@ -33,28 +35,37 @@ import net.marcomerli.xpfp.gui.MainWindow;
  */
 public class XPlaneFlightPlanner {
 
+	protected static final Logger logger = Logger.getLogger(XPlaneFlightPlanner.class);
+
 	public static void main(String[] args) throws Exception
 	{
-		Settings settings = new Settings();
-		settings.load();
-		Context.setSettings(settings);
+		try {
+			Context.init();
 
-		GeoFn.init();
+			Settings settings = new Settings();
+			settings.load();
+			Context.setSettings(settings);
 
-		Preferences prefs = new Preferences();
-		prefs.load();
-		Context.setPreferences(prefs);
+			GeoFn.init();
 
-		UIManager.setLookAndFeel(
-			UIManager.getSystemLookAndFeelClassName());
+			Preferences prefs = new Preferences();
+			prefs.load();
+			Context.setPreferences(prefs);
 
-		SwingUtilities.invokeLater(new Runnable() {
+			UIManager.setLookAndFeel(
+				UIManager.getSystemLookAndFeelClassName());
 
-			@Override
-			public void run()
-			{
-				new MainWindow();
-			}
-		});
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run()
+				{
+					new MainWindow();
+				}
+			});
+		}
+		catch (Exception e) {
+			logger.error("main", e);
+		}
 	}
 }

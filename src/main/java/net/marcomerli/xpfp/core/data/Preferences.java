@@ -20,6 +20,9 @@ package net.marcomerli.xpfp.core.data;
 
 import java.io.File;
 
+import net.marcomerli.xpfp.core.Context;
+
+
 /**
  * @author Marco Merli
  * @since 1.0
@@ -36,7 +39,7 @@ public class Preferences extends Data {
 	@Override
 	protected File file()
 	{
-		return new File(dataDir, "preferences.properties");
+		return new File(Context.getHomedir(), "preferences.properties");
 	}
 
 	@Override

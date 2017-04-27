@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="xpfp" default="release" basedir=".">
+	<xmlproperty file="pom.xml" prefix="pom" />
+
+	<property name="version" value="${pom.project.version}" />
+	<property name="mvn-args" value="mvn clean compile jar:jar war:exploded" />
+
+	<property name="project" value="${ant.project.name}" />
+	<property name="root" value="target/${project}" />
+	<property name="artefact" value="${project}-${version}" />
+	<property name="package" value="${root}.zip" />
+
+	<condition property="is-unix">
+		<os family="unix" />
+	</condition>
+
+	<condition property="is-windows">
+		<os family="windows" />
+	</condition>
+
+
+	<target name="compile-unix" if="is-unix">
+		<exec dir="." executable="sh">
+			<arg line="-c '${mvn-args}'" />
+		</exec>
+	</target>
+
+	<target name="compile-windows" if="is-windows">
+		<exec dir="." executable="cmd">
+			<arg line="/c ${mvn-args}" />
+		</exec>
+	</target>
+
+
+	<target name="compile" depends="compile-unix,compile-windows" />
+
+
+	<target name="build" depends="compile">
+		<move file="${root}/WEB-INF/lib" tofile="${root}/lib" />
+		<delete dir="${root}/WEB-INF" />
+		<delete dir="${root}/META-INF" />
+		<copy todir="${root}/lib">
+			<fileset file="target/${project}.jar" />
+		</copy>
+		<copy todir="${root}">
+			<fileset file="src/main/bin/*" />
+		</copy>
+	</target>
+
+
+	<target name="release" depends="compile,build" description="Zip release">
+		<zip destfile="${package}">
+			<zipfileset dir="${root}" prefix="${artefact}" includes="xpfp.sh" filemode="755" />
+			<zipfileset dir="${root}" prefix="${artefact}" excludes="xpfp.sh" />
+		</zip>
+		<checksum file="${package}" />
+	</target>
+
+</project>

@@ -18,6 +18,8 @@
 
 package net.marcomerli.xpfp.core;
 
+import java.io.File;
+
 import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.core.data.Settings;
 import net.marcomerli.xpfp.model.FlightPlan;
@@ -28,9 +30,24 @@ import net.marcomerli.xpfp.model.FlightPlan;
  */
 public class Context {
 
+	private static File homeDir;
 	private static Settings settings;
 	private static Preferences preferences;
 	private static FlightPlan flightPlan;
+
+	public static void init()
+	{
+		homeDir = new File(new File(System.getProperty("user.home")), ".xpfp");
+		if (! homeDir.exists())
+			if (! homeDir.mkdir())
+				throw new IllegalStateException(
+					"Failed to create home directory at " + homeDir.getAbsolutePath());
+	}
+
+	public static File getHomedir()
+	{
+		return homeDir;
+	}
 
 	public static Settings getSettings()
 	{
