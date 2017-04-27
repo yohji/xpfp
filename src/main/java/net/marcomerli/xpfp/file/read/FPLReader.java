@@ -103,8 +103,6 @@ public class FPLReader extends Reader {
 			flightPlan.add(waypoint);
 		}
 
-		flightPlan.setup();
-
 		return flightPlan;
 	}
 }

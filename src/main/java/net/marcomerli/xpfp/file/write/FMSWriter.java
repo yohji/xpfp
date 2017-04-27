@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 
 import net.marcomerli.xpfp.fn.NumberFn;
+import net.marcomerli.xpfp.fn.UnitFn;
 import net.marcomerli.xpfp.model.FlightPlan;
 import net.marcomerli.xpfp.model.Location;
 import net.marcomerli.xpfp.model.Waypoint;
@@ -52,8 +53,10 @@ public class FMSWriter {
 				Location loc = wp.getLocation();
 
 				writer.write(String.format("%d %s %d %s %s%n",
-					wp.getType().getFmsCode(), wp.getFMSIdentifier(), (long) loc.alt,
-					NumberFn.format(loc.lat, 6), NumberFn.format(loc.lng, 6)));
+					wp.getType().getFmsCode(), wp.getFMSIdentifier(),
+					(long) UnitFn.mToFt(loc.alt),
+					NumberFn.format(loc.lat, 6),
+					NumberFn.format(loc.lng, 6)));
 			}
 		}
 	}

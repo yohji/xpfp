@@ -43,48 +43,33 @@ public class FlightPlan extends LinkedList<Waypoint> {
 
 	public void calculate(double fl, double cs, double vs) throws Exception
 	{
+		/*
+		 * TODO: implement vertical calculation
+		 * 
+		 * double dAlt = fl - loc.alt;
+		 * double secAlt = dAlt / vs;
+		 * double nmAlt = (cs * 0.6) * secAlt;
+		 */
+
 		Iterator<Waypoint> iterator = iterator();
 		Waypoint prev = iterator.next();
 		Location loc = prev.getLocation();
-		alt(loc);
-
-		double dAlt = fl - loc.alt;
-		double secAlt = dAlt / vs;
-		double nmAlt = (cs * 0.6) * secAlt;
+		loc.alt = GeoFn.elevationOf(loc);
 
 		for (; iterator.hasNext();) {
 			Waypoint wp = iterator.next();
+
+			Double dist = wp.setDistance(prev);
+			wp.setBearing(prev);
+			ete += wp.setEte((long) ((double) dist / cs) * 1000);
 
 			loc = wp.getLocation();
-			if (wp.getType().equals(WaypointType.ICAO)) {
-				alt(loc);
-				break;
-			}
+			if (wp.getType().equals(WaypointType.ICAO))
+				loc.alt = GeoFn.elevationOf(loc);
+			else
+				loc.alt = fl;
 
-			wp.getLocation().alt = fl;
-			// TODO: continue...
-
-			prev = wp;
-		}
-	}
-
-	private void alt(Location loc) throws Exception
-	{
-		if (loc.alt == 0)
-			loc.alt = GeoFn.elevationOf(loc);
-	}
-
-	public void setup()
-	{
-		Iterator<Waypoint> iterator = iterator();
-		Waypoint prev = iterator.next();
-
-		for (; iterator.hasNext();) {
-			Waypoint wp = iterator.next();
-
-			distance += wp.setDistance(prev);
-			wp.setBearing(prev);
-
+			distance += dist;
 			prev = wp;
 		}
 	}

@@ -52,6 +52,23 @@ public class Waypoint implements Serializable {
 			wp.getLocation(), this.getLocation()));
 	}
 
+	public Long setEte(Long ete)
+	{
+		return (this.ete = ete);
+	}
+
+	public String getFMSIdentifier()
+	{
+		if (type.equals(WaypointType.POS))
+			return String.format("%s%s_%s%s",
+				(location.lat > 0 ? "+" : "-"),
+				NumberFn.format(location.lat, 3),
+				(location.lng > 0 ? "+" : "-"),
+				NumberFn.format(location.lng, 3));
+
+		return identifier;
+	}
+
 	public Double getDistance()
 	{
 		return distance;
@@ -65,18 +82,6 @@ public class Waypoint implements Serializable {
 	public Integer getBearing()
 	{
 		return bearing;
-	}
-
-	public String getFMSIdentifier()
-	{
-		if (type.equals(WaypointType.POS))
-			return String.format("%s%s_%s%s",
-				(location.lat > 0 ? "+" : "-"),
-				NumberFn.format(location.lat, 3),
-				(location.lng > 0 ? "+" : "-"),
-				NumberFn.format(location.lng, 3));
-
-		return identifier;
 	}
 
 	public String getIdentifier()

@@ -91,6 +91,8 @@ public class MainContent extends JPanel {
 		};
 
 		private JTable table;
+		private ValueLabel distance;
+		private ValueLabel ete;
 
 		public FlightPlaneData() {
 
@@ -111,16 +113,16 @@ public class MainContent extends JPanel {
 			pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			pane.setViewportView(table);
 
-			draw();
-
 			DesignGridLayout layout = new DesignGridLayout(this);
 			layout.row().grid().add(pane);
 			layout.row().bar()
-				.add(new JLabel("Distance: " + FormatFn.distance(flightPlan.getDistance())), Tag.RIGHT).gap()
-				.add(new JLabel("ETE: " + FormatFn.time(flightPlan.getEte())), Tag.RIGHT);
+				.add(distance = new ValueLabel("Distance", "-"), Tag.RIGHT).gap()
+				.add(ete = new ValueLabel("ETE", "-"), Tag.RIGHT);
+
+			render();
 		}
 
-		private void draw()
+		private void render()
 		{
 			FlightPlan flightPlan = Context.getFlightPlan();
 			String[][] data = new String[flightPlan.size()][columnNames.length];
@@ -146,6 +148,8 @@ public class MainContent extends JPanel {
 			}
 
 			table.setModel(new TableModel(data, columnNames));
+			distance.setValue(FormatFn.distance(flightPlan.getDistance()));
+			ete.setValue(FormatFn.time(flightPlan.getEte()));
 
 			TableColumnModel columnModel = table.getColumnModel();
 			for (int iCol = 0; iCol < columnNames.length; iCol++) {
@@ -156,7 +160,7 @@ public class MainContent extends JPanel {
 
 		public void refresh()
 		{
-			draw();
+			render();
 			revalidate();
 			repaint();
 		}
@@ -279,6 +283,25 @@ public class MainContent extends JPanel {
 						setText(text.substring(0, text.length() - 1));
 				}
 			});
+		}
+	}
+
+	private class ValueLabel extends JLabel {
+
+		private static final long serialVersionUID = - 8172651693355521184L;
+
+		private String label;
+
+		public ValueLabel(String label, Object value) {
+
+			this.label = label;
+			setValue(value);
+		}
+
+		public void setValue(Object value)
+		{
+			setText(String.format("%s: %s",
+				label, value));
 		}
 	}
 
