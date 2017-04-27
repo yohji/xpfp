@@ -19,10 +19,20 @@
 package net.marcomerli.xpfp.gui;
 
 import java.awt.HeadlessException;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.URL;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JPopupMenu;
+import javax.swing.text.JTextComponent;
 
 import org.apache.log4j.Logger;
 
@@ -44,5 +54,104 @@ public abstract class Window extends JFrame {
 
 		URL res = getClass().getClassLoader().getResource("xpfp.jpg");
 		setIconImage(new ImageIcon(res).getImage());
+	}
+
+	/**
+	 * @author Bozhidar Batsov
+	 */
+	protected static class EditMenuMouseListener extends MouseAdapter {
+
+		private JTextComponent textComponent;
+		private JPopupMenu popup = new JPopupMenu();
+
+		private Action cutAction;
+		private Action copyAction;
+		private Action pasteAction;
+		private Action selectAllAction;
+
+		@SuppressWarnings("serial")
+		public EditMenuMouseListener(JTextComponent textComponent) {
+
+			this.textComponent = textComponent;
+
+			cutAction = new AbstractAction("Cut") {
+
+				@Override
+				public void actionPerformed(ActionEvent ae)
+				{
+					textComponent.cut();
+				}
+			};
+
+			popup.add(cutAction);
+
+			copyAction = new AbstractAction("Copy") {
+
+				@Override
+				public void actionPerformed(ActionEvent ae)
+				{
+					textComponent.copy();
+				}
+			};
+
+			popup.add(copyAction);
+
+			pasteAction = new AbstractAction("Paste") {
+
+				@Override
+				public void actionPerformed(ActionEvent ae)
+				{
+					textComponent.paste();
+				}
+			};
+
+			popup.add(pasteAction);
+			popup.addSeparator();
+
+			selectAllAction = new AbstractAction("Select All") {
+
+				@Override
+				public void actionPerformed(ActionEvent ae)
+				{
+					textComponent.selectAll();
+				}
+			};
+
+			popup.add(selectAllAction);
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e)
+		{
+			if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
+				if (! (e.getSource() instanceof JTextComponent)) {
+					return;
+				}
+
+				textComponent = (JTextComponent) e.getSource();
+				textComponent.requestFocus();
+
+				boolean enabled = textComponent.isEnabled();
+				boolean editable = textComponent.isEditable();
+				boolean nonempty = ! (textComponent.getText() == null || textComponent.getText().equals(""));
+				boolean marked = textComponent.getSelectedText() != null;
+
+				boolean pasteAvailable = Toolkit.getDefaultToolkit().getSystemClipboard()
+					.getContents(null).isDataFlavorSupported(DataFlavor.stringFlavor);
+
+				cutAction.setEnabled(enabled && editable && marked);
+				copyAction.setEnabled(enabled && marked);
+				pasteAction.setEnabled(enabled && editable && pasteAvailable);
+				selectAllAction.setEnabled(enabled && nonempty);
+
+				int nx = e.getX();
+
+				if (nx > 500) {
+					nx = nx - popup.getSize().width;
+				}
+
+				popup.show(e.getComponent(), nx, e.getY() - popup.getSize().height);
+			}
+		}
 	}
 }

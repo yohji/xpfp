@@ -54,6 +54,7 @@ import net.marcomerli.xpfp.file.write.FMSWriter;
 import net.marcomerli.xpfp.fn.FormatFn;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.fn.UnitFn;
+import net.marcomerli.xpfp.gui.Window.EditMenuMouseListener;
 import net.marcomerli.xpfp.model.FlightPlan;
 import net.marcomerli.xpfp.model.Location;
 import net.marcomerli.xpfp.model.Waypoint;
@@ -107,8 +108,8 @@ public class MainContent extends JPanel {
 
 			table = new JTable();
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			table.setFillsViewportHeight(true);
-			table.setPreferredScrollableViewportSize(new Dimension(600, 100));
+			table.setFillsViewportHeight(false);
+			table.setPreferredScrollableViewportSize(new Dimension(600, 170));
 
 			JScrollPane pane = new JScrollPane();
 			pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -196,6 +197,7 @@ public class MainContent extends JPanel {
 			vs = new NumberInput(4);
 			vs.setText(prefs.getProperty(Preferences.FP_VERTICAL_SPEED));
 			fn = new JTextField();
+			fn.addMouseListener(new EditMenuMouseListener(fn));
 			fn.setText(Context.getFlightPlan().getFilename());
 
 			JButton calc = new JButton("Calculate");
@@ -277,6 +279,7 @@ public class MainContent extends JPanel {
 
 		public NumberInput(int maxSize) {
 
+			addMouseListener(new EditMenuMouseListener(this));
 			addKeyListener(new KeyAdapter() {
 
 				@Override
@@ -284,8 +287,9 @@ public class MainContent extends JPanel {
 				{
 					String text = NumberInput.this.getText();
 					char key = e.getKeyChar();
+					System.out.println((int) key);
 
-					if (text.isEmpty() || (key == 127 || key == 8))
+					if (text.isEmpty() || key <= 31 || key == 127 || key == 65535)
 						return;
 
 					if ((key < 48 || key > 57) || text.length() > maxSize)
