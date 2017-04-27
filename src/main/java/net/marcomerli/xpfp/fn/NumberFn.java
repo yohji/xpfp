@@ -45,5 +45,13 @@ public class NumberFn {
 		return df.format(number);
 	}
 
+	public static boolean isNumeric(String number)
+	{
+		if (number == null)
+			return false;
+
+		return number.matches("-?\\d+([\\.,]\\d+)?");
+	}
+
 	private NumberFn() {}
 }

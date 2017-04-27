@@ -38,7 +38,7 @@ public class Waypoint implements Serializable {
 
 	private Double distance = 0.0;
 	private Long ete = 0L;
-	private Integer bearing;
+	private Double bearing;
 
 	public Double setDistance(Waypoint wp)
 	{
@@ -46,9 +46,9 @@ public class Waypoint implements Serializable {
 			wp.getLocation(), this.getLocation()));
 	}
 
-	public Integer setBearing(Waypoint wp)
+	public Double setBearing(Waypoint wp)
 	{
-		return (bearing = GeoFn.bearing(
+		return (bearing = GeoFn.heading(
 			wp.getLocation(), this.getLocation()));
 	}
 
@@ -79,7 +79,7 @@ public class Waypoint implements Serializable {
 		return ete;
 	}
 
-	public Integer getBearing()
+	public Double getBearing()
 	{
 		return bearing;
 	}

@@ -20,10 +20,9 @@ package net.marcomerli.xpfp;
 
 // TODO: writing the README
 // TODO: logging into file
-// TODO: importing FMS files
 // TODO: information tab in about
-// TODO: improving home page
-// TODO: exporting in GPX, KML and GML file format
+// TODO: home page
+// TODO: handling GPX, KML and GML file format
 // TODO: flight plan elevation profile graph
 
 import javax.swing.SwingUtilities;

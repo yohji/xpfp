@@ -38,6 +38,8 @@ import net.marcomerli.xpfp.core.data.Settings;
 import net.marcomerli.xpfp.model.Location;
 
 /**
+ * <a href="http://www.movable-type.co.uk/scripts/latlong.html">Reference</a>
+ * 
  * @author Marco Merli
  * @since 1.0
  */
@@ -75,19 +77,24 @@ public class GeoFn {
 		return dist * 1000;
 	}
 
-	public static int bearing(Location from, Location to)
+	public static double heading(Location from, Location to)
 	{
-		// FIXME: resolve for good the bearing problem
-		return (int) (_bearing(from, to) + declination(from));
+		return bearing(from, to) + declination(from);
 	}
 
-	private static double _bearing(Location from, Location to)
+	public static double bearing(Location from, Location to)
 	{
-		double y = Math.sin(to.lng - from.lng) * Math.cos(to.lat);
-		double x = Math.cos(from.lat) * Math.sin(to.lat) -
-			Math.sin(from.lat) * Math.cos(to.lat) * Math.cos(to.lng - from.lng);
+		double φ1 = Math.toRadians(from.lat);
+		double φ2 = Math.toRadians(to.lat);
+		double λ1 = from.lng;
+		double λ2 = to.lng;
 
-		return ((Math.round(Math.toDegrees(Math.atan2(y, x)) + 360) % 360));
+		double Δλ = Math.toRadians(λ2 - λ1);
+		double y = Math.sin(Δλ) * Math.cos(φ2);
+		double x = Math.cos(φ1) * Math.sin(φ2)
+			- Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+
+		return (Math.toDegrees(Math.atan2(y, x)) + 360) % 360;
 	}
 
 	public static double declination(Location loc)

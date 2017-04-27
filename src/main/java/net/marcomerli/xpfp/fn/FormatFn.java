@@ -26,21 +26,28 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
  */
 public class FormatFn {
 
-	public static String distance(double distance)
+	public static String distance(Double distance)
 	{
-		double d = UnitFn.mToNn(distance);
-		return (d > 0 ? NumberFn.format(d, 2) + " nm" : "-");
+		if (distance == null || distance.longValue() == 0)
+			return "-";
+
+		return NumberFn.format(UnitFn.mToNn(distance), 2) + " nm";
 	}
 
-	public static String time(long time)
+	public static String time(Long time)
 	{
-		return (time != 0 ? DurationFormatUtils
-			.formatDuration(time, "HH:mm:ss") : "-");
+		if (time == null || time.longValue() == 0)
+			return "-";
+
+		return DurationFormatUtils.formatDuration(time, "HH:mm:ss");
 	}
 
-	public static String degree(Integer bearing)
+	public static String degree(Double bearing)
 	{
-		return (bearing != null ? bearing + "°" : "-");
+		if (bearing == null)
+			return "-";
+
+		return String.format("%d°", Math.round(bearing));
 	}
 
 	private FormatFn() {}

@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.lang.reflect.Constructor;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -33,7 +34,9 @@ import org.apache.log4j.Logger;
 
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
+import net.marcomerli.xpfp.file.read.FMSReader;
 import net.marcomerli.xpfp.file.read.FPLReader;
+import net.marcomerli.xpfp.file.read.Reader;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.model.FlightPlan;
 
@@ -69,7 +72,13 @@ public class MenuBar extends JMenuBar {
 		JMenuItem menuItem = new JMenuItem("Import Garmin FPL", KeyEvent.VK_G);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
 			KeyEvent.VK_G, ActionEvent.CTRL_MASK));
-		menuItem.addActionListener(new OnImportFPL(menuItem));
+		menuItem.addActionListener(new OnImportFPL(menuItem, FPLReader.class));
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem("Import X-Plnae FMS", KeyEvent.VK_F);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(
+			KeyEvent.VK_F, ActionEvent.CTRL_MASK));
+		menuItem.addActionListener(new OnImportFPL(menuItem, FMSReader.class));
 		menu.add(menuItem);
 
 		menu.addSeparator();
@@ -105,10 +114,12 @@ public class MenuBar extends JMenuBar {
 	private class OnImportFPL implements ActionListener {
 
 		private JMenuItem menuItem;
+		private Class<? extends Reader> readerClass;
 
-		public OnImportFPL(JMenuItem menuItem) {
+		public OnImportFPL(JMenuItem menuItem, Class<? extends Reader> reader) {
 
 			this.menuItem = menuItem;
+			this.readerClass = reader;
 		}
 
 		@Override
@@ -124,8 +135,9 @@ public class MenuBar extends JMenuBar {
 				preferences.save();
 
 				try {
-					FPLReader fplReader = new FPLReader(fpl);
-					FlightPlan flightPlan = fplReader.read();
+					Constructor<? extends Reader> constr = readerClass.getConstructor(File.class);
+					Reader reader = constr.newInstance(fpl);
+					FlightPlan flightPlan = reader.read();
 
 					Context.setFlightPlan(flightPlan);
 					win.setContentPane(new MainContent(win));

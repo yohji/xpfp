@@ -48,9 +48,6 @@ public class FPLReader extends Reader {
 	@Override
 	public FlightPlan read() throws Exception
 	{
-		Validate.isTrue(file.getName().endsWith(".fpl") || file.getName().endsWith(".FPL"),
-			"Invalid FPL file format.");
-
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(file);
@@ -104,5 +101,11 @@ public class FPLReader extends Reader {
 		}
 
 		return flightPlan;
+	}
+
+	@Override
+	public String extension()
+	{
+		return ".fpl";
 	}
 }

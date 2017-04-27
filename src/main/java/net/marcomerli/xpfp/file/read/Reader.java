@@ -20,6 +20,8 @@ package net.marcomerli.xpfp.file.read;
 
 import java.io.File;
 
+import org.apache.commons.lang3.Validate;
+
 import net.marcomerli.xpfp.model.FlightPlan;
 
 /**
@@ -32,8 +34,14 @@ public abstract class Reader {
 
 	public Reader(File file) {
 
+		String f = file.getName();
+		Validate.isTrue(f.length() >= 4 && f.substring(f.length() - 4, f.length()).equalsIgnoreCase(extension()),
+			"Invalid FPL file format.");
+
 		this.file = file;
 	}
 
 	public abstract FlightPlan read() throws Exception;
+
+	public abstract String extension();
 }
