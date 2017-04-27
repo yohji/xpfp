@@ -34,8 +34,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -169,10 +171,12 @@ public class MainContent extends JPanel {
 	private class FlightPlaneProcessor extends JPanel {
 
 		private static final long serialVersionUID = - 7914800898847981824L;
+
 		private NumberInput fl;
 		private NumberInput cs;
 		private NumberInput vs;
 		private JButton export;
+		private JTextField fn;
 
 		public FlightPlaneProcessor() {
 
@@ -191,6 +195,8 @@ public class MainContent extends JPanel {
 			cs.setText(prefs.getProperty(Preferences.FP_CRUISING_SPEED));
 			vs = new NumberInput(4);
 			vs.setText(prefs.getProperty(Preferences.FP_VERTICAL_SPEED));
+			fn = new JTextField();
+			fn.setText(Context.getFlightPlan().getFilename());
 
 			JButton calc = new JButton("Calculate");
 			calc.addActionListener(new OnCalculate());
@@ -199,10 +205,13 @@ public class MainContent extends JPanel {
 			export.setEnabled(false);
 			export.addActionListener(new OnExport());
 
-			layout.row().grid().add(new JLabel("Flight level (FL)")).add(fl)
-				.add(new JLabel("Cruising Speed (kn)")).add(cs)
-				.add(new JLabel("Vertical Speed (ft/s)")).add(vs)
-				.add(calc).add(export);
+			layout.row().grid().add(new JLabel("Flight level (FL)", SwingConstants.RIGHT)).add(fl)
+				.add(new JLabel("Cruising Speed (kn)", SwingConstants.RIGHT)).add(cs)
+				.add(new JLabel("Vertical Speed (ft/s)", SwingConstants.RIGHT)).add(vs)
+				.add(calc);
+			layout.row().grid().add(new JSeparator(), 7);
+			layout.row().grid().empty(3)
+				.add(new JLabel("Filename", SwingConstants.RIGHT)).add(fn, 2).add(export);
 		}
 
 		private class OnCalculate implements ActionListener {
@@ -240,12 +249,14 @@ public class MainContent extends JPanel {
 			{
 				try {
 					FlightPlan flightPlan = Context.getFlightPlan();
+					flightPlan.setFilename(fn.getText());
+
 					File fms = new File(Context.getSettings().getProperty(Settings.EXPORT_DIRECTORY, File.class),
 						flightPlan.getFilename());
 
 					if (fms.exists()) {
 						int select = GuiFn.selectPopup("FMS file already exists. Override it?", win);
-						if (select == JOptionPane.NO_OPTION)
+						if (select == JOptionPane.NO_OPTION || select == JOptionPane.CLOSED_OPTION)
 							return;
 					}
 
@@ -265,8 +276,6 @@ public class MainContent extends JPanel {
 		private static final long serialVersionUID = - 3400518930083189803L;
 
 		public NumberInput(int maxSize) {
-
-			super(maxSize);
 
 			addKeyListener(new KeyAdapter() {
 

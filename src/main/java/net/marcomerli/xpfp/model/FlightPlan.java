@@ -33,12 +33,15 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	private static final long serialVersionUID = 1776920015546695648L;
 
 	private String name;
+	private String filename;
 	private Double distance = 0.0;
 	private Long ete = 0L;
 
 	public FlightPlan(String name) {
 
 		this.name = name;
+		filename = String.format("%s.fms",
+			name.replaceAll("\\W+", "_"));
 	}
 
 	public void calculate(double fl, double cs, double vs) throws Exception
@@ -50,6 +53,9 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		 * double secAlt = dAlt / vs;
 		 * double nmAlt = (cs * 0.6) * secAlt;
 		 */
+
+		distance = 0.0;
+		ete = 0L;
 
 		Iterator<Waypoint> iterator = iterator();
 		Waypoint prev = iterator.next();
@@ -92,15 +98,19 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		return wp;
 	}
 
-	public String getFilename()
-	{
-		return String.format("%s.fms",
-			name.replaceAll("\\W+", "_"));
-	}
-
 	public String getName()
 	{
 		return name;
+	}
+
+	public String getFilename()
+	{
+		return filename;
+	}
+
+	public void setFilename(String filename)
+	{
+		this.filename = filename;
 	}
 
 	public void setDistance(Double distance)

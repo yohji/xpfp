@@ -34,7 +34,8 @@ public class FormatFn {
 
 	public static String time(long time)
 	{
-		return (time != 0 ? DurationFormatUtils.formatDurationHMS(time) : "-");
+		return (time != 0 ? DurationFormatUtils
+			.formatDuration(time, "HH:mm:ss") : "-");
 	}
 
 	public static String degree(Integer bearing)
