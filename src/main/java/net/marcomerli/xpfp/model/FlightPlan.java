@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import net.marcomerli.xpfp.error.NoSuchWaypointException;
+import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.fn.GeoFn;
 
 /**
@@ -40,8 +41,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	public FlightPlan(String name) {
 
 		this.name = name;
-		filename = String.format("%s.fms",
-			name.replaceAll("\\W+", "_"));
+		filename = name.replaceAll("\\W+", "_");
 	}
 
 	public void calculate(double fl, double cs) throws Exception
@@ -96,6 +96,11 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			throw new NoSuchWaypointException("Destination not specified.");
 
 		return wp;
+	}
+
+	public String getFullFilename(FileType type)
+	{
+		return filename + "." + type.extension();
 	}
 
 	public String getName()

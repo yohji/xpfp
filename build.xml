@@ -9,7 +9,7 @@
 	<property name="project" value="${ant.project.name}" />
 	<property name="root" value="target/${project}" />
 	<property name="artefact" value="${project}-${version}" />
-	<property name="package" value="${root}.zip" />
+	<property name="package" value="target/${artefact}.zip" />
 
 	<condition property="is-unix">
 		<os family="unix" />

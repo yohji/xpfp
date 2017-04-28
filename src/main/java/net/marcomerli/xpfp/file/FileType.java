@@ -16,31 +16,22 @@
  *   along with XPFP.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.marcomerli.xpfp.file.read;
-
-import java.io.File;
-
-import org.apache.commons.lang3.Validate;
-
-import net.marcomerli.xpfp.file.FileType;
-import net.marcomerli.xpfp.model.FlightPlan;
+package net.marcomerli.xpfp.file;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public abstract class Reader {
+public enum FileType {
 
-	protected File file;
+	FMS, // X-Plane
+	FPL, // Garmin
+	GPX, // GPS eXchange
+	KML, // Google
+	GML; // Geography Markup Language
 
-	public Reader(File file, FileType type) {
-
-		String f = file.getName();
-		Validate.isTrue(f.length() >= 4 && f.substring(f.length() - 3, f.length()).equalsIgnoreCase(type.extension()),
-			"Invalid FPL file format.");
-
-		this.file = file;
+	public String extension()
+	{
+		return name().toLowerCase();
 	}
-
-	public abstract FlightPlan read() throws Exception;
 }

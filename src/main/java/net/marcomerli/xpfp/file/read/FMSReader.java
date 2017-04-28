@@ -25,6 +25,7 @@ import java.io.FileReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
+import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.fn.NumberFn;
 import net.marcomerli.xpfp.fn.UnitFn;
 import net.marcomerli.xpfp.model.FlightPlan;
@@ -42,7 +43,7 @@ public class FMSReader extends Reader {
 
 	public FMSReader(File file) {
 
-		super(file);
+		super(file, FileType.FMS);
 	}
 
 	@Override
@@ -100,11 +101,5 @@ public class FMSReader extends Reader {
 		}
 
 		return flightPlan;
-	}
-
-	@Override
-	public String extension()
-	{
-		return ".fms";
 	}
 }

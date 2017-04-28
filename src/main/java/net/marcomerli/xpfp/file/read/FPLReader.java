@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.model.FlightPlan;
 import net.marcomerli.xpfp.model.Location;
 import net.marcomerli.xpfp.model.Waypoint;
@@ -42,7 +43,7 @@ public class FPLReader extends Reader {
 
 	public FPLReader(File file) {
 
-		super(file);
+		super(file, FileType.FPL);
 	}
 
 	@Override
@@ -101,11 +102,5 @@ public class FPLReader extends Reader {
 		}
 
 		return flightPlan;
-	}
-
-	@Override
-	public String extension()
-	{
-		return ".fpl";
 	}
 }

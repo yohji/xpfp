@@ -21,40 +21,36 @@ package net.marcomerli.xpfp.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 import net.java.dev.designgridlayout.DesignGridLayout;
 import net.java.dev.designgridlayout.Tag;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.core.data.Settings;
+import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.file.write.FMSWriter;
 import net.marcomerli.xpfp.fn.FormatFn;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.fn.UnitFn;
-import net.marcomerli.xpfp.gui.Window.EditMenuMouseListener;
 import net.marcomerli.xpfp.model.FlightPlan;
 import net.marcomerli.xpfp.model.Location;
 import net.marcomerli.xpfp.model.Waypoint;
@@ -63,10 +59,9 @@ import net.marcomerli.xpfp.model.Waypoint;
  * @author Marco Merli
  * @since 1.0
  */
-public class MainContent extends JPanel {
+public class MainContent extends Panel {
 
 	private static final long serialVersionUID = - 8732614615105930839L;
-	private static final Logger logger = Logger.getLogger(MainContent.class);
 
 	private MainWindow win;
 	private FlightPlaneData data;
@@ -177,8 +172,8 @@ public class MainContent extends JPanel {
 
 		private NumberInput fl;
 		private NumberInput cs;
+		private TextInput fn;
 		private JButton export;
-		private JTextField fn;
 
 		public FlightPlaneProcessor() {
 
@@ -195,16 +190,16 @@ public class MainContent extends JPanel {
 			fl.setText(prefs.getProperty(Preferences.FP_FLIGHT_LEVEL));
 			cs = new NumberInput(3);
 			cs.setText(prefs.getProperty(Preferences.FP_CRUISING_SPEED));
-			fn = new JTextField();
-			fn.addMouseListener(new EditMenuMouseListener(fn));
-			fn.setText(Context.getFlightPlan().getFilename());
 
 			JButton calc = new JButton("Calculate");
-			calc.addActionListener(new OnCalculate());
+			calc.addActionListener(new OnCalculate(fl, cs));
+
+			fn = new TextInput();
+			fn.setText(Context.getFlightPlan().getFilename());
 
 			export = new JButton("Export");
 			export.setEnabled(false);
-			export.addActionListener(new OnExport());
+			export.addActionListener(new OnExport(fn));
 
 			layout.row().grid().add(new JLabel("Flight level (FL)", SwingConstants.RIGHT)).add(fl)
 				.add(new JLabel("Cruising Speed (kn)", SwingConstants.RIGHT)).add(cs)
@@ -214,14 +209,17 @@ public class MainContent extends JPanel {
 				.add(new JLabel("Filename", SwingConstants.RIGHT)).add(fn, 2).add(export);
 		}
 
-		private class OnCalculate implements ActionListener {
+		private class OnCalculate extends FormValidator {
+
+			public OnCalculate(JComponent... fields) {
+
+				super(fields);
+			}
 
 			@Override
-			public void actionPerformed(ActionEvent e)
+			public void perform(ActionEvent e)
 			{
 				try {
-					// FIXME: validate field first
-					
 					FlightPlan flightPlan = Context.getFlightPlan();
 					flightPlan.calculate(
 						UnitFn.ftToM(Integer.valueOf(fl.getText()) * 100),
@@ -242,17 +240,22 @@ public class MainContent extends JPanel {
 			}
 		}
 
-		private class OnExport implements ActionListener {
+		private class OnExport extends FormValidator {
+
+			public OnExport(JComponent... fields) {
+
+				super(fields);
+			}
 
 			@Override
-			public void actionPerformed(ActionEvent e)
+			public void perform(ActionEvent e)
 			{
 				try {
 					FlightPlan flightPlan = Context.getFlightPlan();
 					flightPlan.setFilename(fn.getText());
 
 					File fms = new File(Context.getSettings().getProperty(Settings.EXPORT_DIRECTORY, File.class),
-						flightPlan.getFilename());
+						flightPlan.getFullFilename(FileType.FMS));
 
 					if (fms.exists()) {
 						int select = GuiFn.selectPopup("FMS file already exists. Override it?", win);
@@ -268,51 +271,6 @@ public class MainContent extends JPanel {
 					GuiFn.errorPopup(ee, win);
 				}
 			}
-		}
-	}
-
-	private class NumberInput extends JTextField {
-
-		private static final long serialVersionUID = - 3400518930083189803L;
-
-		public NumberInput(final int maxSize) {
-
-			addMouseListener(new EditMenuMouseListener(this));
-			addKeyListener(new KeyAdapter() {
-
-				@Override
-				public void keyReleased(KeyEvent e)
-				{
-					String text = NumberInput.this.getText();
-					char key = e.getKeyChar();
-					System.out.println((int) key);
-
-					if (text.isEmpty() || key <= 31 || key == 127 || key == 65535)
-						return;
-
-					if ((key < 48 || key > 57) || text.length() > maxSize)
-						setText(text.substring(0, text.length() - 1));
-				}
-			});
-		}
-	}
-
-	private class ValueLabel extends JLabel {
-
-		private static final long serialVersionUID = - 8172651693355521184L;
-
-		private String label;
-
-		public ValueLabel(String label, Object value) {
-
-			this.label = label;
-			setValue(value);
-		}
-
-		public void setValue(Object value)
-		{
-			setText(String.format("%s: %s",
-				label, value));
 		}
 	}
 

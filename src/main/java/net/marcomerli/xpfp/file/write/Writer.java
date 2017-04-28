@@ -16,31 +16,24 @@
  *   along with XPFP.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.marcomerli.xpfp.file.read;
+package net.marcomerli.xpfp.file.write;
 
 import java.io.File;
 
-import org.apache.commons.lang3.Validate;
-
-import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.model.FlightPlan;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public abstract class Reader {
+public abstract class Writer {
 
 	protected File file;
 
-	public Reader(File file, FileType type) {
-
-		String f = file.getName();
-		Validate.isTrue(f.length() >= 4 && f.substring(f.length() - 3, f.length()).equalsIgnoreCase(type.extension()),
-			"Invalid FPL file format.");
+	public Writer(File file) {
 
 		this.file = file;
 	}
 
-	public abstract FlightPlan read() throws Exception;
+	public abstract void write(FlightPlan flightPlan) throws Exception;
 }

@@ -31,17 +31,16 @@ import net.marcomerli.xpfp.model.Waypoint;
  * @author Marco Merli
  * @since 1.0
  */
-public class FMSWriter {
+public class FMSWriter extends Writer {
 
 	private static final String HEADER = String.format("I%n3 version%n1%n");
 
-	private File file;
-
 	public FMSWriter(File file) {
 
-		this.file = file;
+		super(file);
 	}
 
+	@Override
 	public void write(FlightPlan flightPlan) throws Exception
 	{
 		try (FileWriter writer = new FileWriter(file)) {

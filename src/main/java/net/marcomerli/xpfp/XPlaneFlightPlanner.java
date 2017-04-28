@@ -18,8 +18,8 @@
 
 package net.marcomerli.xpfp;
 
-// TODO: writing the README
-// TODO: logging into file
+// FIXME: error handling and issue notify 
+// FIXME: writing the README
 // TODO: graphics in home and about
 // TODO: elevation profile under the flight plan
 // TODO: handling GPX, KML and GML file format
