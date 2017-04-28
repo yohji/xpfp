@@ -30,10 +30,13 @@ public class Preferences extends Data {
 
 	private static final long serialVersionUID = 511605731858765879L;
 
-	public static final String IMPORT_DIRECTORY = "import.directory";
-	public static final String FP_FLIGHT_LEVEL = "fp.flight.level";
-	public static final String FP_CRUISING_SPEED = "fp.cruising.speed";
-	public static final String FP_VERTICAL_SPEED = "fp.vertical.speed";
+	public static final String IMPORT_DIRECTORY = "directory.import.last";
+	public static final String FP_FLIGHT_LEVEL = "flightlevel.fl";
+	public static final String FP_CRUISING_SPEED = "flightlevel.cs";
+	public static final String FP_ASC_RATE_oF_CLIMB = "flightlevel.asc.roc";
+	public static final String FP_ASC_SPEED = "flightlevel.asc.speed";
+	public static final String FP_DESC_RATE_oF_CLIMB = "flightlevel.desc.roc";
+	public static final String FP_DESC_SPEED = "flightlevel.desc.speed";
 
 	@Override
 	protected File file()
@@ -46,6 +49,6 @@ public class Preferences extends Data {
 	{}
 
 	@Override
-	protected void upgrade()
+	protected void upgrade(String oldVersion)
 	{}
 }

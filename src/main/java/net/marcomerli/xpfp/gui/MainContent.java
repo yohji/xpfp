@@ -85,12 +85,13 @@ public class MainContent extends JPanel {
 		private static final long serialVersionUID = - 2408834160839600983L;
 
 		private final String[] columnNames = new String[] {
-			"-", "Bearing", "Identifier", "Type", "Country", "Latitude",
-			"Longitude", "Elevation", "Distance", "ETE"
+			"-", "Identifier", "Type", "Country", "Latitude",
+			"Longitude", "Elevation", "Bearing", "Heading",
+			"Distance", "ETE"
 		};
 
 		private final int[] columnWidths = new int[] {
-			25, 50, 65, 40, 50, 110, 110, 80, 70, 70
+			25, 60, 40, 50, 115, 115, 70, 55, 55, 80, 60
 		};
 
 		private JTable table;
@@ -136,7 +137,6 @@ public class MainContent extends JPanel {
 				int iCol = 0;
 
 				data[iRow][iCol++] = String.valueOf(iRow + 1);
-				data[iRow][iCol++] = FormatFn.degree(wp.getBearing());
 				data[iRow][iCol++] = wp.getIdentifier();
 				data[iRow][iCol++] = wp.getType().name();
 				data[iRow][iCol++] = StringUtils.defaultString(wp.getCountry(), "-");
@@ -146,6 +146,8 @@ public class MainContent extends JPanel {
 				data[iRow][iCol++] = loc.getLongitude();
 				data[iRow][iCol++] = loc.getAltitude();
 
+				data[iRow][iCol++] = FormatFn.degree(wp.getBearing());
+				data[iRow][iCol++] = FormatFn.degree(wp.getHeading());
 				data[iRow][iCol++] = FormatFn.distance(wp.getDistance());
 				data[iRow][iCol++] = FormatFn.time(wp.getEte());
 			}
@@ -175,7 +177,6 @@ public class MainContent extends JPanel {
 
 		private NumberInput fl;
 		private NumberInput cs;
-		private NumberInput vs;
 		private JButton export;
 		private JTextField fn;
 
@@ -194,8 +195,6 @@ public class MainContent extends JPanel {
 			fl.setText(prefs.getProperty(Preferences.FP_FLIGHT_LEVEL));
 			cs = new NumberInput(3);
 			cs.setText(prefs.getProperty(Preferences.FP_CRUISING_SPEED));
-			vs = new NumberInput(4);
-			vs.setText(prefs.getProperty(Preferences.FP_VERTICAL_SPEED));
 			fn = new JTextField();
 			fn.addMouseListener(new EditMenuMouseListener(fn));
 			fn.setText(Context.getFlightPlan().getFilename());
@@ -209,29 +208,28 @@ public class MainContent extends JPanel {
 
 			layout.row().grid().add(new JLabel("Flight level (FL)", SwingConstants.RIGHT)).add(fl)
 				.add(new JLabel("Cruising Speed (kn)", SwingConstants.RIGHT)).add(cs)
-				.add(new JLabel("Vertical Speed (ft/s)", SwingConstants.RIGHT)).add(vs)
-				.add(calc);
-			layout.row().grid().add(new JSeparator(), 7);
-			layout.row().grid().empty(3)
+				.empty(1).add(calc);
+			layout.row().grid().add(new JSeparator(), 6);
+			layout.row().grid().empty(2)
 				.add(new JLabel("Filename", SwingConstants.RIGHT)).add(fn, 2).add(export);
 		}
 
 		private class OnCalculate implements ActionListener {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0)
+			public void actionPerformed(ActionEvent e)
 			{
 				try {
+					// FIXME: validate field first
+					
 					FlightPlan flightPlan = Context.getFlightPlan();
 					flightPlan.calculate(
 						UnitFn.ftToM(Integer.valueOf(fl.getText()) * 100),
-						UnitFn.knToMs(Integer.valueOf(cs.getText())),
-						UnitFn.ftToM(Integer.valueOf(vs.getText())));
+						UnitFn.knToMs(Integer.valueOf(cs.getText())));
 
 					Preferences prefs = Context.getPreferences();
 					prefs.setProperty(Preferences.FP_FLIGHT_LEVEL, fl.getText());
 					prefs.setProperty(Preferences.FP_CRUISING_SPEED, cs.getText());
-					prefs.setProperty(Preferences.FP_VERTICAL_SPEED, vs.getText());
 					prefs.save();
 
 					data.refresh();

@@ -30,8 +30,8 @@ public class Settings extends Data {
 
 	private static final long serialVersionUID = 511605731858765879L;
 
-	public static final String EXPORT_DIRECTORY = "export.directory";
-	public static final String GEOAPI_KEY = "geoapi.key";
+	public static final String EXPORT_DIRECTORY = "directory.export";
+	public static final String GEOAPI_KEY = "geoapi.google.key";
 	public static final String PROXY_ACTIVE = "proxy.active";
 	public static final String PROXY_HOSTNAME = "proxy.hostname";
 	public static final String PROXY_PORT = "proxy.port";
@@ -56,6 +56,6 @@ public class Settings extends Data {
 	}
 
 	@Override
-	protected void upgrade()
+	protected void upgrade(String oldVersion)
 	{}
 }

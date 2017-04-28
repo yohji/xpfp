@@ -44,7 +44,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			name.replaceAll("\\W+", "_"));
 	}
 
-	public void calculate(double fl, double cs, double vs) throws Exception
+	public void calculate(double fl, double cs) throws Exception
 	{
 		/*
 		 * TODO: implement vertical calculation
@@ -66,7 +66,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			Waypoint wp = iterator.next();
 
 			Double dist = wp.setDistance(prev);
-			wp.setBearing(prev);
+			wp.setCourse(prev);
 			ete += wp.setEte((long) ((double) dist / cs) * 1000);
 
 			loc = wp.getLocation();

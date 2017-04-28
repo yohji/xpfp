@@ -48,8 +48,10 @@ public abstract class Data extends Properties {
 		else {
 			try {
 				load(new FileReader(file()));
-				if (! Version.get().equals(getProperty(VERSION)))
-					upgrade();
+
+				String v = getProperty(VERSION);
+				if (! Version.get().equals(v))
+					upgrade(v);
 			}
 			catch (Exception e) {
 				throw new RuntimeException(e);
@@ -94,5 +96,5 @@ public abstract class Data extends Properties {
 
 	protected abstract void init();
 
-	protected abstract void upgrade();
+	protected abstract void upgrade(String oldVersion);
 }

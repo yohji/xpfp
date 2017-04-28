@@ -19,6 +19,9 @@
 package net.marcomerli.xpfp;
 
 import java.io.File;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -44,9 +47,27 @@ public abstract class UnitTestSupport extends Assert {
 	// Support
 	//
 
-	protected final Result run(Class<? extends UnitTestSupport> test)
+	protected static final Result run(Class<? extends UnitTestSupport> test)
 	{
 		return new JUnitCore().run(test);
+	}
+
+	protected static final Proxy proxy()
+	{
+		Proxy proxy = Proxy.NO_PROXY;
+
+		String proxyHost = System.getProperty("http.proxyHost");
+		String proxyPort = System.getProperty("http.proxyPort");
+		if (StringUtils.isEmpty(proxyHost)) {
+			proxyHost = System.getProperty("https.proxyHost");
+			proxyPort = System.getProperty("https.proxyPort");
+		}
+
+		if (StringUtils.isNotEmpty(proxyHost))
+			proxy = new Proxy(Type.HTTP, new InetSocketAddress(
+				proxyHost, Integer.valueOf(proxyPort)));
+
+		return proxy;
 	}
 
 	//

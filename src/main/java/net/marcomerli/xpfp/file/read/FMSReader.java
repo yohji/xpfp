@@ -64,7 +64,7 @@ public class FMSReader extends Reader {
 					Validate.isTrue(line.equals("3 version"), "Invalid FMS file format.");
 				break;
 				case 3:
-					Validate.isTrue(line.equals("1"), "Invalid FMS file format.");
+					Validate.isTrue(line.matches("0|1"), "Invalid FMS file format.");
 				break;
 				case 4:
 					Validate.isTrue(NumberFn.isNumeric(line), "Invalid FMS file format.");
@@ -79,7 +79,11 @@ public class FMSReader extends Reader {
 
 					Waypoint waypoint = new Waypoint();
 					waypoint.setType(WaypointType.get(Integer.valueOf(parts[0])));
-					waypoint.setIdentifier(parts[1]);
+
+					if (! waypoint.getType().equals(WaypointType.POS))
+						waypoint.setIdentifier(parts[1]);
+					else
+						waypoint.setIdentifier("-");
 
 					Double lat = Double.valueOf(parts[3]);
 					Double lng = Double.valueOf(parts[4]);

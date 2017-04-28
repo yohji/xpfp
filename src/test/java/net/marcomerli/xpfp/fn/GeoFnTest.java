@@ -1,9 +1,5 @@
 package net.marcomerli.xpfp.fn;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.Proxy.Type;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -16,8 +12,7 @@ public class GeoFnTest extends UnitTestSupport {
 	public static void before() throws Exception
 	{
 		GeoFn.context.setApiKey("AIzaSyC96Ww5A-wNmGFLfVpbr61eLr_JZv9cjuQ");
-		GeoFn.context.setProxy(new Proxy(Type.HTTP, new InetSocketAddress(
-			"127.0.0.1", 3128)));
+		GeoFn.context.setProxy(proxy());
 	}
 
 	@Test

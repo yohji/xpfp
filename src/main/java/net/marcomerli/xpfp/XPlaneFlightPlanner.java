@@ -20,11 +20,9 @@ package net.marcomerli.xpfp;
 
 // TODO: writing the README
 // TODO: logging into file
-// TODO: information tab in about
-// TODO: home page
+// TODO: graphics in home and about
 // TODO: elevation profile under the flight plan
 // TODO: handling GPX, KML and GML file format
-// TODO: flight plan elevation profile graph
 
 import javax.swing.SwingUtilities;
 
