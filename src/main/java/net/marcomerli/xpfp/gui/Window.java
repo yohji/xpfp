@@ -1,19 +1,19 @@
 /**
- *  Copyright (c) 2017 Marco Merli <yohji@marcomerli.net>
+ *   Copyright (c) 2017 Marco Merli <yohji@marcomerli.net>
+ *   This file is part of XPFP.
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *   XPFP is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU Lesser General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *   XPFP is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software Foundation,
- *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *   You should have received a copy of the GNU Lesser General Public License
+ *   along with XPFP.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package net.marcomerli.xpfp.gui;
@@ -61,7 +61,6 @@ public abstract class Window extends JFrame {
 	 */
 	protected static class EditMenuMouseListener extends MouseAdapter {
 
-		private JTextComponent textComponent;
 		private JPopupMenu popup = new JPopupMenu();
 
 		private Action cutAction;
@@ -70,9 +69,7 @@ public abstract class Window extends JFrame {
 		private Action selectAllAction;
 
 		@SuppressWarnings("serial")
-		public EditMenuMouseListener(JTextComponent textComponent) {
-
-			this.textComponent = textComponent;
+		public EditMenuMouseListener(final JTextComponent textComponent) {
 
 			cutAction = new AbstractAction("Cut") {
 
@@ -128,7 +125,7 @@ public abstract class Window extends JFrame {
 					return;
 				}
 
-				textComponent = (JTextComponent) e.getSource();
+				JTextComponent textComponent = (JTextComponent) e.getSource();
 				textComponent.requestFocus();
 
 				boolean enabled = textComponent.isEnabled();
