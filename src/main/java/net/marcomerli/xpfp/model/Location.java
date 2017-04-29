@@ -54,6 +54,26 @@ public class Location extends LatLng implements Serializable {
 		this(lat, lng, 0);
 	}
 
+	public boolean isNorth()
+	{
+		return lat >= 0;
+	}
+
+	public boolean isSouth()
+	{
+		return lat < 0;
+	}
+
+	public boolean isEast()
+	{
+		return lng >= 0;
+	}
+
+	public boolean isWest()
+	{
+		return lng < 0;
+	}
+
 	public String getLatitude()
 	{
 		return latitude.toString();

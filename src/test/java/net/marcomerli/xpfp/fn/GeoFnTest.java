@@ -69,5 +69,10 @@ public class GeoFnTest extends UnitTestSupport {
 
 		assertNumberNotZero(decl);
 		assertNumberBetween(decl, 2, 3);
+
+		assertNumberBetween(GeoFn.declination(new Location(30, - 30)), - 12, - 8);
+		assertNumberBetween(GeoFn.declination(new Location(25, 0)), - 2, 2);
+		assertNumberBetween(GeoFn.declination(new Location(55, - 135)), 15, 25);
+		assertNumberBetween(GeoFn.declination(new Location(- 65, - 170)), 50, 70);
 	}
 }

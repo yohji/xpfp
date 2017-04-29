@@ -50,7 +50,9 @@ public class Waypoint implements Serializable {
 	public void setCourse(Waypoint wp)
 	{
 		bearing = GeoFn.bearing(wp.getLocation(), this.getLocation());
-		heading = bearing + GeoFn.declination(wp.getLocation());
+		heading = bearing - GeoFn.declination(wp.getLocation());
+		if (heading < 0)
+			heading = (heading + 360) % 360;
 	}
 
 	public Long setEte(Long ete)
