@@ -70,6 +70,11 @@ public class Waypoint implements Serializable {
 		return identifier;
 	}
 
+	public void setIdentifier(String identifier)
+	{
+		this.identifier = identifier.toUpperCase();
+	}
+
 	public Double getDistance()
 	{
 		return distance;
@@ -93,11 +98,6 @@ public class Waypoint implements Serializable {
 	public String getIdentifier()
 	{
 		return identifier;
-	}
-
-	public void setIdentifier(String identifier)
-	{
-		this.identifier = identifier;
 	}
 
 	public WaypointType getType()

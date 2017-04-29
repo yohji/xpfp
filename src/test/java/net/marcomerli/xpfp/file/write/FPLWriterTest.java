@@ -1,7 +1,5 @@
 package net.marcomerli.xpfp.file.write;
 
-import java.io.File;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,13 +19,18 @@ public class FPLWriterTest extends UnitTestSupport {
 	public void write() throws Exception
 	{
 		FlightPlan fp = FPLReaderTest.getFlightPlan();
-		File file = new File(tempDir(), fp.getFilename());
+		FMSWriter writer = new FMSWriter(tempDir(), fp.getFilename());
+
+		assertFalse(writer.exists());
 
 		try {
-			new FMSWriter(file).write(fp);
+			writer.write(fp);
 		}
 		catch (Exception e) {
 			failWhenExceptionNotExpected(e);
+		}
+		finally {
+			writer.delete();
 		}
 	}
 }

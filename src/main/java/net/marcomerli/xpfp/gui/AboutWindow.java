@@ -26,6 +26,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -45,6 +46,14 @@ import net.marcomerli.xpfp.Version;
 public class AboutWindow extends Window {
 
 	private static final long serialVersionUID = 5454273820569518074L;
+
+	public static URL GITHUB_URL = null;
+	static {
+		try {
+			GITHUB_URL = new URL("https://github.com/yohji/xpfp/");
+		}
+		catch (Exception e) {}
+	}
 
 	public AboutWindow() {
 
@@ -84,6 +93,8 @@ public class AboutWindow extends Window {
 		pane.add(new JLabel("Copyright (c) 2017"));
 		pane.add(new JLabel("Marco Merli <yohji@marcomerli.net>"));
 		pane.add(new JLabel("All rights reserved."));
+		pane.add(Box.createRigidArea(new Dimension(0, 20)));
+		pane.add(new Panel.LinkLabel("Follow me on GitHub", GITHUB_URL));
 		pane.add(Box.createGlue());
 
 		return pane;

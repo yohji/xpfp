@@ -19,6 +19,8 @@
 package net.marcomerli.xpfp.fn;
 
 import java.awt.Component;
+import java.awt.Desktop;
+import java.net.URL;
 
 import javax.swing.JOptionPane;
 
@@ -48,6 +50,22 @@ public class GuiFn {
 	{
 		JOptionPane.showMessageDialog(component, ExceptionUtils.getRootCauseMessage(e),
 			MainWindow.TITLE_COMPACT + " :: Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	public static boolean isBrowserSupported()
+	{
+		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+		if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE))
+			return true;
+
+		return false;
+	}
+
+	public static void openBrowser(URL url) throws Exception
+	{
+		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+		if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE))
+			desktop.browse(url.toURI());
 	}
 
 	private GuiFn() {}

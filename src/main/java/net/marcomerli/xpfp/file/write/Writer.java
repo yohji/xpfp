@@ -20,6 +20,7 @@ package net.marcomerli.xpfp.file.write;
 
 import java.io.File;
 
+import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.model.FlightPlan;
 
 /**
@@ -30,10 +31,23 @@ public abstract class Writer {
 
 	protected File file;
 
-	public Writer(File file) {
+	public Writer(File dir, String filename) {
 
-		this.file = file;
+		file = new File(dir, String.format("%s.%s",
+			filename, type().extension()));
 	}
 
 	public abstract void write(FlightPlan flightPlan) throws Exception;
+
+	protected abstract FileType type();
+
+	public boolean exists()
+	{
+		return file.exists();
+	}
+
+	public boolean delete()
+	{
+		return file.delete();
+	}
 }

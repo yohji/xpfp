@@ -21,6 +21,7 @@ package net.marcomerli.xpfp.file.write;
 import java.io.File;
 import java.io.FileWriter;
 
+import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.fn.NumberFn;
 import net.marcomerli.xpfp.fn.UnitFn;
 import net.marcomerli.xpfp.model.FlightPlan;
@@ -35,9 +36,9 @@ public class FMSWriter extends Writer {
 
 	private static final String HEADER = String.format("I%n3 version%n1%n");
 
-	public FMSWriter(File file) {
+	public FMSWriter(File dir, String filename) {
 
-		super(file);
+		super(dir, filename);
 	}
 
 	@Override
@@ -58,5 +59,11 @@ public class FMSWriter extends Writer {
 					NumberFn.format(loc.lng, 6)));
 			}
 		}
+	}
+
+	@Override
+	protected FileType type()
+	{
+		return FileType.FMS;
 	}
 }

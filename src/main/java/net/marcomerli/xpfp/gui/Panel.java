@@ -19,13 +19,16 @@
 package net.marcomerli.xpfp.gui;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.InputVerifier;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,6 +37,7 @@ import javax.swing.JTextField;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.gui.Window.EditMenuMouseListener;
 
 /**
@@ -45,11 +49,11 @@ public abstract class Panel extends JPanel {
 	private static final long serialVersionUID = - 7280965664177289899L;
 	protected final Logger logger = Logger.getLogger(getClass());
 
-	protected abstract class FormValidator implements ActionListener {
+	protected static abstract class FormValidatorAction implements ActionListener {
 
 		private JComponent[] fields;
 
-		public FormValidator(JComponent... fields) {
+		public FormValidatorAction(JComponent... fields) {
 
 			this.fields = fields;
 		}
@@ -80,7 +84,7 @@ public abstract class Panel extends JPanel {
 		public abstract void perform(ActionEvent e);
 	}
 
-	protected class TextInput extends JTextField {
+	protected static class TextInput extends JTextField {
 
 		private static final long serialVersionUID = 3513321511037094181L;
 
@@ -101,7 +105,7 @@ public abstract class Panel extends JPanel {
 		}
 	}
 
-	protected class NumberInput extends TextInput {
+	protected static class NumberInput extends TextInput {
 
 		private static final long serialVersionUID = - 3400518930083189803L;
 
@@ -126,7 +130,42 @@ public abstract class Panel extends JPanel {
 		}
 	}
 
-	protected class ValueLabel extends JLabel {
+	protected static class LinkLabel extends JButton {
+
+		private static final long serialVersionUID = - 7546019315359390845L;
+
+		public LinkLabel(final String label, final URL url) {
+
+			super(label);
+
+			setBorder(BorderFactory.createEmptyBorder());
+			setBorderPainted(false);
+			setOpaque(false);
+			setBackground(Color.WHITE);
+
+			if (GuiFn.isBrowserSupported()) {
+
+				setForeground(Color.BLUE);
+				setCursor(new Cursor(Cursor.HAND_CURSOR));
+				setToolTipText(url.toString());
+				addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						try {
+							GuiFn.openBrowser(url);
+						}
+						catch (Exception ee) {
+							ee.printStackTrace();
+						}
+					}
+				});
+			}
+		}
+	}
+
+	protected static class ValueLabel extends JLabel {
 
 		private static final long serialVersionUID = - 8172651693355521184L;
 

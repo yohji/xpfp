@@ -46,7 +46,6 @@ import net.java.dev.designgridlayout.Tag;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.core.data.Settings;
-import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.file.write.FMSWriter;
 import net.marcomerli.xpfp.fn.FormatFn;
 import net.marcomerli.xpfp.fn.GuiFn;
@@ -209,7 +208,7 @@ public class MainContent extends Panel {
 				.add(new JLabel("Filename", SwingConstants.RIGHT)).add(fn, 2).add(export);
 		}
 
-		private class OnCalculate extends FormValidator {
+		private class OnCalculate extends FormValidatorAction {
 
 			public OnCalculate(JComponent... fields) {
 
@@ -240,7 +239,7 @@ public class MainContent extends Panel {
 			}
 		}
 
-		private class OnExport extends FormValidator {
+		private class OnExport extends FormValidatorAction {
 
 			public OnExport(JComponent... fields) {
 
@@ -254,16 +253,16 @@ public class MainContent extends Panel {
 					FlightPlan flightPlan = Context.getFlightPlan();
 					flightPlan.setFilename(fn.getText());
 
-					File fms = new File(Context.getSettings().getProperty(Settings.EXPORT_DIRECTORY, File.class),
-						flightPlan.getFullFilename(FileType.FMS));
+					FMSWriter writer = new FMSWriter(Context.getSettings()
+						.getProperty(Settings.EXPORT_DIRECTORY, File.class), flightPlan.getFilename());
 
-					if (fms.exists()) {
+					if (writer.exists()) {
 						int select = GuiFn.selectPopup("FMS file already exists. Override it?", win);
 						if (select == JOptionPane.NO_OPTION || select == JOptionPane.CLOSED_OPTION)
 							return;
 					}
 
-					new FMSWriter(fms).write(flightPlan);
+					writer.write(flightPlan);
 					GuiFn.infoPopup("Export completed", win);
 				}
 				catch (Exception ee) {
