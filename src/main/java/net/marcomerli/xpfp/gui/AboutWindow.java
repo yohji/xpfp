@@ -88,13 +88,14 @@ public class AboutWindow extends Window {
 		pane.add(new JLabel(TITLE_FULL));
 		pane.add(new JLabel("Version: " + Version.get()));
 		pane.add(Box.createRigidArea(new Dimension(0, 20)));
-		pane.add(new JLabel("ONLY FOR FLIGHT SIMULATION!"));
+		pane.add(new JLabel("IT IS ONLY FOR FLIGHT SIMULATION!"));
+		pane.add(new JLabel("DO NOT USE IT FOR REAL FLIGHT!"));
 		pane.add(Box.createRigidArea(new Dimension(0, 20)));
 		pane.add(new JLabel("Copyright (c) 2017"));
 		pane.add(new JLabel("Marco Merli <yohji@marcomerli.net>"));
 		pane.add(new JLabel("All rights reserved."));
 		pane.add(Box.createRigidArea(new Dimension(0, 20)));
-		pane.add(new Panel.LinkLabel("Follow me on GitHub", GITHUB_URL));
+		pane.add(new Panel.LinkLabel("Follow Me on GitHub", GITHUB_URL));
 		pane.add(Box.createGlue());
 
 		return pane;

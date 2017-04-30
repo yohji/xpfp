@@ -83,9 +83,9 @@ public class MenuBar extends JMenuBar {
 
 		menu.addSeparator();
 
-		menuItem = new JMenuItem("Settings", KeyEvent.VK_S);
+		menuItem = new JMenuItem("Settings", KeyEvent.VK_COMMA);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
-			KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+			KeyEvent.VK_COMMA, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new OnSettings());
 		menu.add(menuItem);
 

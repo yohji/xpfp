@@ -63,7 +63,7 @@ public abstract class Data extends Properties {
 	{
 		try {
 			setProperty(VERSION, Version.get());
-			store(new FileWriter(file()), "");
+			store(new FileWriter(file()), StringUtils.EMPTY);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
@@ -90,6 +90,11 @@ public abstract class Data extends Properties {
 	public boolean hasProperty(String key)
 	{
 		return StringUtils.isNotBlank(super.getProperty(key));
+	}
+
+	public void clearProperty(String key)
+	{
+		setProperty(key, StringUtils.EMPTY);
 	}
 
 	protected abstract File file();

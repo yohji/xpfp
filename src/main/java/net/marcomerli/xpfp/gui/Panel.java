@@ -152,7 +152,6 @@ public abstract class Panel extends JPanel {
 				{
 					String text = NumberInput.this.getText();
 					char key = e.getKeyChar();
-					System.out.println((int) key);
 
 					if (text.isEmpty() || key <= 31 || key == 127 || key == 65535)
 						return;

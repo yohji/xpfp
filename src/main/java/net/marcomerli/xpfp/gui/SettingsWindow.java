@@ -22,6 +22,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -64,6 +66,16 @@ public class SettingsWindow extends Window {
 
 		super(TITLE_COMPACT + " :: Settings");
 
+		addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				new OnSave().actionPerformed(null);
+				super.windowClosing(e);
+			}
+		});
+
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		fmsDirFileChooser = new JFileChooser();
 		fmsDirFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -90,7 +102,7 @@ public class SettingsWindow extends Window {
 		mainPane.add(Box.createGlue());
 
 		setContentPane(mainPane);
-		setSize(350, 450);
+		setSize(360, 460);
 
 		setResizable(false);
 		setLocationByPlatform(true);
@@ -101,7 +113,7 @@ public class SettingsWindow extends Window {
 	{
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createTitledBorder("FMS Directory"),
+			BorderFactory.createTitledBorder("Export Directory"),
 			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
 		DesignGridLayout layout = new DesignGridLayout(panel);
@@ -156,15 +168,15 @@ public class SettingsWindow extends Window {
 		proxyPortText = new JTextField();
 		proxyPortText.setText(settings.getProperty(Settings.PROXY_PORT));
 		layout.row().grid(new JLabel("Port", JLabel.TRAILING)).add(proxyPortText);
-		
+
 		proxyAuth = new JCheckBox();
 		proxyAuth.setSelected(settings.getProperty(Settings.PROXY_AUTH, Boolean.class));
 		layout.row().grid(new JLabel("Authentication", JLabel.TRAILING)).add(proxyAuth);
-		
+
 		proxyAuthUsername = new JTextField();
 		proxyAuthUsername.setText(settings.getProperty(Settings.PROXY_AUTH_USERNAME));
 		layout.row().grid(new JLabel("Username", JLabel.TRAILING)).add(proxyAuthUsername);
-		
+
 		proxyAuthPassword = new JTextField();
 		proxyAuthPassword.setText(settings.getProperty(Settings.PROXY_AUTH_PASSWORD));
 		layout.row().grid(new JLabel("Password", JLabel.TRAILING)).add(proxyAuthPassword);
