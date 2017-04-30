@@ -69,13 +69,13 @@ public class MenuBar extends JMenuBar {
 		menu.setMnemonic(KeyEvent.VK_F);
 		add(menu);
 
-		JMenuItem menuItem = new JMenuItem("Import Garmin FPL", KeyEvent.VK_G);
+		JMenuItem menuItem = new JMenuItem("Import FPL file", KeyEvent.VK_G);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
 			KeyEvent.VK_G, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new OnImportFPL(menuItem, FPLReader.class));
 		menu.add(menuItem);
 
-		menuItem = new JMenuItem("Import X-Plnae FMS", KeyEvent.VK_F);
+		menuItem = new JMenuItem("Import FMS file", KeyEvent.VK_F);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
 			KeyEvent.VK_F, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new OnImportFPL(menuItem, FMSReader.class));
@@ -102,9 +102,9 @@ public class MenuBar extends JMenuBar {
 		menu.setMnemonic(KeyEvent.VK_H);
 		add(menu);
 
-		menuItem = new JMenuItem("About", KeyEvent.VK_A);
+		menuItem = new JMenuItem("About", KeyEvent.VK_P);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
-			KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+			KeyEvent.VK_P, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new OnAbout());
 		menu.add(menuItem);
 

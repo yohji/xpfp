@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
@@ -32,7 +33,10 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.text.JTextComponent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -49,11 +53,11 @@ public abstract class Panel extends JPanel {
 	private static final long serialVersionUID = - 7280965664177289899L;
 	protected final Logger logger = Logger.getLogger(getClass());
 
-	protected static abstract class FormValidatorAction implements ActionListener {
+	protected static abstract class ValidateFormAction implements ActionListener {
 
 		private JComponent[] fields;
 
-		public FormValidatorAction(JComponent... fields) {
+		public ValidateFormAction(JComponent... fields) {
 
 			this.fields = fields;
 		}
@@ -82,6 +86,36 @@ public abstract class Panel extends JPanel {
 		}
 
 		public abstract void perform(ActionEvent e);
+	}
+
+	protected static class ResetFormAction implements ActionListener {
+
+		private JComponent[] fields;
+
+		public ResetFormAction(JComponent... fields) {
+
+			this.fields = fields;
+		}
+
+		@Override
+		public final void actionPerformed(ActionEvent e)
+		{
+			if (fields != null && fields.length > 0) {
+				for (JComponent comp : fields) {
+
+					if (JTextComponent.class.isAssignableFrom(comp.getClass())) {
+						((JTextComponent) comp).setText("");
+					}
+					else if (JToggleButton.class.isAssignableFrom(comp.getClass())) {
+						((JToggleButton) comp).setSelected(false);
+					}
+					else if (JSlider.class.isAssignableFrom(comp.getClass())) {
+						JSlider slider = (JSlider) comp;
+						slider.setValue(slider.getModel().getMinimum());
+					}
+				}
+			}
+		}
 	}
 
 	protected static class TextInput extends JTextField {
@@ -162,6 +196,11 @@ public abstract class Panel extends JPanel {
 					}
 				});
 			}
+		}
+
+		public LinkLabel(final String label, final String url) throws MalformedURLException {
+
+			this(label, new URL(url));
 		}
 	}
 

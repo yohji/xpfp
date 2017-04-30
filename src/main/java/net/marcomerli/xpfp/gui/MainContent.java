@@ -196,19 +196,22 @@ public class MainContent extends Panel {
 			fn = new TextInput();
 			fn.setText(Context.getFlightPlan().getFilename());
 
+			JButton reset = new JButton("Reset");
+			reset.addActionListener(new ResetFormAction(fl, cs));
+
 			export = new JButton("Export");
 			export.setEnabled(false);
 			export.addActionListener(new OnExport(fn));
 
 			layout.row().grid().add(new JLabel("Flight level (FL)", SwingConstants.RIGHT)).add(fl)
 				.add(new JLabel("Cruising Speed (kn)", SwingConstants.RIGHT)).add(cs)
-				.empty(1).add(calc);
+				.add(reset).add(calc);
 			layout.row().grid().add(new JSeparator(), 6);
 			layout.row().grid().empty(2)
 				.add(new JLabel("Filename", SwingConstants.RIGHT)).add(fn, 2).add(export);
 		}
 
-		private class OnCalculate extends FormValidatorAction {
+		private class OnCalculate extends ValidateFormAction {
 
 			public OnCalculate(JComponent... fields) {
 
@@ -239,7 +242,7 @@ public class MainContent extends Panel {
 			}
 		}
 
-		private class OnExport extends FormValidatorAction {
+		private class OnExport extends ValidateFormAction {
 
 			public OnExport(JComponent... fields) {
 
