@@ -19,7 +19,6 @@
 package net.marcomerli.xpfp;
 
 // FIXME: error handling and issue notify
-// FIXME: choose a new free icon
 
 import javax.swing.SwingUtilities;
 

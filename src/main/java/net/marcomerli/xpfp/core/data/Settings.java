@@ -20,6 +20,8 @@ package net.marcomerli.xpfp.core.data;
 
 import java.io.File;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import net.marcomerli.xpfp.core.Context;
 
 /**
@@ -48,7 +50,7 @@ public class Settings extends Data {
 	@Override
 	protected void init()
 	{
-		setProperty(EXPORT_DIRECTORY, System.getProperty("user.home"));
+		setProperty(EXPORT_DIRECTORY, SystemUtils.USER_HOME);
 		setProperty(PROXY_ACTIVE, "false");
 		setProperty(PROXY_HOSTNAME, "127.0.0.1");
 		setProperty(PROXY_PORT, "3128");

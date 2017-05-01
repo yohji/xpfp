@@ -25,6 +25,8 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.core.data.Settings;
 import net.marcomerli.xpfp.model.FlightPlan;
@@ -43,11 +45,15 @@ public class Context {
 
 	public static void init()
 	{
-		homeDir = new File(new File(System.getProperty("user.home")), ".xpfp");
-		if (! homeDir.exists())
-			if (! homeDir.mkdir())
-				throw new IllegalStateException(
-					"Failed to create home directory at " + homeDir.getAbsolutePath());
+		String dir = ".xpfp";
+		if (SystemUtils.IS_OS_WINDOWS)
+			dir = String.format("AppData%sLocal%sXPFP", File.separator, File.separator);
+
+		homeDir = new File(new File(SystemUtils.USER_HOME), dir);
+
+		if (! homeDir.exists() && ! homeDir.mkdir())
+			throw new IllegalStateException(
+				"Failed to create home directory at " + homeDir.getAbsolutePath());
 	}
 
 	public static void refresh()

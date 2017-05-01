@@ -115,7 +115,12 @@ public abstract class Panel extends JPanel {
 					}
 				}
 			}
+
+			perform(e);
 		}
+
+		public void perform(ActionEvent e)
+		{}
 	}
 
 	protected static class TextInput extends JTextField {

@@ -197,7 +197,7 @@ public class MainContent extends Panel {
 			fn.setText(Context.getFlightPlan().getFilename());
 
 			JButton reset = new JButton("Reset");
-			reset.addActionListener(new ResetFormAction(fl, cs));
+			reset.addActionListener(new OnReset(fl, cs));
 
 			export = new JButton("Export");
 			export.setEnabled(false);
@@ -239,6 +239,23 @@ public class MainContent extends Panel {
 					logger.error("OnCalculate", ee);
 					GuiFn.errorPopup(ee, win);
 				}
+			}
+		}
+
+		private class OnReset extends ResetFormAction {
+
+			public OnReset(JComponent... fields) {
+
+				super(fields);
+			}
+
+			@Override
+			public void perform(ActionEvent e)
+			{
+				Preferences prefs = Context.getPreferences();
+				prefs.clearProperty(Preferences.FP_FLIGHT_LEVEL);
+				prefs.clearProperty(Preferences.FP_CRUISING_SPEED);
+				prefs.save();
 			}
 		}
 

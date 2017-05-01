@@ -52,7 +52,7 @@ public abstract class Window extends JFrame {
 
 		super(title);
 
-		URL res = getClass().getClassLoader().getResource("xpfp.jpg");
+		URL res = getClass().getClassLoader().getResource("xpfp.png");
 		setIconImage(new ImageIcon(res).getImage());
 	}
 
