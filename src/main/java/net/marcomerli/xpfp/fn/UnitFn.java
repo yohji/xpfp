@@ -24,7 +24,7 @@ package net.marcomerli.xpfp.fn;
  */
 public class UnitFn {
 
-	public static double mToNn(double unit)
+	public static double mToNm(double unit)
 	{
 		return unit / 1852;
 	}

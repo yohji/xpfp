@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import net.marcomerli.xpfp.error.NoSuchWaypointException;
 import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.fn.GeoFn;
+import net.marcomerli.xpfp.fn.UnitFn;
 
 /**
  * @author Marco Merli
@@ -44,16 +45,95 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		filename = name.replaceAll("\\W+", "_");
 	}
 
+	public void _calculate(final double crzAlt, final double crzSpeed) throws Exception
+	{
+		//
+		final double clbSpeed = UnitFn.knToMs(75);
+		final double clbRate = UnitFn.ftToM(1250);
+		//
+
+		distance = 0.0;
+		ete = 0L;
+
+		for (Iterator<Waypoint> it = iterator(); it.hasNext();)
+			if (it.next().isCalculated())
+				it.remove();
+
+		Waypoint dep = getDeparture();
+		Location depLoc = dep.getLocation();
+		GeoFn.elevation(depLoc);
+
+		boolean clbWpAdd = false;
+		double clbAlt = crzAlt - depLoc.alt;
+		double clbTime = (clbAlt / clbRate) * 60;
+		double clbDistance = Math.sqrt(
+			Math.pow(clbSpeed * clbTime, 2) - Math.pow(clbAlt, 2));
+
+		for (int iWp = 1; iWp < size(); iWp++) {
+			Waypoint prev = get(iWp - 1);
+			Waypoint curr = get(iWp);
+
+			if (curr.getType().equals(WaypointType.ICAO))
+				GeoFn.elevation(curr.getLocation());
+
+			curr.getLocation().alt = crzAlt;
+			curr.setCourse(prev);
+			double currDist = curr.setDistance(prev);
+			long currEte = curr.setEte(crzSpeed);
+			double sumDistance = (distance != 0 ? distance : currDist);
+
+			if (! clbWpAdd && sumDistance > clbDistance) {
+
+				Waypoint clbWp = new Waypoint();
+				clbWp.setIdentifier("ʌʌʌ");
+				clbWp.setCalculated(true);
+				clbWp.setType(WaypointType.POS);
+				clbWp.setLocation(GeoFn.point(
+					prev.getLocation(),
+					(sumDistance - clbDistance),
+					curr.getBearing()));
+
+				for (int iFix = (iWp - 1); iFix > 0; iFix--) {
+					// FIXME: mid altitudes and ETE
+					Waypoint currFix = get(iFix);
+					currFix.getLocation().alt = - 1;
+				}
+
+				clbWp.getLocation().alt = crzAlt;
+				clbWp.setCourse(prev);
+				clbWp.setDistance(prev);
+				clbWp.setEte(clbSpeed);
+
+				curr.setDistance(clbWp);
+				curr.setEte(crzSpeed);
+
+				add(iWp, clbWp);
+				iWp += 1;
+				clbWpAdd = true;
+			}
+			else {
+				distance += currDist;
+				ete += currEte;
+			}
+		}
+
+		/*
+		 * FIXME: calculate descent (ṿṿṿ)
+		 * 
+		 * final double desSpeed = UnitFn.knToMs(120);
+		 * final double desRate = UnitFn.ftToM(1500);
+		 * 
+		 * Waypoint arr = getArrival();
+		 * Location arrLoc = arr.getLocation();
+		 *
+		 * double desAlt = fl - depLoc.alt;
+		 * double desTime = desAlt / (desRate / 60);
+		 * double desDistance = desSpeed * desTime;
+		 */
+	}
+
 	public void calculate(double fl, double cs) throws Exception
 	{
-		/*
-		 * TODO: implement vertical calculation
-		 * 
-		 * double dAlt = fl - loc.alt;
-		 * double secAlt = dAlt / vs;
-		 * double nmAlt = (cs * 0.6) * secAlt;
-		 */
-
 		distance = 0.0;
 		ete = 0L;
 
@@ -67,7 +147,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 
 			Double dist = wp.setDistance(prev);
 			wp.setCourse(prev);
-			ete += wp.setEte((long) ((double) dist / cs) * 1000);
+			ete += wp.setEte(cs);
 
 			loc = wp.getLocation();
 			if (wp.getType().equals(WaypointType.ICAO))
@@ -89,11 +169,11 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		return wp;
 	}
 
-	public Waypoint getDestination() throws NoSuchWaypointException
+	public Waypoint getArrival() throws NoSuchWaypointException
 	{
 		Waypoint wp = getLast();
 		if (! wp.getType().equals(WaypointType.ICAO))
-			throw new NoSuchWaypointException("Destination not specified.");
+			throw new NoSuchWaypointException("Arrival not specified.");
 
 		return wp;
 	}

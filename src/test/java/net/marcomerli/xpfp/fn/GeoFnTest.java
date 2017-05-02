@@ -31,7 +31,7 @@ public class GeoFnTest extends UnitTestSupport {
 	{
 		Location start = new Location(45.086389, 7.601944);
 		Location expected = new Location(45.0601, 7.3886);
-		Location actual = GeoFn.point(start, 17, 260);
+		Location actual = GeoFn.point(start, 17000, 260);
 
 		assertNotNull(actual);
 		assertNumberBetween(GeoFn.distance(expected, actual), 0, 100);

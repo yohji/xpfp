@@ -31,7 +31,7 @@ public class FormatFn {
 		if (distance == null || distance.longValue() == 0)
 			return "-";
 
-		return NumberFn.format(UnitFn.mToNn(distance), 2) + " nm";
+		return NumberFn.format(UnitFn.mToNm(distance), 2) + " nm";
 	}
 
 	public static String time(Long time)

@@ -37,7 +37,7 @@ public class FMSReaderTest extends UnitTestSupport {
 
 		try {
 			flightPlan.getDeparture();
-			flightPlan.getDestination();
+			flightPlan.getArrival();
 		}
 		catch (NoSuchWaypointException e) {
 			failWhenExceptionNotExpected(e);

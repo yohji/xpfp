@@ -38,7 +38,7 @@ public class FPLReaderTest extends UnitTestSupport {
 
 		try {
 			flightPlan.getDeparture();
-			flightPlan.getDestination();
+			flightPlan.getArrival();
 		}
 		catch (NoSuchWaypointException e) {
 			failWhenExceptionNotExpected(e);

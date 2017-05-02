@@ -186,9 +186,9 @@ public class MainContent extends Panel {
 			DesignGridLayout layout = new DesignGridLayout(this);
 
 			fl = new NumberInput(3);
-			fl.setText(prefs.getProperty(Preferences.FP_FLIGHT_LEVEL));
+			fl.setText(prefs.getProperty(Preferences.FP_CRZ_LEVEL));
 			cs = new NumberInput(3);
-			cs.setText(prefs.getProperty(Preferences.FP_CRUISING_SPEED));
+			cs.setText(prefs.getProperty(Preferences.FP_CRZ_SPEED));
 
 			JButton calc = new JButton("Calculate");
 			calc.addActionListener(new OnCalculate(fl, cs));
@@ -228,8 +228,8 @@ public class MainContent extends Panel {
 						UnitFn.knToMs(Integer.valueOf(cs.getText())));
 
 					Preferences prefs = Context.getPreferences();
-					prefs.setProperty(Preferences.FP_FLIGHT_LEVEL, fl.getText());
-					prefs.setProperty(Preferences.FP_CRUISING_SPEED, cs.getText());
+					prefs.setProperty(Preferences.FP_CRZ_LEVEL, fl.getText());
+					prefs.setProperty(Preferences.FP_CRZ_SPEED, cs.getText());
 					prefs.save();
 
 					data.refresh();
@@ -253,8 +253,8 @@ public class MainContent extends Panel {
 			public void perform(ActionEvent e)
 			{
 				Preferences prefs = Context.getPreferences();
-				prefs.clearProperty(Preferences.FP_FLIGHT_LEVEL);
-				prefs.clearProperty(Preferences.FP_CRUISING_SPEED);
+				prefs.clearProperty(Preferences.FP_CRZ_LEVEL);
+				prefs.clearProperty(Preferences.FP_CRZ_SPEED);
 				prefs.save();
 			}
 		}
@@ -274,7 +274,7 @@ public class MainContent extends Panel {
 					flightPlan.setFilename(fn.getText());
 
 					FMSWriter writer = new FMSWriter(Context.getSettings()
-						.getProperty(Settings.EXPORT_DIRECTORY, File.class), flightPlan.getFilename());
+						.getProperty(Settings.DIR_EXPORT, File.class), flightPlan.getFilename());
 
 					if (writer.exists()) {
 						int select = GuiFn.selectPopup("FMS file already exists. Override it?", win);

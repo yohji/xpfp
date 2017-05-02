@@ -39,7 +39,7 @@ public class NumberFn {
 		DecimalFormat df = formatters.get(precision);
 		if (df == null)
 			formatters.put(precision,
-				(df = new DecimalFormat("#." + StringUtils.repeat('0', precision),
+				(df = new DecimalFormat("0." + StringUtils.repeat('0', precision),
 					new DecimalFormatSymbols(Locale.US))));
 
 		return df.format(number);
@@ -51,6 +51,11 @@ public class NumberFn {
 			return false;
 
 		return number.matches("-?\\d+([\\.,]\\d+)?");
+	}
+
+	public static long round(double number, int nearest)
+	{
+		return Math.round(number / nearest) * nearest;
 	}
 
 	private NumberFn() {}

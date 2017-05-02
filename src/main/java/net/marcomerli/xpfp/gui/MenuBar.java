@@ -59,7 +59,7 @@ public class MenuBar extends JMenuBar {
 		fcFPL = new JFileChooser();
 		fcFPL.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		fcFPL.setCurrentDirectory(Context.getPreferences()
-			.getProperty(Preferences.IMPORT_DIRECTORY, File.class));
+			.getProperty(Preferences.DIR_IMPORT, File.class));
 	}
 
 	public JMenuBar init()
@@ -130,7 +130,7 @@ public class MenuBar extends JMenuBar {
 				File fpl = fcFPL.getSelectedFile();
 
 				Preferences preferences = Context.getPreferences();
-				preferences.setProperty(Preferences.IMPORT_DIRECTORY,
+				preferences.setProperty(Preferences.DIR_IMPORT,
 					fcFPL.getCurrentDirectory().getAbsolutePath());
 				preferences.save();
 

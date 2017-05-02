@@ -73,7 +73,7 @@ public class GeoFn {
 	public static Location point(Location loc, double distance, double bearing)
 	{
 		DirectPosition2D point = DistanceUtils.getPointOnGreatCircle(
-			loc.lat, loc.lng, distance, bearing);
+			loc.lat, loc.lng, (distance / 1000), bearing);
 
 		return new Location(point.x, point.y);
 	}

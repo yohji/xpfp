@@ -36,6 +36,7 @@ public class Waypoint implements Serializable {
 	private Location location;
 	private String country;
 
+	private boolean calculated = false;
 	private Double distance = 0.0;
 	private Long ete = 0L;
 	private Double bearing;
@@ -55,9 +56,9 @@ public class Waypoint implements Serializable {
 			heading = (heading + 360) % 360;
 	}
 
-	public Long setEte(Long ete)
+	public Long setEte(double speed)
 	{
-		return (this.ete = ete);
+		return (this.ete = (long) ((double) distance / speed) * 1000);
 	}
 
 	public String getFMSIdentifier()
@@ -95,6 +96,16 @@ public class Waypoint implements Serializable {
 	public Double getHeading()
 	{
 		return heading;
+	}
+
+	public boolean isCalculated()
+	{
+		return calculated;
+	}
+
+	public void setCalculated(boolean calculated)
+	{
+		this.calculated = calculated;
 	}
 
 	public String getIdentifier()

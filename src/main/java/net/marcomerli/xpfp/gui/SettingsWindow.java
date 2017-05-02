@@ -121,7 +121,7 @@ public class SettingsWindow extends Window {
 		fmsDirText = new JTextField();
 		fmsDirText.setEnabled(false);
 		fmsDirText.setText(Context.getSettings()
-			.getProperty(Settings.EXPORT_DIRECTORY, File.class).getAbsolutePath());
+			.getProperty(Settings.DIR_EXPORT, File.class).getAbsolutePath());
 
 		fmsDirBtn = new JButton("Choose");
 		fmsDirBtn.addActionListener(new OnChooseDir());
@@ -205,7 +205,7 @@ public class SettingsWindow extends Window {
 		{
 			try {
 				Settings settings = Context.getSettings();
-				settings.setProperty(Settings.EXPORT_DIRECTORY, fmsDirText.getText());
+				settings.setProperty(Settings.DIR_EXPORT, fmsDirText.getText());
 				settings.setProperty(Settings.GEOAPI_KEY, geoApiText.getText());
 				settings.setProperty(Settings.PROXY_ACTIVE, String.valueOf(proxyActive.isSelected()));
 				settings.setProperty(Settings.PROXY_HOSTNAME, proxyHostnameText.getText());
