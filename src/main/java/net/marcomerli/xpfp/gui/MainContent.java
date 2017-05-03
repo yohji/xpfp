@@ -74,6 +74,7 @@ public class MainContent extends Panel {
 
 	private MainWindow win;
 	private FlightPlaneData data;
+	private FlightPlaneProcessor processor;
 
 	public MainContent(MainWindow win) {
 
@@ -81,7 +82,7 @@ public class MainContent extends Panel {
 		this.win = win;
 
 		add(data = new FlightPlaneData());
-		add(new FlightPlaneProcessor());
+		add(processor = new FlightPlaneProcessor());
 	}
 
 	private class FlightPlaneData extends JPanel {
@@ -196,6 +197,7 @@ public class MainContent extends Panel {
 							return;
 
 						Context.getFlightPlan().remove(row);
+						processor.getCalculate().doClick();
 						refresh();
 					}
 				};
@@ -254,6 +256,8 @@ public class MainContent extends Panel {
 		private TextInput fn;
 		private JButton export;
 
+		private JButton calculate;
+
 		public FlightPlaneProcessor() {
 
 			super(new BorderLayout());
@@ -270,8 +274,8 @@ public class MainContent extends Panel {
 			cs = new NumberInput(3);
 			cs.setText(prefs.getProperty(Preferences.FP_CRZ_SPEED));
 
-			JButton calc = new JButton("Calculate");
-			calc.addActionListener(new OnCalculate(fl, cs));
+			calculate = new JButton("Calculate");
+			calculate.addActionListener(new OnCalculate(fl, cs));
 
 			fn = new TextInput();
 			fn.setText(Context.getFlightPlan().getFilename());
@@ -285,10 +289,15 @@ public class MainContent extends Panel {
 
 			layout.row().grid().add(new JLabel("Flight level (FL)", SwingConstants.RIGHT)).add(fl)
 				.add(new JLabel("Cruising Speed (kn)", SwingConstants.RIGHT)).add(cs)
-				.add(reset).add(calc);
+				.add(reset).add(calculate);
 			layout.row().grid().add(new JSeparator(), 6);
 			layout.row().grid().empty(2)
 				.add(new JLabel("Filename", SwingConstants.RIGHT)).add(fn, 2).add(export);
+		}
+
+		public JButton getCalculate()
+		{
+			return calculate;
 		}
 
 		private class OnCalculate extends ValidateFormAction {
