@@ -59,7 +59,7 @@ public abstract class Window extends JFrame {
 	/**
 	 * @author Bozhidar Batsov
 	 */
-	protected static class EditMenuMouseListener extends MouseAdapter {
+	protected static class TextPopup extends MouseAdapter {
 
 		private JPopupMenu popup = new JPopupMenu();
 
@@ -69,7 +69,7 @@ public abstract class Window extends JFrame {
 		private Action selectAllAction;
 
 		@SuppressWarnings("serial")
-		public EditMenuMouseListener(final JTextComponent textComponent) {
+		public TextPopup(final JTextComponent textComponent) {
 
 			cutAction = new AbstractAction("Cut") {
 
@@ -141,13 +141,7 @@ public abstract class Window extends JFrame {
 				pasteAction.setEnabled(enabled && editable && pasteAvailable);
 				selectAllAction.setEnabled(enabled && nonempty);
 
-				int nx = e.getX();
-
-				if (nx > 500) {
-					nx = nx - popup.getSize().width;
-				}
-
-				popup.show(e.getComponent(), nx, e.getY() - popup.getSize().height);
+				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
 	}

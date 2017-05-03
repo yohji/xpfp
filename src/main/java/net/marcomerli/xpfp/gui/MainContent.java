@@ -21,9 +21,15 @@ package net.marcomerli.xpfp.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.net.URL;
 import java.util.Iterator;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -31,9 +37,11 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -53,6 +61,7 @@ import net.marcomerli.xpfp.fn.UnitFn;
 import net.marcomerli.xpfp.model.FlightPlan;
 import net.marcomerli.xpfp.model.Location;
 import net.marcomerli.xpfp.model.Waypoint;
+import net.marcomerli.xpfp.model.WaypointType;
 
 /**
  * @author Marco Merli
@@ -61,6 +70,7 @@ import net.marcomerli.xpfp.model.Waypoint;
 public class MainContent extends Panel {
 
 	private static final long serialVersionUID = - 8732614615105930839L;
+	private static final String SKYVECTOR_AIRPORT_URL = "https://skyvector.com/airport/";
 
 	private MainWindow win;
 	private FlightPlaneData data;
@@ -79,7 +89,7 @@ public class MainContent extends Panel {
 		private static final long serialVersionUID = - 2408834160839600983L;
 
 		private final String[] columnNames = new String[] {
-			"-", "Identifier", "Type", "Country", "Latitude",
+			"#", "Identifier", "Type", "Country", "Latitude",
 			"Longitude", "Elevation", "Bearing", "Heading",
 			"Distance", "ETE"
 		};
@@ -102,9 +112,9 @@ public class MainContent extends Panel {
 				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 
 			table = new JTable();
-			table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			table.setFillsViewportHeight(false);
-			table.setPreferredScrollableViewportSize(new Dimension(600, 170));
+			table.setPreferredScrollableViewportSize(new Dimension(600, 250));
+			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			table.addMouseListener(new TablePopup());
 
 			JScrollPane pane = new JScrollPane();
 			pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -162,6 +172,76 @@ public class MainContent extends Panel {
 			render();
 			revalidate();
 			repaint();
+		}
+
+		private class TablePopup extends MouseAdapter {
+
+			private JPopupMenu popup = new JPopupMenu();
+			private Action delete;
+			private Action info;
+
+			public TablePopup() {
+
+				delete = new AbstractAction("Delete") {
+
+					private static final long serialVersionUID = 8978260573053814935L;
+
+					@Override
+					public void actionPerformed(ActionEvent ee)
+					{
+						int row = table.getSelectedRow();
+
+						int select = GuiFn.selectDialog(String.format("Do you want to remove the #%d waypoint?", (row + 1)), win);
+						if (select == JOptionPane.NO_OPTION || select == JOptionPane.CLOSED_OPTION)
+							return;
+
+						Context.getFlightPlan().remove(row);
+						refresh();
+					}
+				};
+
+				popup.add(delete);
+				popup.addSeparator();
+
+				info = new AbstractAction("Info") {
+
+					private static final long serialVersionUID = - 4915421040608026019L;
+
+					@Override
+					public void actionPerformed(ActionEvent ee)
+					{
+						try {
+							Object icao = table.getModel().getValueAt(table.getSelectedRow(), 1);
+							GuiFn.openBrowser(new URL(SKYVECTOR_AIRPORT_URL + icao));
+						}
+						catch (Exception e) {
+							GuiFn.warnDialog("Failed to open the default web browsert.", win);
+						}
+					}
+				};
+				info.setEnabled(false);
+				popup.add(info);
+			}
+
+			@Override
+			public void mouseClicked(final MouseEvent e)
+			{
+				final int row = table.getSelectedRow();
+				if (row == - 1)
+					return;
+
+				if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
+
+					info.setEnabled(WaypointType.ICAO.name().equals(
+						table.getModel().getValueAt(row, 2)));
+
+					int nx = e.getX();
+					if (nx > (table.getSize().width - popup.getSize().width))
+						nx = nx - popup.getSize().width;
+
+					popup.show(e.getComponent(), nx, e.getY());
+				}
+			}
 		}
 	}
 
@@ -237,7 +317,7 @@ public class MainContent extends Panel {
 				}
 				catch (Exception ee) {
 					logger.error("OnCalculate", ee);
-					GuiFn.errorPopup(ee, win);
+					GuiFn.errorDialog(ee, win);
 				}
 			}
 		}
@@ -277,17 +357,17 @@ public class MainContent extends Panel {
 						.getProperty(Settings.DIR_EXPORT, File.class), flightPlan.getFilename());
 
 					if (writer.exists()) {
-						int select = GuiFn.selectPopup("FMS file already exists. Override it?", win);
+						int select = GuiFn.selectDialog("FMS file already exists. Override it?", win);
 						if (select == JOptionPane.NO_OPTION || select == JOptionPane.CLOSED_OPTION)
 							return;
 					}
 
 					writer.write(flightPlan);
-					GuiFn.infoPopup("Export completed", win);
+					GuiFn.infoDialog("Export completed", win);
 				}
 				catch (Exception ee) {
 					logger.error("onError", ee);
-					GuiFn.errorPopup(ee, win);
+					GuiFn.errorDialog(ee, win);
 				}
 			}
 		}

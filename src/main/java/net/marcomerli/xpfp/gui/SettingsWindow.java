@@ -220,7 +220,7 @@ public class SettingsWindow extends Window {
 			}
 			catch (Exception ee) {
 				logger.error("onSave", ee);
-				GuiFn.errorPopup(ee, SettingsWindow.this);
+				GuiFn.errorDialog(ee, SettingsWindow.this);
 			}
 			finally {
 				dispose();

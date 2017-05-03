@@ -42,7 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import net.marcomerli.xpfp.fn.GuiFn;
-import net.marcomerli.xpfp.gui.Window.EditMenuMouseListener;
+import net.marcomerli.xpfp.gui.Window.TextPopup;
 
 /**
  * @author Marco Merli
@@ -129,7 +129,7 @@ public abstract class Panel extends JPanel {
 
 		public TextInput() {
 
-			addMouseListener(new EditMenuMouseListener(this));
+			addMouseListener(new TextPopup(this));
 
 			setVerifyInputWhenFocusTarget(false);
 			setInputVerifier(new InputVerifier() {

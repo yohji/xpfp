@@ -45,11 +45,17 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		filename = name.replaceAll("\\W+", "_");
 	}
 
-	public void _calculate(final double crzAlt, final double crzSpeed) throws Exception
+	public void _calculate(final double crzAlt, final double crzSpeed,
+		double clbSpeed, double clbRate,
+		double desSpeed, double desRate)
+		throws Exception
 	{
+		if (size() <= 1)
+			return;
+
 		//
-		final double clbSpeed = UnitFn.knToMs(75);
-		final double clbRate = UnitFn.ftToM(1250);
+		clbSpeed = UnitFn.knToMs(75);
+		clbRate = UnitFn.ftToM(1250);
 		//
 
 		distance = 0.0;
@@ -120,8 +126,8 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		/*
 		 * FIXME: calculate descent (ṿṿṿ)
 		 * 
-		 * final double desSpeed = UnitFn.knToMs(120);
-		 * final double desRate = UnitFn.ftToM(1500);
+		 * desSpeed = UnitFn.knToMs(120);
+		 * desRate = UnitFn.ftToM(1500);
 		 * 
 		 * Waypoint arr = getArrival();
 		 * Location arrLoc = arr.getLocation();
@@ -134,6 +140,9 @@ public class FlightPlan extends LinkedList<Waypoint> {
 
 	public void calculate(double fl, double cs) throws Exception
 	{
+		if (size() <= 1)
+			return;
+
 		distance = 0.0;
 		ete = 0L;
 

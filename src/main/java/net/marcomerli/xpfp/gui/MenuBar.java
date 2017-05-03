@@ -146,7 +146,7 @@ public class MenuBar extends JMenuBar {
 				}
 				catch (Exception ee) {
 					logger.error("onImport", ee);
-					GuiFn.errorPopup(ee, win);
+					GuiFn.errorDialog(ee, win);
 				}
 			}
 		}
