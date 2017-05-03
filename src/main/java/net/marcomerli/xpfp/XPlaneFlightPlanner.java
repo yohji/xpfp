@@ -18,10 +18,14 @@
 
 package net.marcomerli.xpfp;
 
+import java.awt.Toolkit;
+import java.lang.reflect.Field;
+
 // FIXME: error handling and issue notify
 
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 
 import net.marcomerli.xpfp.core.Context;
@@ -29,6 +33,7 @@ import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.core.data.Settings;
 import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.gui.MainWindow;
+import net.marcomerli.xpfp.gui.Window;
 
 /**
  * @author Marco Merli
@@ -52,6 +57,13 @@ public class XPlaneFlightPlanner {
 			Preferences prefs = new Preferences();
 			prefs.load();
 			Context.setPreferences(prefs);
+
+			if (SystemUtils.IS_OS_LINUX) {
+				Toolkit xToolkit = Toolkit.getDefaultToolkit();
+				Field awtAppClassNameField = xToolkit.getClass().getDeclaredField("awtAppClassName");
+				awtAppClassNameField.setAccessible(true);
+				awtAppClassNameField.set(xToolkit, Window.TITLE_FULL);
+			}
 
 			SwingUtilities.invokeLater(new Runnable() {
 
