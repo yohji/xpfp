@@ -27,9 +27,10 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
 import org.apache.sis.distance.DistanceUtils;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.maps.ElevationApi;
 import com.google.maps.GeoApiContext;
@@ -171,7 +172,7 @@ public class GeoFn {
  */
 class TSAGeoMag {
 
-	private static Logger logger = Logger.getLogger(TSAGeoMag.class);
+	private static Logger logger = LoggerFactory.getLogger(TSAGeoMag.class);
 
 	/**
 	 * Geodetic altitude in km. An input,

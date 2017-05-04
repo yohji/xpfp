@@ -26,7 +26,8 @@ import java.lang.reflect.Field;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
@@ -41,7 +42,7 @@ import net.marcomerli.xpfp.gui.Window;
  */
 public class XPlaneFlightPlanner {
 
-	protected static final Logger logger = Logger.getLogger(XPlaneFlightPlanner.class);
+	protected static final Logger logger = LoggerFactory.getLogger(XPlaneFlightPlanner.class);
 
 	public static void main(String[] args) throws Exception
 	{

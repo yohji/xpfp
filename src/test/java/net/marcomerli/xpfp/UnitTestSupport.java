@@ -29,10 +29,11 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Marco Merli
@@ -41,7 +42,7 @@ import org.junit.runner.Result;
 public abstract class UnitTestSupport extends Assert {
 
 	private static final DateFormat df = new SimpleDateFormat("yyyyMMdd");
-	protected Logger logger = Logger.getLogger(getClass());
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	//
 	// Support
@@ -157,7 +158,7 @@ public abstract class UnitTestSupport extends Assert {
 
 	protected final void println(Object object)
 	{
-		logger.info(object);
+		logger.info(object.toString());
 	}
 
 	protected final void printf(String format, Object... args)

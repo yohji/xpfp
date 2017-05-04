@@ -39,7 +39,8 @@ import javax.swing.JToggleButton;
 import javax.swing.text.JTextComponent;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.gui.Window.TextPopup;
@@ -51,7 +52,7 @@ import net.marcomerli.xpfp.gui.Window.TextPopup;
 public abstract class Panel extends JPanel {
 
 	private static final long serialVersionUID = - 7280965664177289899L;
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	protected static abstract class ValidateFormAction implements ActionListener {
 

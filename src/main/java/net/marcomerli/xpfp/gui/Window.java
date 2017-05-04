@@ -34,7 +34,8 @@ import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 import javax.swing.text.JTextComponent;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Marco Merli
@@ -43,7 +44,7 @@ import org.apache.log4j.Logger;
 public abstract class Window extends JFrame {
 
 	private static final long serialVersionUID = 7604558040904896370L;
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	public static final String TITLE_FULL = "X-Plane Flight Planner";
 	public static final String TITLE_COMPACT = "XPFP";

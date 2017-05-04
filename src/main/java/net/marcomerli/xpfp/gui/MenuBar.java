@@ -30,7 +30,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
@@ -47,7 +48,7 @@ import net.marcomerli.xpfp.model.FlightPlan;
 public class MenuBar extends JMenuBar {
 
 	private static final long serialVersionUID = - 2425410924278164802L;
-	private static final Logger logger = Logger.getLogger(MenuBar.class);
+	private static final Logger logger = LoggerFactory.getLogger(MenuBar.class);
 
 	private MainWindow win;
 	private JFileChooser fcFPL;
