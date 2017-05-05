@@ -54,5 +54,15 @@ public class UnitFn {
 		return unit * 0.514;
 	}
 
+	public static double msToFtMin(double unit)
+	{
+		return unit / 0.514;
+	}
+
+	public static double ftMinToMs(double unit)
+	{
+		return unit * 0.00508;
+	}
+
 	private UnitFn() {}
 }

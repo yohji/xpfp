@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import net.marcomerli.xpfp.error.NoSuchWaypointException;
 import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.fn.GeoFn;
-import net.marcomerli.xpfp.fn.UnitFn;
 
 /**
  * @author Marco Merli
@@ -53,11 +52,6 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		if (size() <= 1)
 			return;
 
-		//
-		clbSpeed = UnitFn.knToMs(75);
-		clbRate = UnitFn.ftToM(1250);
-		//
-
 		distance = 0.0;
 		ete = 0L;
 
@@ -71,9 +65,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 
 		boolean clbWpAdd = false;
 		double clbAlt = crzAlt - depLoc.alt;
-		double clbTime = (clbAlt / clbRate) * 60;
-		double clbDistance = Math.sqrt(
-			Math.pow(clbSpeed * clbTime, 2) - Math.pow(clbAlt, 2));
+		double clbDistance = (clbAlt / clbRate) * clbSpeed;
 
 		for (int iWp = 1; iWp < size(); iWp++) {
 			Waypoint prev = get(iWp - 1);
@@ -126,9 +118,6 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		/*
 		 * FIXME: calculate descent (ṿṿṿ)
 		 * 
-		 * desSpeed = UnitFn.knToMs(120);
-		 * desRate = UnitFn.ftToM(1500);
-		 * 
 		 * Waypoint arr = getArrival();
 		 * Location arrLoc = arr.getLocation();
 		 *
@@ -138,8 +127,17 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		 */
 	}
 
-	public void calculate(double fl, double cs) throws Exception
+	public void calculate(final double crzAlt, final double crzSpeed) throws Exception
 	{
+		//
+		// if (true) {
+		// _calculate(crzAlt, crzSpeed,
+		// UnitFn.knToMs(75), UnitFn.ftMinToMs(800),
+		// UnitFn.knToMs(120), UnitFn.ftMinToMs(1500));
+		// return;
+		// }
+		//
+
 		if (size() <= 1)
 			return;
 
@@ -156,13 +154,13 @@ public class FlightPlan extends LinkedList<Waypoint> {
 
 			Double dist = wp.setDistance(prev);
 			wp.setCourse(prev);
-			ete += wp.setEte(cs);
+			ete += wp.setEte(crzSpeed);
 
 			loc = wp.getLocation();
 			if (wp.getType().equals(WaypointType.ICAO))
 				GeoFn.elevation(loc);
 			else
-				loc.alt = fl;
+				loc.alt = crzAlt;
 
 			distance += dist;
 			prev = wp;

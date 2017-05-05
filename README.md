@@ -6,11 +6,12 @@
 
 * Handling *FPL* and *FMS* file format.
 * Flight plan calculation with course, elevation, distance and *ETE*.
+* Vertical navigation calculation.
+* Ascent and descent waypoint calculation.
 * Exporting in *FMS* file format.
 
 ## Future Features
 
-* Vertical navigation calculation.
 * Elevation profile graph for avoiding obstacles.
 * Map graph using *OpenStreetMap*.
 * Integration with *Navigraph*.

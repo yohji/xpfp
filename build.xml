@@ -45,7 +45,7 @@
 		</copy>
 		<copy todir="${root}">
 			<fileset file="src/main/bin/*" />
-			<fileset file="src/main/resources/xpfp.png" />
+			<fileset file="src/main/resources/xpfp.ico" />
 			<fileset file="README.md" />
 			<fileset file="CHANGELOG.md" />
 		</copy>
