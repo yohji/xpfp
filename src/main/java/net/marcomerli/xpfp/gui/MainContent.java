@@ -292,11 +292,11 @@ public class MainContent extends Panel {
 			crzLevel.setText(prefs.getProperty(Preferences.FP_CRZ_LEVEL));
 			crzSpeed = new NumberInput(3);
 			crzSpeed.setText(prefs.getProperty(Preferences.FP_CRZ_SPEED));
-			clbRate = new NumberInput(4);
+			clbRate = new NumberInput(5);
 			clbRate.setText(prefs.getProperty(Preferences.FP_CLB_RATE));
 			clbSpeed = new NumberInput(3);
 			clbSpeed.setText(prefs.getProperty(Preferences.FP_CLB_SPEED));
-			desRate = new NumberInput(4);
+			desRate = new NumberInput(5);
 			desRate.setText(prefs.getProperty(Preferences.FP_DES_RATE));
 			desSpeed = new NumberInput(3);
 			desSpeed.setText(prefs.getProperty(Preferences.FP_DES_SPEED));

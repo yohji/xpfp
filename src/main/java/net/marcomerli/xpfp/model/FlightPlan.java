@@ -171,7 +171,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		final double clbRate, final double clbSpeed, Location depLoc)
 	{
 		boolean clbWpAdd = false;
-		double prevDistance = 0;
+		double lastDistance = 0;
 
 		double clbAlt = crzAlt - depLoc.alt;
 		double clbDistance = (clbAlt / clbRate) * clbSpeed;
@@ -185,7 +185,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			double currDist = curr.setDistance(prev);
 			curr.setEte(crzSpeed);
 
-			double sumDistance = (prevDistance + currDist);
+			double sumDistance = (lastDistance + currDist);
 			if (! clbWpAdd && sumDistance > clbDistance) {
 
 				Waypoint clbWp = new Waypoint();
@@ -193,7 +193,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 				clbWp.setCalculated(true);
 				clbWp.setType(WaypointType.POS);
 				clbWp.setLocation(GeoFn.point(prev.getLocation(),
-					(clbDistance - prevDistance), curr.getBearing()));
+					(clbDistance - lastDistance), curr.getBearing()));
 
 				clbWp.getLocation().alt = crzAlt;
 				clbWp.setCourse(prev);
@@ -217,49 +217,48 @@ public class FlightPlan extends LinkedList<Waypoint> {
 				iWp += 1;
 				clbWpAdd = true;
 			}
-			else {
-				prevDistance += currDist;
-			}
+			else
+				lastDistance += currDist;
 		}
 	}
 
 	private void calculateDescent(final double crzAlt, final double crzSpeed,
 		final double desRate, final double desSpeed, Location arrLoc)
 	{
-		boolean desWpAdd = false;
-		double prevDistance = 0;
+		double lastDistance = 0;
 
 		double desAlt = crzAlt - arrLoc.alt;
 		double desDistance = (desAlt / desRate) * desSpeed;
 
-		for (int iWp = (size() - 1); iWp > 0; iWp--) {
-			Waypoint prev = get(iWp - 1);
+		for (int iWp = (size() - 2); iWp > 0; iWp--) {
+			int iWpNext = iWp + 1;
+			Waypoint next = get(iWpNext);
 			Waypoint curr = get(iWp);
 
-			double currDist = curr.getDistance();
-			double sumDistance = (prevDistance + currDist);
+			double currDist = next.getDistance();
+			double sumDistance = (lastDistance + currDist);
 
-			if (! desWpAdd && sumDistance > desDistance) {
+			if (sumDistance > desDistance) {
 
 				Waypoint desWp = new Waypoint();
 				desWp.setIdentifier("ṿṿṿ");
 				desWp.setCalculated(true);
 				desWp.setType(WaypointType.POS);
-				desWp.setLocation(GeoFn.point(prev.getLocation(),
-					(desDistance - prevDistance), curr.getBearing()));
+				desWp.setLocation(GeoFn.point(next.getLocation(), (desDistance - lastDistance),
+					GeoFn.bearing(next.getLocation(), curr.getLocation())));
 
 				desWp.getLocation().alt = crzAlt;
-				desWp.setCourse(prev);
-				desWp.setDistance(prev);
-				desWp.setEte(desSpeed);
+				desWp.setCourse(curr);
+				desWp.setDistance(curr);
+				desWp.setEte(crzSpeed);
 
-				curr.setDistance(desWp);
-				curr.setEte(crzSpeed);
+				next.setDistance(desWp);
+				next.setEte(desSpeed);
 
-				add(iWp, desWp);
+				add(iWpNext, desWp);
 
 				sumDistance = 0;
-				for (int iFix = (size() - 2); iFix > iWp; iFix--) {
+				for (int iFix = (size() - 2); iFix > iWpNext; iFix--) {
 					Waypoint fixWp = get(iFix);
 					sumDistance += fixWp.getDistance();
 
@@ -268,11 +267,10 @@ public class FlightPlan extends LinkedList<Waypoint> {
 				}
 
 				iWp -= 1;
-				desWpAdd = true;
+				break;
 			}
-			else {
-				prevDistance += currDist;
-			}
+			else
+				lastDistance += currDist;
 		}
 	}
 }
