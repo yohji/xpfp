@@ -44,16 +44,13 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		filename = name.replaceAll("\\W+", "_");
 	}
 
-	public void _calculate(final double crzAlt, final double crzSpeed,
-		double clbSpeed, double clbRate,
-		double desSpeed, double desRate)
+	public void calculate(final double crzAlt, final double crzSpeed,
+		double clbRate, double clbSpeed,
+		double desRate, double desSpeed)
 		throws Exception
 	{
 		if (size() <= 1)
 			return;
-
-		distance = 0.0;
-		ete = 0L;
 
 		for (Iterator<Waypoint> it = iterator(); it.hasNext();)
 			if (it.next().isCalculated())
@@ -63,81 +60,27 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		Location depLoc = dep.getLocation();
 		GeoFn.elevation(depLoc);
 
-		boolean clbWpAdd = false;
-		double clbAlt = crzAlt - depLoc.alt;
-		double clbDistance = (clbAlt / clbRate) * clbSpeed;
+		calculateClimb(crzAlt, crzSpeed, clbRate, clbSpeed, depLoc);
+
+		Waypoint arr = getArrival();
+		Location arrLoc = arr.getLocation();
+		GeoFn.elevation(arrLoc);
+
+		calculateDescent(crzAlt, crzSpeed, desRate, desSpeed, arrLoc);
+
+		distance = 0.0;
+		ete = 0L;
 
 		for (int iWp = 1; iWp < size(); iWp++) {
-			Waypoint prev = get(iWp - 1);
-			Waypoint curr = get(iWp);
+			Waypoint wp = get(iWp);
 
-			if (curr.getType().equals(WaypointType.ICAO))
-				GeoFn.elevation(curr.getLocation());
-
-			curr.getLocation().alt = crzAlt;
-			curr.setCourse(prev);
-			double currDist = curr.setDistance(prev);
-			long currEte = curr.setEte(crzSpeed);
-			double sumDistance = (distance != 0 ? distance : currDist);
-
-			if (! clbWpAdd && sumDistance > clbDistance) {
-
-				Waypoint clbWp = new Waypoint();
-				clbWp.setIdentifier("ʌʌʌ");
-				clbWp.setCalculated(true);
-				clbWp.setType(WaypointType.POS);
-				clbWp.setLocation(GeoFn.point(
-					prev.getLocation(),
-					(sumDistance - clbDistance),
-					curr.getBearing()));
-
-				for (int iFix = (iWp - 1); iFix > 0; iFix--) {
-					// FIXME: mid altitudes and ETE
-					Waypoint currFix = get(iFix);
-					currFix.getLocation().alt = - 1;
-				}
-
-				clbWp.getLocation().alt = crzAlt;
-				clbWp.setCourse(prev);
-				clbWp.setDistance(prev);
-				clbWp.setEte(clbSpeed);
-
-				curr.setDistance(clbWp);
-				curr.setEte(crzSpeed);
-
-				add(iWp, clbWp);
-				iWp += 1;
-				clbWpAdd = true;
-			}
-			else {
-				distance += currDist;
-				ete += currEte;
-			}
+			distance += wp.getDistance();
+			ete += wp.getEte();
 		}
-
-		/*
-		 * FIXME: calculate descent (ṿṿṿ)
-		 * 
-		 * Waypoint arr = getArrival();
-		 * Location arrLoc = arr.getLocation();
-		 *
-		 * double desAlt = fl - depLoc.alt;
-		 * double desTime = desAlt / (desRate / 60);
-		 * double desDistance = desSpeed * desTime;
-		 */
 	}
 
 	public void calculate(final double crzAlt, final double crzSpeed) throws Exception
 	{
-		//
-		// if (true) {
-		// _calculate(crzAlt, crzSpeed,
-		// UnitFn.knToMs(75), UnitFn.ftMinToMs(800),
-		// UnitFn.knToMs(120), UnitFn.ftMinToMs(1500));
-		// return;
-		// }
-		//
-
 		if (size() <= 1)
 			return;
 
@@ -218,5 +161,118 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	public Long getEte()
 	{
 		return ete;
+	}
+
+	//
+	// Internal
+	//
+
+	private void calculateClimb(final double crzAlt, final double crzSpeed,
+		final double clbRate, final double clbSpeed, Location depLoc)
+	{
+		boolean clbWpAdd = false;
+		double prevDistance = 0;
+
+		double clbAlt = crzAlt - depLoc.alt;
+		double clbDistance = (clbAlt / clbRate) * clbSpeed;
+
+		for (int iWp = 1; iWp < size(); iWp++) {
+			Waypoint prev = get(iWp - 1);
+			Waypoint curr = get(iWp);
+
+			curr.getLocation().alt = crzAlt;
+			curr.setCourse(prev);
+			double currDist = curr.setDistance(prev);
+			curr.setEte(crzSpeed);
+
+			double sumDistance = (prevDistance + currDist);
+			if (! clbWpAdd && sumDistance > clbDistance) {
+
+				Waypoint clbWp = new Waypoint();
+				clbWp.setIdentifier("ʌʌʌ");
+				clbWp.setCalculated(true);
+				clbWp.setType(WaypointType.POS);
+				clbWp.setLocation(GeoFn.point(prev.getLocation(),
+					(clbDistance - prevDistance), curr.getBearing()));
+
+				clbWp.getLocation().alt = crzAlt;
+				clbWp.setCourse(prev);
+				clbWp.setDistance(prev);
+				clbWp.setEte(clbSpeed);
+
+				curr.setDistance(clbWp);
+				curr.setEte(crzSpeed);
+
+				add(iWp, clbWp);
+
+				sumDistance = 0;
+				for (int iFix = 1; iFix < iWp; iFix++) {
+					Waypoint fixWp = get(iFix);
+					sumDistance += fixWp.getDistance();
+
+					fixWp.getLocation().alt = ((sumDistance * clbRate) / clbSpeed) + depLoc.alt;
+					fixWp.setEte(clbSpeed);
+				}
+
+				iWp += 1;
+				clbWpAdd = true;
+			}
+			else {
+				prevDistance += currDist;
+			}
+		}
+	}
+
+	private void calculateDescent(final double crzAlt, final double crzSpeed,
+		final double desRate, final double desSpeed, Location arrLoc)
+	{
+		boolean desWpAdd = false;
+		double prevDistance = 0;
+
+		double desAlt = crzAlt - arrLoc.alt;
+		double desDistance = (desAlt / desRate) * desSpeed;
+
+		for (int iWp = (size() - 1); iWp > 0; iWp--) {
+			Waypoint prev = get(iWp - 1);
+			Waypoint curr = get(iWp);
+
+			double currDist = curr.getDistance();
+			double sumDistance = (prevDistance + currDist);
+
+			if (! desWpAdd && sumDistance > desDistance) {
+
+				Waypoint desWp = new Waypoint();
+				desWp.setIdentifier("ṿṿṿ");
+				desWp.setCalculated(true);
+				desWp.setType(WaypointType.POS);
+				desWp.setLocation(GeoFn.point(prev.getLocation(),
+					(desDistance - prevDistance), curr.getBearing()));
+
+				desWp.getLocation().alt = crzAlt;
+				desWp.setCourse(prev);
+				desWp.setDistance(prev);
+				desWp.setEte(desSpeed);
+
+				curr.setDistance(desWp);
+				curr.setEte(crzSpeed);
+
+				add(iWp, desWp);
+
+				sumDistance = 0;
+				for (int iFix = (size() - 2); iFix > iWp; iFix--) {
+					Waypoint fixWp = get(iFix);
+					sumDistance += fixWp.getDistance();
+
+					fixWp.getLocation().alt = ((sumDistance * desRate) / desSpeed) + arrLoc.alt;
+					fixWp.setEte(desSpeed);
+				}
+
+				iWp -= 1;
+				desWpAdd = true;
+			}
+			else {
+				prevDistance += currDist;
+			}
+		}
 	}
 }

@@ -151,6 +151,7 @@ public abstract class Panel extends JPanel {
 
 		public NumberInput(final int maxSize) {
 
+			setColumns(maxSize);
 			addKeyListener(new KeyAdapter() {
 
 				@Override

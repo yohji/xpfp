@@ -245,15 +245,34 @@ public class MainContent extends Panel {
 				}
 			}
 		}
+
+		private class TableModel extends DefaultTableModel {
+
+			private static final long serialVersionUID = - 7234273051637878221L;
+
+			public TableModel(String[][] data, String[] columnNames) {
+
+				super(data, columnNames);
+			}
+
+			public boolean isCellEditable(int row, int column)
+			{
+				return false;
+			}
+		}
 	}
 
 	private class FlightPlaneProcessor extends JPanel {
 
 		private static final long serialVersionUID = - 7914800898847981824L;
 
-		private NumberInput fl;
-		private NumberInput cs;
-		private TextInput fn;
+		private NumberInput crzLevel;
+		private NumberInput crzSpeed;
+		private NumberInput clbRate;
+		private NumberInput clbSpeed;
+		private NumberInput desRate;
+		private NumberInput desSpeed;
+		private TextInput filename;
 		private JButton export;
 
 		private JButton calculate;
@@ -269,30 +288,45 @@ public class MainContent extends Panel {
 			Preferences prefs = Context.getPreferences();
 			DesignGridLayout layout = new DesignGridLayout(this);
 
-			fl = new NumberInput(3);
-			fl.setText(prefs.getProperty(Preferences.FP_CRZ_LEVEL));
-			cs = new NumberInput(3);
-			cs.setText(prefs.getProperty(Preferences.FP_CRZ_SPEED));
+			crzLevel = new NumberInput(3);
+			crzLevel.setText(prefs.getProperty(Preferences.FP_CRZ_LEVEL));
+			crzSpeed = new NumberInput(3);
+			crzSpeed.setText(prefs.getProperty(Preferences.FP_CRZ_SPEED));
+			clbRate = new NumberInput(4);
+			clbRate.setText(prefs.getProperty(Preferences.FP_CLB_RATE));
+			clbSpeed = new NumberInput(3);
+			clbSpeed.setText(prefs.getProperty(Preferences.FP_CLB_SPEED));
+			desRate = new NumberInput(4);
+			desRate.setText(prefs.getProperty(Preferences.FP_DES_RATE));
+			desSpeed = new NumberInput(3);
+			desSpeed.setText(prefs.getProperty(Preferences.FP_DES_SPEED));
 
 			calculate = new JButton("Calculate");
-			calculate.addActionListener(new OnCalculate(fl, cs));
+			calculate.addActionListener(new OnCalculate(crzLevel, crzSpeed,
+				clbRate, clbSpeed, desRate, desSpeed));
 
-			fn = new TextInput();
-			fn.setText(Context.getFlightPlan().getFilename());
+			filename = new TextInput();
+			filename.setText(Context.getFlightPlan().getFilename());
 
 			JButton reset = new JButton("Reset");
-			reset.addActionListener(new OnReset(fl, cs));
+			reset.addActionListener(new OnReset(crzLevel, crzSpeed,
+				clbRate, clbSpeed, desRate, desSpeed));
 
 			export = new JButton("Export");
 			export.setEnabled(false);
-			export.addActionListener(new OnExport(fn));
+			export.addActionListener(new OnExport(filename));
 
-			layout.row().grid().add(new JLabel("Flight level (FL)", SwingConstants.RIGHT)).add(fl)
-				.add(new JLabel("Cruising Speed (kn)", SwingConstants.RIGHT)).add(cs)
-				.add(reset).add(calculate);
-			layout.row().grid().add(new JSeparator(), 6);
-			layout.row().grid().empty(2)
-				.add(new JLabel("Filename", SwingConstants.RIGHT)).add(fn, 2).add(export);
+			layout.row().grid().add(new JLabel("Flight level (FL)", SwingConstants.RIGHT)).add(crzLevel)
+				.add(new JLabel("Rate of climb (ft/min)", SwingConstants.RIGHT)).add(clbRate)
+				.add(new JLabel("Rate of descent (ft/min)", SwingConstants.RIGHT)).add(desRate)
+				.add(calculate);
+			layout.row().grid().add(new JLabel("Cruising speed (GS kn)", SwingConstants.RIGHT)).add(crzSpeed)
+				.add(new JLabel("Climbing speed (GS kn)", SwingConstants.RIGHT)).add(clbSpeed)
+				.add(new JLabel("Descenting speed (GS kn)", SwingConstants.RIGHT)).add(desSpeed)
+				.add(reset);
+			layout.row().grid().add(new JSeparator(), 7);
+			layout.row().grid().empty(3)
+				.add(new JLabel("Filename", SwingConstants.RIGHT)).add(filename, 2).add(export);
 		}
 
 		public JButton getCalculate()
@@ -313,12 +347,20 @@ public class MainContent extends Panel {
 				try {
 					FlightPlan flightPlan = Context.getFlightPlan();
 					flightPlan.calculate(
-						UnitFn.ftToM(Integer.valueOf(fl.getText()) * 100),
-						UnitFn.knToMs(Integer.valueOf(cs.getText())));
+						UnitFn.ftToM(Integer.valueOf(crzLevel.getText()) * 100),
+						UnitFn.knToMs(Integer.valueOf(crzSpeed.getText())),
+						UnitFn.ftMinToMs(Integer.valueOf(clbRate.getText())),
+						UnitFn.knToMs(Integer.valueOf(clbSpeed.getText())),
+						UnitFn.ftMinToMs(Integer.valueOf(desRate.getText())),
+						UnitFn.knToMs(Integer.valueOf(desSpeed.getText())));
 
 					Preferences prefs = Context.getPreferences();
-					prefs.setProperty(Preferences.FP_CRZ_LEVEL, fl.getText());
-					prefs.setProperty(Preferences.FP_CRZ_SPEED, cs.getText());
+					prefs.setProperty(Preferences.FP_CRZ_LEVEL, crzLevel.getText());
+					prefs.setProperty(Preferences.FP_CRZ_SPEED, crzSpeed.getText());
+					prefs.setProperty(Preferences.FP_CLB_RATE, clbRate.getText());
+					prefs.setProperty(Preferences.FP_CLB_SPEED, clbSpeed.getText());
+					prefs.setProperty(Preferences.FP_DES_RATE, desRate.getText());
+					prefs.setProperty(Preferences.FP_DES_SPEED, desSpeed.getText());
 					prefs.save();
 
 					data.refresh();
@@ -344,6 +386,10 @@ public class MainContent extends Panel {
 				Preferences prefs = Context.getPreferences();
 				prefs.clearProperty(Preferences.FP_CRZ_LEVEL);
 				prefs.clearProperty(Preferences.FP_CRZ_SPEED);
+				prefs.clearProperty(Preferences.FP_CLB_RATE);
+				prefs.clearProperty(Preferences.FP_CLB_SPEED);
+				prefs.clearProperty(Preferences.FP_DES_RATE);
+				prefs.clearProperty(Preferences.FP_DES_SPEED);
 				prefs.save();
 			}
 		}
@@ -360,7 +406,7 @@ public class MainContent extends Panel {
 			{
 				try {
 					FlightPlan flightPlan = Context.getFlightPlan();
-					flightPlan.setFilename(fn.getText());
+					flightPlan.setFilename(filename.getText());
 
 					FMSWriter writer = new FMSWriter(Context.getSettings()
 						.getProperty(Settings.DIR_EXPORT, File.class), flightPlan.getFilename());
@@ -379,21 +425,6 @@ public class MainContent extends Panel {
 					GuiFn.errorDialog(ee, win);
 				}
 			}
-		}
-	}
-
-	private class TableModel extends DefaultTableModel {
-
-		private static final long serialVersionUID = - 7234273051637878221L;
-
-		public TableModel(String[][] data, String[] columnNames) {
-
-			super(data, columnNames);
-		}
-
-		public boolean isCellEditable(int row, int column)
-		{
-			return false;
 		}
 	}
 }
