@@ -19,29 +19,44 @@
 package net.marcomerli.xpfp.gui;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.InputVerifier;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.AbstractBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.java.dev.designgridlayout.DesignGridLayoutManager;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.gui.Window.TextPopup;
 
@@ -49,10 +64,44 @@ import net.marcomerli.xpfp.gui.Window.TextPopup;
  * @author Marco Merli
  * @since 1.0
  */
-public abstract class Panel extends JPanel {
+public class Components {
 
-	private static final long serialVersionUID = - 7280965664177289899L;
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+	protected static class EnableablePanel extends JPanel {
+
+		private static final long serialVersionUID = 1478891565610026831L;
+
+		public EnableablePanel(String title, boolean enabled) {
+
+			CheckBoxTitledBorder border = new CheckBoxTitledBorder(title, enabled);
+			border.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					setEnabled(((JCheckBox) e.getSource()).isSelected());
+				}
+			});
+
+			setBorder(border);
+			setEnabled(enabled);
+		}
+
+		public EnableablePanel(String title) {
+
+			this(title, true);
+		}
+
+		@Override
+		public void setEnabled(boolean enabled)
+		{
+			super.setEnabled(enabled);
+
+			for (Component comp : getComponents())
+				comp.setEnabled(enabled);
+		}
+	}
 
 	protected static abstract class ValidateFormAction implements ActionListener {
 
@@ -70,15 +119,19 @@ public abstract class Panel extends JPanel {
 
 			if (fields != null && fields.length > 0) {
 				for (JComponent comp : fields) {
+					if (comp.isEnabled()) {
 
-					InputVerifier verifier = comp.getInputVerifier();
-					if (verifier != null) {
+						InputVerifier verifier = comp.getInputVerifier();
+						if (verifier != null) {
 
-						boolean isValid = verifier.verify(comp);
-						comp.setBorder(BorderFactory.createLineBorder(
-							(isValid ? Color.gray : Color.red)));
-						allValid &= isValid;
+							boolean isValid = verifier.verify(comp);
+							comp.setBorder(BorderFactory.createLineBorder(
+								(isValid ? Color.gray : Color.red)));
+							allValid &= isValid;
+						}
 					}
+					else
+						comp.setBorder(BorderFactory.createLineBorder(Color.gray));
 				}
 			}
 
@@ -226,6 +279,90 @@ public abstract class Panel extends JPanel {
 		{
 			setText(String.format("%s: %s",
 				label, value));
+		}
+	}
+
+	protected static class CheckBoxTitledBorder extends AbstractBorder {
+
+		private static final long serialVersionUID = - 5180386633364648300L;
+
+		private final TitledBorder _parent;
+		private final JCheckBox _checkBox;
+
+		public CheckBoxTitledBorder(String title, boolean selected) {
+
+			_parent = BorderFactory.createTitledBorder(title);
+			_checkBox = new JCheckBox(title, selected);
+			_checkBox.setHorizontalTextPosition(SwingConstants.LEFT);
+		}
+
+		public boolean isSelected()
+		{
+			return _checkBox.isSelected();
+		}
+
+		public void addActionListener(ActionListener listener)
+		{
+			_checkBox.addActionListener(listener);
+		}
+
+		@Override
+		public boolean isBorderOpaque()
+		{
+			return true;
+		}
+
+		@Override
+		public void paintBorder(Component c, Graphics g, int x, int y, int width, int height)
+		{
+			Insets borderInsets = _parent.getBorderInsets(c);
+			Insets insets = getBorderInsets(c);
+			int temp = (insets.top - borderInsets.top) / 2;
+			_parent.paintBorder(c, g, x, y + temp, width, height - temp);
+			Dimension size = _checkBox.getPreferredSize();
+			final Rectangle rectangle = new Rectangle(5, 0, size.width, size.height);
+
+			final Container container = (Container) c;
+			container.addMouseListener(new MouseAdapter() {
+
+				private void dispatchEvent(MouseEvent me)
+				{
+					if (rectangle.contains(me.getX(), me.getY())) {
+						Point pt = me.getPoint();
+						pt.translate(- 5, 0);
+						_checkBox.setBounds(rectangle);
+						_checkBox.dispatchEvent(new MouseEvent(_checkBox, me.getID(),
+							me.getWhen(), me.getModifiers(), pt.x, pt.y, me.getClickCount(), me.isPopupTrigger(), me.getButton()));
+						if (! _checkBox.isValid()) {
+							container.repaint();
+						}
+					}
+				}
+
+				public void mousePressed(MouseEvent me)
+				{
+					dispatchEvent(me);
+				}
+
+				public void mouseReleased(MouseEvent me)
+				{
+					dispatchEvent(me);
+				}
+			});
+
+			if (container.getLayout().getClass().equals(DesignGridLayoutManager.class)) {
+				; // FIXME: resolve for good the conflict with DesignGridLayout
+			}
+			else
+				SwingUtilities.paintComponent(g, _checkBox, container, rectangle);
+		}
+
+		@Override
+		public Insets getBorderInsets(Component c)
+		{
+			Insets insets = _parent.getBorderInsets(c);
+			insets.top = Math.max(insets.top, _checkBox.getPreferredSize().height);
+			return insets;
 		}
 	}
 }

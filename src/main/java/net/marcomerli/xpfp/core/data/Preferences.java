@@ -33,6 +33,7 @@ public class Preferences extends Data {
 	public static final String DIR_IMPORT = "directory.import.last";
 	public static final String FP_CRZ_LEVEL = "flightlevel.crz.level";
 	public static final String FP_CRZ_SPEED = "flightlevel.crz.speed";
+	public static final String FP_VNAV = "flightlevel.vnav";
 	public static final String FP_CLB_RATE = "flightlevel.clb.rate";
 	public static final String FP_CLB_SPEED = "flightlevel.clb.speed";
 	public static final String FP_DES_RATE = "flightlevel.des.rate";
@@ -46,7 +47,9 @@ public class Preferences extends Data {
 
 	@Override
 	protected void init()
-	{}
+	{
+		setProperty(FP_VNAV, "true");
+	}
 
 	@Override
 	protected void upgrade(String oldVersion)

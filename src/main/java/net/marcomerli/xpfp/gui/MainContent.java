@@ -39,7 +39,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -48,6 +47,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.java.dev.designgridlayout.DesignGridLayout;
 import net.java.dev.designgridlayout.Tag;
@@ -58,6 +59,12 @@ import net.marcomerli.xpfp.file.write.FMSWriter;
 import net.marcomerli.xpfp.fn.FormatFn;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.fn.UnitFn;
+import net.marcomerli.xpfp.gui.Components.EnableablePanel;
+import net.marcomerli.xpfp.gui.Components.NumberInput;
+import net.marcomerli.xpfp.gui.Components.ResetFormAction;
+import net.marcomerli.xpfp.gui.Components.TextInput;
+import net.marcomerli.xpfp.gui.Components.ValidateFormAction;
+import net.marcomerli.xpfp.gui.Components.ValueLabel;
 import net.marcomerli.xpfp.model.FlightPlan;
 import net.marcomerli.xpfp.model.Location;
 import net.marcomerli.xpfp.model.Waypoint;
@@ -67,9 +74,10 @@ import net.marcomerli.xpfp.model.WaypointType;
  * @author Marco Merli
  * @since 1.0
  */
-public class MainContent extends Panel {
+public class MainContent extends JPanel {
 
 	private static final long serialVersionUID = - 8732614615105930839L;
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	private static final String SKYVECTOR_AIRPORT_URL = "https://skyvector.com/airport/";
 
 	private MainWindow win;
@@ -273,20 +281,13 @@ public class MainContent extends Panel {
 		private NumberInput desRate;
 		private NumberInput desSpeed;
 		private TextInput filename;
+		private EnableablePanel vnavPanel;
 		private JButton export;
-
 		private JButton calculate;
 
 		public FlightPlaneProcessor() {
 
-			super(new BorderLayout());
-
-			setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder("Flight Data"),
-				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
-
 			Preferences prefs = Context.getPreferences();
-			DesignGridLayout layout = new DesignGridLayout(this);
 
 			crzLevel = new NumberInput(3);
 			crzLevel.setText(prefs.getProperty(Preferences.FP_CRZ_LEVEL));
@@ -316,17 +317,38 @@ public class MainContent extends Panel {
 			export.setEnabled(false);
 			export.addActionListener(new OnExport(filename));
 
-			layout.row().grid().add(new JLabel("Flight level (FL)", SwingConstants.RIGHT)).add(crzLevel)
+			JPanel left = new JPanel(new BorderLayout());
+			left.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createTitledBorder("Cruise Navigation"),
+				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
+
+			DesignGridLayout leftLayout = new DesignGridLayout(left);
+			leftLayout.row().grid().add(new JLabel("Flight level (FL)", SwingConstants.RIGHT)).add(crzLevel);
+			leftLayout.row().grid().add(new JLabel("Cruising speed (GS kn)", SwingConstants.RIGHT)).add(crzSpeed);
+
+			vnavPanel = new EnableablePanel("Vertical Navigation");
+
+			DesignGridLayout centerLayout = new DesignGridLayout(vnavPanel);
+			centerLayout.row().grid()
 				.add(new JLabel("Rate of climb (ft/min)", SwingConstants.RIGHT)).add(clbRate)
+				.add(new JLabel("Climbing speed (GS kn)", SwingConstants.RIGHT)).add(clbSpeed);
+			centerLayout.row().grid()
 				.add(new JLabel("Rate of descent (ft/min)", SwingConstants.RIGHT)).add(desRate)
-				.add(calculate);
-			layout.row().grid().add(new JLabel("Cruising speed (GS kn)", SwingConstants.RIGHT)).add(crzSpeed)
-				.add(new JLabel("Climbing speed (GS kn)", SwingConstants.RIGHT)).add(clbSpeed)
-				.add(new JLabel("Descenting speed (GS kn)", SwingConstants.RIGHT)).add(desSpeed)
-				.add(reset);
-			layout.row().grid().add(new JSeparator(), 7);
-			layout.row().grid().empty(3)
-				.add(new JLabel("Filename", SwingConstants.RIGHT)).add(filename, 2).add(export);
+				.add(new JLabel("Descenting speed (GS kn)", SwingConstants.RIGHT)).add(desSpeed);
+			
+			vnavPanel.setEnabled(prefs.getProperty(Preferences.FP_VNAV, Boolean.class));
+
+			JPanel right = new JPanel();
+			DesignGridLayout rightLayout = new DesignGridLayout(right);
+			rightLayout.row().grid().add(calculate);
+			rightLayout.row().grid().add(reset);
+
+			DesignGridLayout mainLayout = new DesignGridLayout(this);
+			mainLayout.row().grid().add(left, 2).add(vnavPanel, 4).add(right);
+			mainLayout.row().grid().empty(3)
+				.add(new JLabel("Filename", SwingConstants.RIGHT))
+				.add(filename, 2)
+				.add(export);
 		}
 
 		public JButton getCalculate()
@@ -346,15 +368,24 @@ public class MainContent extends Panel {
 			{
 				try {
 					FlightPlan flightPlan = Context.getFlightPlan();
-					flightPlan.calculate(
-						UnitFn.ftToM(Integer.valueOf(crzLevel.getText()) * 100),
-						UnitFn.knToMs(Integer.valueOf(crzSpeed.getText())),
-						UnitFn.ftMinToMs(Integer.valueOf(clbRate.getText())),
-						UnitFn.knToMs(Integer.valueOf(clbSpeed.getText())),
-						UnitFn.ftMinToMs(Integer.valueOf(desRate.getText())),
-						UnitFn.knToMs(Integer.valueOf(desSpeed.getText())));
+
+					if (vnavPanel.isEnabled()) {
+						flightPlan.calculate(
+							UnitFn.ftToM(Integer.valueOf(crzLevel.getText()) * 100),
+							UnitFn.knToMs(Integer.valueOf(crzSpeed.getText())),
+							UnitFn.ftMinToMs(Integer.valueOf(clbRate.getText())),
+							UnitFn.knToMs(Integer.valueOf(clbSpeed.getText())),
+							UnitFn.ftMinToMs(Integer.valueOf(desRate.getText())),
+							UnitFn.knToMs(Integer.valueOf(desSpeed.getText())));
+					}
+					else {
+						flightPlan.calculate(
+							UnitFn.ftToM(Integer.valueOf(crzLevel.getText()) * 100),
+							UnitFn.knToMs(Integer.valueOf(crzSpeed.getText())));
+					}
 
 					Preferences prefs = Context.getPreferences();
+					prefs.setProperty(Preferences.FP_VNAV, Boolean.toString(vnavPanel.isEnabled()));
 					prefs.setProperty(Preferences.FP_CRZ_LEVEL, crzLevel.getText());
 					prefs.setProperty(Preferences.FP_CRZ_SPEED, crzSpeed.getText());
 					prefs.setProperty(Preferences.FP_CLB_RATE, clbRate.getText());

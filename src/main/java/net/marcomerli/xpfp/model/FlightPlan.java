@@ -45,9 +45,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	}
 
 	public void calculate(final double crzAlt, final double crzSpeed,
-		double clbRate, double clbSpeed,
-		double desRate, double desSpeed)
-		throws Exception
+		double clbRate, double clbSpeed, double desRate, double desSpeed) throws Exception
 	{
 		if (size() <= 1)
 			return;
@@ -87,27 +85,28 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		distance = 0.0;
 		ete = 0L;
 
-		Iterator<Waypoint> iterator = iterator();
-		Waypoint prev = iterator.next();
-		Location loc = prev.getLocation();
-		GeoFn.elevation(loc);
+		for (Iterator<Waypoint> it = iterator(); it.hasNext();)
+			if (it.next().isCalculated())
+				it.remove();
 
-		for (; iterator.hasNext();) {
-			Waypoint wp = iterator.next();
+		Waypoint dep = getDeparture();
+		Location depLoc = dep.getLocation();
+		GeoFn.elevation(depLoc);
+
+		for (int iWp = 1; iWp < size(); iWp++) {
+			Waypoint prev = get(iWp - 1);
+			Waypoint wp = get(iWp);
 
 			Double dist = wp.setDistance(prev);
 			wp.setCourse(prev);
+			wp.getLocation().alt = crzAlt;
 			ete += wp.setEte(crzSpeed);
-
-			loc = wp.getLocation();
-			if (wp.getType().equals(WaypointType.ICAO))
-				GeoFn.elevation(loc);
-			else
-				loc.alt = crzAlt;
-
 			distance += dist;
-			prev = wp;
 		}
+
+		Waypoint arr = getArrival();
+		Location arrLoc = arr.getLocation();
+		GeoFn.elevation(arrLoc);
 	}
 
 	public Waypoint getDeparture() throws NoSuchWaypointException

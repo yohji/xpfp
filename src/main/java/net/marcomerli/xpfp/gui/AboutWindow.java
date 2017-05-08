@@ -38,6 +38,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 import net.marcomerli.xpfp.Version;
+import net.marcomerli.xpfp.gui.Components.LinkLabel;
 
 /**
  * @author Marco Merli
@@ -95,7 +96,7 @@ public class AboutWindow extends Window {
 		pane.add(new JLabel("Marco Merli <yohji@marcomerli.net>"));
 		pane.add(new JLabel("All rights reserved."));
 		pane.add(Box.createRigidArea(new Dimension(0, 20)));
-		pane.add(new Panel.LinkLabel("Follow Me on GitHub", GITHUB_URL));
+		pane.add(new LinkLabel("Follow Me on GitHub", GITHUB_URL));
 		pane.add(Box.createGlue());
 
 		return pane;
