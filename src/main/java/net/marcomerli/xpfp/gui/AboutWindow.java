@@ -31,6 +31,7 @@ import java.net.URL;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -75,7 +76,7 @@ public class AboutWindow extends Window {
 
 		mainPane.add(tabbedPane);
 		setContentPane(mainPane);
-		setSize(360, 425);
+		setSize(475, 475);
 
 		setResizable(false);
 		setLocationByPlatform(true);
@@ -87,21 +88,27 @@ public class AboutWindow extends Window {
 		JPanel pane = new JPanel();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
 		pane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		pane.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-		pane.add(Box.createRigidArea(new Dimension(0, 20)));
+		pane.add(Box.createRigidArea(new Dimension(0, 50)));
 		pane.add(new JLabel(TITLE_FULL));
 		pane.add(new JLabel("Version: " + Version.get()));
-		pane.add(Box.createRigidArea(new Dimension(0, 20)));
-		pane.add(new JLabel("IT IS ONLY FOR FLIGHT SIMULATION!"));
-		pane.add(new JLabel("DO NOT USE IT FOR REAL FLIGHT!"));
-		pane.add(Box.createRigidArea(new Dimension(0, 20)));
+		add(Box.createGlue());
+
+		pane.add(Box.createRigidArea(new Dimension(0, 30)));
 		pane.add(new JLabel("Copyright (c) 2017"));
 		pane.add(new JLabel("Marco Merli <yohji@marcomerli.net>"));
 		pane.add(new JLabel("All rights reserved."));
-		pane.add(Box.createRigidArea(new Dimension(0, 20)));
+		pane.add(new JLabel("X-Plane is a registered trademark of Laminar Research."));
 		pane.add(new LinkLabel("Follow Me on GitHub", GITHUB_URL));
+		add(Box.createGlue());
+
+		pane.add(Box.createRigidArea(new Dimension(0, 30)));
+		pane.add(new JLabel("IT IS ONLY FOR FLIGHT SIMULATION!"));
+		pane.add(new JLabel("DO NOT USE IT FOR REAL FLIGHT!"));
 		pane.add(Box.createGlue());
+
+		for (Component comp : pane.getComponents())
+			((JComponent) comp).setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		return pane;
 	}
