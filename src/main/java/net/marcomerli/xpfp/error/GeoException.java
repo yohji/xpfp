@@ -22,16 +22,16 @@ package net.marcomerli.xpfp.error;
  * @author Marco Merli
  * @since 1.0
  */
-public class NoSuchWaypointException extends Exception {
+public class GeoException extends Exception {
 
-	private static final long serialVersionUID = - 6565089515708887605L;
+	private static final long serialVersionUID = - 1992201232500161984L;
 
-	public NoSuchWaypointException(String message) {
+	public GeoException(String message) {
 
 		super(message);
 	}
 
-	public NoSuchWaypointException(Throwable cause) {
+	public GeoException(Throwable cause) {
 
 		super(cause);
 	}

@@ -62,7 +62,7 @@ public class GeoFnTest extends UnitTestSupport {
 	}
 
 	@Test
-	public void declination()
+	public void declination() throws Exception
 	{
 		Location loc = new Location(45.0, 7.5);
 		double decl = GeoFn.declination(loc);

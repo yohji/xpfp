@@ -40,6 +40,7 @@ import javax.swing.JTextField;
 import net.java.dev.designgridlayout.DesignGridLayout;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Settings;
+import net.marcomerli.xpfp.error.DataException;
 import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.fn.GuiFn;
 
@@ -217,6 +218,9 @@ public class SettingsWindow extends Window {
 				settings.save();
 				Context.refresh();
 				GeoFn.init();
+			}
+			catch (DataException ee) {
+				GuiFn.errorDialog(ee, SettingsWindow.this);
 			}
 			catch (Exception ee) {
 				logger.error("onSave", ee);

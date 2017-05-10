@@ -21,7 +21,8 @@ package net.marcomerli.xpfp.model;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import net.marcomerli.xpfp.error.NoSuchWaypointException;
+import net.marcomerli.xpfp.error.FlightPlanException;
+import net.marcomerli.xpfp.error.GeoException;
 import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.fn.GeoFn;
 
@@ -37,6 +38,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	private String filename;
 	private Double distance = 0.0;
 	private Long ete = 0L;
+	private boolean valid;
 
 	public FlightPlan(String name) {
 
@@ -45,10 +47,10 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	}
 
 	public void calculate(final double crzAlt, final double crzSpeed,
-		double clbRate, double clbSpeed, double desRate, double desSpeed) throws Exception
+		double clbRate, double clbSpeed, double desRate, double desSpeed)
+		throws FlightPlanException, GeoException
 	{
-		if (size() <= 1)
-			return;
+		validate();
 
 		for (Iterator<Waypoint> it = iterator(); it.hasNext();)
 			if (it.next().isCalculated())
@@ -77,13 +79,10 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		}
 	}
 
-	public void calculate(final double crzAlt, final double crzSpeed) throws Exception
+	public void calculate(final double crzAlt, final double crzSpeed)
+		throws FlightPlanException, GeoException
 	{
-		if (size() <= 1)
-			return;
-
-		distance = 0.0;
-		ete = 0L;
+		validate();
 
 		for (Iterator<Waypoint> it = iterator(); it.hasNext();)
 			if (it.next().isCalculated())
@@ -92,6 +91,9 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		Waypoint dep = getDeparture();
 		Location depLoc = dep.getLocation();
 		GeoFn.elevation(depLoc);
+
+		distance = 0.0;
+		ete = 0L;
 
 		for (int iWp = 1; iWp < size(); iWp++) {
 			Waypoint prev = get(iWp - 1);
@@ -109,22 +111,42 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		GeoFn.elevation(arrLoc);
 	}
 
-	public Waypoint getDeparture() throws NoSuchWaypointException
+	public void validate() throws FlightPlanException
 	{
-		Waypoint wp = getFirst();
-		if (! wp.getType().equals(WaypointType.ICAO))
-			throw new NoSuchWaypointException("Departure not specified.");
+		try {
+			if (size() <= 1)
+				throw new FlightPlanException(
+					"Insufficient number of waypoints specified.");
 
-		return wp;
+			Waypoint wp = getDeparture();
+			if (! wp.getType().equals(WaypointType.ICAO))
+				throw new FlightPlanException("Departure not specified.");
+
+			wp = getArrival();
+			if (! wp.getType().equals(WaypointType.ICAO))
+				throw new FlightPlanException("Arrival not specified.");
+
+			valid = true;
+		}
+		catch (FlightPlanException e) {
+			valid = false;
+			throw e;
+		}
 	}
 
-	public Waypoint getArrival() throws NoSuchWaypointException
+	public Waypoint getDeparture()
 	{
-		Waypoint wp = getLast();
-		if (! wp.getType().equals(WaypointType.ICAO))
-			throw new NoSuchWaypointException("Arrival not specified.");
+		return getFirst();
+	}
 
-		return wp;
+	public Waypoint getArrival()
+	{
+		return getLast();
+	}
+
+	public boolean isValid()
+	{
+		return valid;
 	}
 
 	public String getFullFilename(FileType type)
@@ -167,7 +189,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	//
 
 	private void calculateClimb(final double crzAlt, final double crzSpeed,
-		final double clbRate, final double clbSpeed, Location depLoc)
+		final double clbRate, final double clbSpeed, Location depLoc) throws GeoException
 	{
 		boolean clbWpAdd = false;
 		double lastDistance = 0;
@@ -222,7 +244,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	}
 
 	private void calculateDescent(final double crzAlt, final double crzSpeed,
-		final double desRate, final double desSpeed, Location arrLoc)
+		final double desRate, final double desSpeed, Location arrLoc) throws GeoException
 	{
 		double lastDistance = 0;
 

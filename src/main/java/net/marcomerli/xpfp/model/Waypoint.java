@@ -20,6 +20,7 @@ package net.marcomerli.xpfp.model;
 
 import java.io.Serializable;
 
+import net.marcomerli.xpfp.error.GeoException;
 import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.fn.NumberFn;
 
@@ -48,7 +49,7 @@ public class Waypoint implements Serializable {
 			wp.getLocation(), this.getLocation()));
 	}
 
-	public void setCourse(Waypoint wp)
+	public void setCourse(Waypoint wp) throws GeoException
 	{
 		bearing = GeoFn.bearing(wp.getLocation(), this.getLocation());
 		heading = bearing - GeoFn.declination(wp.getLocation());

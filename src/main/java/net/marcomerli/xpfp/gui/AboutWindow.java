@@ -37,6 +37,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
+import org.slf4j.LoggerFactory;
+
 import net.marcomerli.xpfp.Version;
 import net.marcomerli.xpfp.gui.Components.LinkLabel;
 
@@ -53,7 +55,9 @@ public class AboutWindow extends Window {
 		try {
 			GITHUB_URL = new URL("https://github.com/yohji/xpfp/");
 		}
-		catch (Exception e) {}
+		catch (Exception e) {
+			LoggerFactory.getLogger(AboutWindow.class).error("url", e);
+		}
 	}
 
 	public AboutWindow() {
@@ -121,7 +125,7 @@ public class AboutWindow extends Window {
 			textArea.setText(buffer.toString());
 		}
 		catch (Exception e) {
-			throw new RuntimeException(e);
+			logger.error("license", e);
 		}
 
 		textArea.setCaretPosition(0);

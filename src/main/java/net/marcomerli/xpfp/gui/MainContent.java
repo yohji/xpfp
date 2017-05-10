@@ -55,6 +55,9 @@ import net.java.dev.designgridlayout.Tag;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.core.data.Settings;
+import net.marcomerli.xpfp.error.DataException;
+import net.marcomerli.xpfp.error.FlightPlanException;
+import net.marcomerli.xpfp.error.GeoException;
 import net.marcomerli.xpfp.file.write.FMSWriter;
 import net.marcomerli.xpfp.fn.FormatFn;
 import net.marcomerli.xpfp.fn.GuiFn;
@@ -225,7 +228,8 @@ public class MainContent extends JPanel {
 							GuiFn.openBrowser(new URL(SKYVECTOR_AIRPORT_URL + icao));
 						}
 						catch (Exception e) {
-							GuiFn.warnDialog("Failed to open the default web browsert.", win);
+							logger.error("info", e);
+							GuiFn.fatalDialog(e, win);
 						}
 					}
 				};
@@ -335,7 +339,7 @@ public class MainContent extends JPanel {
 			centerLayout.row().grid()
 				.add(new JLabel("Rate of descent (ft/min)", SwingConstants.RIGHT)).add(desRate)
 				.add(new JLabel("Descenting speed (GS kn)", SwingConstants.RIGHT)).add(desSpeed);
-			
+
 			vnavPanel.setEnabled(prefs.getProperty(Preferences.FP_VNAV, Boolean.class));
 
 			JPanel right = new JPanel();
@@ -397,9 +401,12 @@ public class MainContent extends JPanel {
 					data.refresh();
 					export.setEnabled(true);
 				}
-				catch (Exception ee) {
-					logger.error("OnCalculate", ee);
+				catch (FlightPlanException | GeoException ee) {
 					GuiFn.errorDialog(ee, win);
+				}
+				catch (Exception ee) {
+					logger.error("onCalculate", ee);
+					GuiFn.fatalDialog(ee, win);
 				}
 			}
 		}
@@ -414,14 +421,19 @@ public class MainContent extends JPanel {
 			@Override
 			public void perform(ActionEvent e)
 			{
-				Preferences prefs = Context.getPreferences();
-				prefs.clearProperty(Preferences.FP_CRZ_LEVEL);
-				prefs.clearProperty(Preferences.FP_CRZ_SPEED);
-				prefs.clearProperty(Preferences.FP_CLB_RATE);
-				prefs.clearProperty(Preferences.FP_CLB_SPEED);
-				prefs.clearProperty(Preferences.FP_DES_RATE);
-				prefs.clearProperty(Preferences.FP_DES_SPEED);
-				prefs.save();
+				try {
+					Preferences prefs = Context.getPreferences();
+					prefs.clearProperty(Preferences.FP_CRZ_LEVEL);
+					prefs.clearProperty(Preferences.FP_CRZ_SPEED);
+					prefs.clearProperty(Preferences.FP_CLB_RATE);
+					prefs.clearProperty(Preferences.FP_CLB_SPEED);
+					prefs.clearProperty(Preferences.FP_DES_RATE);
+					prefs.clearProperty(Preferences.FP_DES_SPEED);
+					prefs.save();
+				}
+				catch (DataException ee) {
+					GuiFn.errorDialog(ee, win);
+				}
 			}
 		}
 

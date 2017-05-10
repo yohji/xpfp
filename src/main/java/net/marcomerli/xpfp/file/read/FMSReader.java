@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileReader;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 
 import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.fn.NumberFn;
@@ -59,16 +58,16 @@ public class FMSReader extends Reader {
 
 				switch (iLine) {
 				case 1:
-					Validate.isTrue(line.matches("I|A"), "Invalid FMS file format.");
+					validate(line.matches("I|A"), "Invalid FMS file format.");
 				break;
 				case 2:
-					Validate.isTrue(line.equals("3 version"), "Invalid FMS file format.");
+					validate(line.equals("3 version"), "Invalid FMS file format.");
 				break;
 				case 3:
-					Validate.isTrue(line.matches("0|1"), "Invalid FMS file format.");
+					validate(line.matches("0|1"), "Invalid FMS file format.");
 				break;
 				case 4:
-					Validate.isTrue(NumberFn.isNumeric(line), "Invalid FMS file format.");
+					validate(NumberFn.isNumeric(line), "Invalid FMS file format.");
 					fpSize = Integer.valueOf(line);
 				break;
 				default:
@@ -76,7 +75,7 @@ public class FMSReader extends Reader {
 						break;
 
 					String[] parts = line.split(" ");
-					Validate.isTrue(parts.length == 5, "Invalid FMS file format.");
+					validate(parts.length == 5, "Invalid FMS file format.");
 
 					Waypoint waypoint = new Waypoint();
 					waypoint.setType(WaypointType.get(Integer.valueOf(parts[0])));
@@ -97,7 +96,7 @@ public class FMSReader extends Reader {
 				}
 			}
 
-			Validate.isTrue(fpSize.equals(flightPlan.size()), "Invalid FMS file format.");
+			validate(fpSize.equals(flightPlan.size()), "Invalid FMS file format.");
 		}
 
 		return flightPlan;

@@ -19,9 +19,13 @@
 package net.marcomerli.xpfp.file.read;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
+import net.marcomerli.xpfp.error.ReaderException;
 import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.model.FlightPlan;
 
@@ -43,4 +47,57 @@ public abstract class Reader {
 	}
 
 	public abstract FlightPlan read() throws Exception;
+
+	//
+	// Validation
+	//
+
+	protected void validate(final boolean expression, String message, Object... args)
+		throws ReaderException
+	{
+		if (! expression)
+			throw new ReaderException(message, args);
+	}
+
+	protected void validateNot(final boolean expression, String message, Object... args)
+		throws ReaderException
+	{
+		if (expression)
+			throw new ReaderException(message, args);
+	}
+
+	protected void validateNull(final Object target, String message, Object... args)
+		throws ReaderException
+	{
+		if (target == null)
+			throw new ReaderException(message, args);
+	}
+
+	protected <T extends CharSequence> void validateBlank(final T target, String message, Object... args)
+		throws ReaderException
+	{
+		if (StringUtils.isBlank(target))
+			throw new ReaderException(message, args);
+	}
+
+	protected <T> void validateEmpty(final T[] target, String message, Object... args)
+		throws ReaderException
+	{
+		if (target == null || target.length == 0)
+			throw new ReaderException(message, args);
+	}
+
+	protected <T extends Map<?, ?>> void validateEmpty(final T target, String message, Object... args)
+		throws ReaderException
+	{
+		if (target == null || target.isEmpty())
+			throw new ReaderException(message, args);
+	}
+
+	protected <T extends Collection<?>> void validateEmpty(final T target, String message, Object... args)
+		throws ReaderException
+	{
+		if (target == null || target.isEmpty())
+			throw new ReaderException(message, args);
+	}
 }

@@ -27,6 +27,7 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 
 import net.marcomerli.xpfp.Version;
+import net.marcomerli.xpfp.error.DataException;
 
 /**
  * @author Marco Merli
@@ -38,7 +39,7 @@ public abstract class Data extends Properties {
 
 	public static final String VERSION = "version";
 
-	public void load()
+	public void load() throws DataException
 	{
 		if (! file().exists()) {
 
@@ -54,19 +55,19 @@ public abstract class Data extends Properties {
 					upgrade(v);
 			}
 			catch (Exception e) {
-				throw new RuntimeException(e);
+				throw new DataException(e);
 			}
 		}
 	}
 
-	public void save()
+	public void save() throws DataException
 	{
 		try {
 			setProperty(VERSION, Version.get());
 			store(new FileWriter(file()), StringUtils.EMPTY);
 		}
 		catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new DataException(e);
 		}
 	}
 

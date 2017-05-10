@@ -52,6 +52,13 @@ public class GuiFn {
 			MainWindow.TITLE_COMPACT + " :: Error", JOptionPane.ERROR_MESSAGE);
 	}
 
+	public static void fatalDialog(Throwable e, Component component)
+	{
+		// FIXME: notify the issue on GitHub
+
+		errorDialog(e, component);
+	}
+
 	public static int selectDialog(String message, Component component)
 	{
 		return JOptionPane.showConfirmDialog(component, message,

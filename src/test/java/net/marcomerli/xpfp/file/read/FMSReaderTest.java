@@ -5,7 +5,7 @@ import java.io.File;
 import org.junit.Test;
 
 import net.marcomerli.xpfp.UnitTestSupport;
-import net.marcomerli.xpfp.error.NoSuchWaypointException;
+import net.marcomerli.xpfp.error.FlightPlanException;
 import net.marcomerli.xpfp.model.FlightPlan;
 import net.marcomerli.xpfp.model.Location;
 import net.marcomerli.xpfp.model.Waypoint;
@@ -36,12 +36,12 @@ public class FMSReaderTest extends UnitTestSupport {
 		assertStringNotBlank(flightPlan.getFilename());
 
 		try {
-			flightPlan.getDeparture();
-			flightPlan.getArrival();
+			flightPlan.validate();
 		}
-		catch (NoSuchWaypointException e) {
+		catch (FlightPlanException e) {
 			failWhenExceptionNotExpected(e);
 		}
+
 		assertNotEmpty(flightPlan);
 		for (Waypoint wp : flightPlan) {
 

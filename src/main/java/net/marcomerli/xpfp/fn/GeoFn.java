@@ -38,6 +38,7 @@ import com.google.maps.model.ElevationResult;
 
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Settings;
+import net.marcomerli.xpfp.error.GeoException;
 import net.marcomerli.xpfp.model.Location;
 
 /**
@@ -79,7 +80,7 @@ public class GeoFn {
 		return new Location(point.x, point.y);
 	}
 
-	public static double heading(Location from, Location to)
+	public static double heading(Location from, Location to) throws GeoException
 	{
 		return bearing(from, to) + declination(from);
 	}
@@ -99,31 +100,46 @@ public class GeoFn {
 		return (Math.toDegrees(Math.atan2(y, x)) + 360) % 360;
 	}
 
-	public static void elevation(Location location) throws Exception
+	public static void elevation(Location location) throws GeoException
 	{
-		double elev = ElevationApi.getByPoint(context, location)
-			.await().elevation;
+		try {
+			double elev = ElevationApi.getByPoint(context, location)
+				.await().elevation;
 
-		location.alt = elev;
+			location.alt = elev;
+		}
+		catch (Exception e) {
+			throw new GeoException(e);
+		}
 	}
 
-	public static double[] elevations(Location from, Location to) throws Exception
+	public static double[] elevations(Location from, Location to) throws GeoException
 	{
-		int sample = (int) (distance(from, to) / 750);
-		ElevationResult[] res = ElevationApi.getByPath(context, sample, new Location[] {
-			from, to
-		}).await();
+		try {
+			int sample = (int) (distance(from, to) / 750);
+			ElevationResult[] res = ElevationApi.getByPath(context, sample, new Location[] {
+				from, to
+			}).await();
 
-		double[] elevs = new double[res.length];
-		for (int i = 0; i < res.length; i++)
-			elevs[i] = res[i].elevation;
+			double[] elevs = new double[res.length];
+			for (int i = 0; i < res.length; i++)
+				elevs[i] = res[i].elevation;
 
-		return elevs;
+			return elevs;
+		}
+		catch (Exception e) {
+			throw new GeoException(e);
+		}
 	}
 
-	public static double declination(Location loc)
+	public static double declination(Location loc) throws GeoException
 	{
-		return geoMag.getDeclination(loc.lat, loc.lng);
+		try {
+			return geoMag.getDeclination(loc.lat, loc.lng);
+		}
+		catch (Exception e) {
+			throw new GeoException(e);
+		}
 	}
 
 	private GeoFn() {}

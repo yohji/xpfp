@@ -66,7 +66,7 @@ import net.marcomerli.xpfp.gui.Window.TextPopup;
  */
 public class Components {
 
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
+	protected static final Logger logger = LoggerFactory.getLogger(Components.class);
 
 	protected static class EnableablePanel extends JPanel {
 
@@ -250,7 +250,7 @@ public class Components {
 							GuiFn.openBrowser(url);
 						}
 						catch (Exception ee) {
-							ee.printStackTrace();
+							logger.error("openBrowser", ee);
 						}
 					}
 				});

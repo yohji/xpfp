@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
+import net.marcomerli.xpfp.error.DataException;
+import net.marcomerli.xpfp.error.ReaderException;
 import net.marcomerli.xpfp.file.read.FMSReader;
 import net.marcomerli.xpfp.file.read.FPLReader;
 import net.marcomerli.xpfp.file.read.Reader;
@@ -130,12 +132,12 @@ public class MenuBar extends JMenuBar {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File fpl = fcFPL.getSelectedFile();
 
-				Preferences preferences = Context.getPreferences();
-				preferences.setProperty(Preferences.DIR_IMPORT,
-					fcFPL.getCurrentDirectory().getAbsolutePath());
-				preferences.save();
-
 				try {
+					Preferences preferences = Context.getPreferences();
+					preferences.setProperty(Preferences.DIR_IMPORT,
+						fcFPL.getCurrentDirectory().getAbsolutePath());
+					preferences.save();
+
 					Constructor<? extends Reader> constr = readerClass.getConstructor(File.class);
 					Reader reader = constr.newInstance(fpl);
 					FlightPlan flightPlan = reader.read();
@@ -144,6 +146,9 @@ public class MenuBar extends JMenuBar {
 					win.setContentPane(new MainContent(win));
 					win.pack();
 					win.validate();
+				}
+				catch (DataException | ReaderException ee) {
+					GuiFn.errorDialog(ee, win);
 				}
 				catch (Exception ee) {
 					logger.error("onImport", ee);

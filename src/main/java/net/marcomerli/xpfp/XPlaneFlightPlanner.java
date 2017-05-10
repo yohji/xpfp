@@ -21,6 +21,8 @@ package net.marcomerli.xpfp;
 import java.awt.Toolkit;
 import java.lang.reflect.Field;
 
+import javax.swing.JFrame;
+
 // FIXME: error handling and issue notify
 
 import javax.swing.SwingUtilities;
@@ -32,7 +34,9 @@ import org.slf4j.LoggerFactory;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.core.data.Settings;
+import net.marcomerli.xpfp.error.DataException;
 import net.marcomerli.xpfp.fn.GeoFn;
+import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.gui.MainWindow;
 import net.marcomerli.xpfp.gui.Window;
 
@@ -43,6 +47,8 @@ import net.marcomerli.xpfp.gui.Window;
 public class XPlaneFlightPlanner {
 
 	protected static final Logger logger = LoggerFactory.getLogger(XPlaneFlightPlanner.class);
+
+	private static JFrame mainWindow;
 
 	public static void main(String[] args) throws Exception
 	{
@@ -71,12 +77,24 @@ public class XPlaneFlightPlanner {
 				@Override
 				public void run()
 				{
-					new MainWindow();
+					mainWindow = new MainWindow();
 				}
 			});
 		}
+		catch (DataException e) {
+			GuiFn.errorDialog(e, getMainWindow());
+		}
 		catch (Exception e) {
 			logger.error("main", e);
+			GuiFn.fatalDialog(e, getMainWindow());
 		}
+	}
+
+	public static MainWindow getMainWindow()
+	{
+		if (mainWindow == null)
+			mainWindow = new JFrame(MainWindow.TITLE_FULL);
+
+		return (MainWindow) mainWindow;
 	}
 }

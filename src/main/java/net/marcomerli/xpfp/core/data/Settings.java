@@ -52,8 +52,6 @@ public class Settings extends Data {
 	{
 		setProperty(DIR_EXPORT, SystemUtils.USER_HOME);
 		setProperty(PROXY_ACTIVE, "false");
-		setProperty(PROXY_HOSTNAME, "127.0.0.1");
-		setProperty(PROXY_PORT, "3128");
 		setProperty(PROXY_AUTH, "false");
 	}
 

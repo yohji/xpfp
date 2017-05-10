@@ -24,7 +24,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -55,15 +54,15 @@ public class FPLReader extends Reader {
 		doc.getDocumentElement().normalize();
 
 		NodeList nodes = doc.getElementsByTagName("flight-plan");
-		Validate.isTrue(nodes.getLength() == 1, "Invalid FPL file format.");
+		validate(nodes.getLength() == 1, "Invalid FPL file format.");
 
 		nodes = doc.getElementsByTagName("route-name");
-		Validate.isTrue(nodes.getLength() == 1, "FPL file has not a name of the route.");
+		validate(nodes.getLength() == 1, "FPL file has not a name of the route.");
 
 		FlightPlan flightPlan = new FlightPlan(nodes.item(0).getFirstChild().getNodeValue());
 
 		NodeList wps = doc.getElementsByTagName("waypoint");
-		Validate.isTrue(wps.getLength() > 0, "FPL file has not waypoints.");
+		validate(wps.getLength() > 0, "FPL file has not waypoints.");
 
 		for (int iWp = 0; iWp < wps.getLength(); iWp++) {
 			NodeList wpData = wps.item(iWp).getChildNodes();
