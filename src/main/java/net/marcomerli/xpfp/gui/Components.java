@@ -77,10 +77,8 @@ public class Components {
 
 		private static final long serialVersionUID = - 4777808857168558526L;
 
-		private GridBagConstraints cLast = null;
-		private GridBagConstraints cFull = null;
-		private GridBagConstraints cMiddle = null;
-		private GridBagConstraints cLabel = null;
+		private final GridBagConstraints cLast;
+		private final GridBagConstraints cMiddle;
 
 		public FormPanel() {
 
@@ -89,34 +87,24 @@ public class Components {
 			cLast = new GridBagConstraints();
 			cLast.fill = GridBagConstraints.HORIZONTAL;
 			cLast.anchor = GridBagConstraints.NORTHWEST;
-			cLast.weightx = 1.0;
-			cLast.gridwidth = GridBagConstraints.REMAINDER;
 			cLast.insets = new Insets(1, 1, 1, 1);
-
-			cFull = (GridBagConstraints) cLast.clone();
-			cFull.gridwidth = GridBagConstraints.REMAINDER;
+			cLast.gridwidth = GridBagConstraints.REMAINDER;
 
 			cMiddle = (GridBagConstraints) cLast.clone();
 			cMiddle.gridwidth = GridBagConstraints.RELATIVE;
-
-			cLabel = (GridBagConstraints) cLast.clone();
-			cLabel.weightx = 0.5;
-			cLabel.gridwidth = 1;
 		}
 
-		public JLabel addLabel(String s)
+		public JLabel addLabel(String label)
 		{
-			JLabel label = new JLabel(s);
-			addLabel(label);
-
-			return label;
+			return addLabel(label, 0);
 		}
 
-		public void addLabel(Component label)
+		public JLabel addLabel(String label, double weight)
 		{
-			GridBagLayout gbl = (GridBagLayout) getLayout();
-			gbl.setConstraints(label, cLabel);
-			add(label);
+			JLabel jl = new JLabel(label);
+			addMiddle(jl, weight);
+
+			return jl;
 		}
 
 		public void addSpace(Number space)
@@ -124,24 +112,31 @@ public class Components {
 			addLabel(StringUtils.repeat(' ', space.intValue()));
 		}
 
-		public void addLastField(Component field)
+		public void addLast(Component field)
+		{
+			addLast(field, 0);
+		}
+
+		public void addLast(Component field, double weight)
 		{
 			GridBagLayout gbl = (GridBagLayout) getLayout();
+			cLast.weightx = weight;
 			gbl.setConstraints(field, cLast);
+
 			add(field);
 		}
 
-		public void addMiddleField(Component field)
+		public void addMiddle(Component field)
+		{
+			addMiddle(field, 0);
+		}
+
+		public void addMiddle(Component field, double weight)
 		{
 			GridBagLayout gbl = (GridBagLayout) getLayout();
+			cMiddle.weightx = weight;
 			gbl.setConstraints(field, cMiddle);
-			add(field);
-		}
 
-		public void addFullField(Component field)
-		{
-			GridBagLayout gbl = (GridBagLayout) getLayout();
-			gbl.setConstraints(field, cFull);
 			add(field);
 		}
 	}
@@ -175,6 +170,8 @@ public class Components {
 		public void setEnabled(boolean enabled)
 		{
 			super.setEnabled(enabled);
+
+			((CheckBoxTitledBorder) getBorder()).setSelected(enabled);
 
 			for (Component comp : getComponents())
 				if (! EnableablePanel.class.isAssignableFrom(comp.getClass()))
@@ -378,6 +375,11 @@ public class Components {
 		public boolean isSelected()
 		{
 			return _checkBox.isSelected();
+		}
+
+		public void setSelected(boolean enabled)
+		{
+			_checkBox.setSelected(enabled);
 		}
 
 		public void addActionListener(ActionListener listener)

@@ -18,8 +18,8 @@
 
 package net.marcomerli.xpfp.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
@@ -39,9 +39,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -50,8 +50,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.java.dev.designgridlayout.DesignGridLayout;
-import net.java.dev.designgridlayout.Tag;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.core.data.Settings;
@@ -63,6 +61,7 @@ import net.marcomerli.xpfp.fn.FormatFn;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.fn.UnitFn;
 import net.marcomerli.xpfp.gui.Components.EnableablePanel;
+import net.marcomerli.xpfp.gui.Components.FormPanel;
 import net.marcomerli.xpfp.gui.Components.NumberInput;
 import net.marcomerli.xpfp.gui.Components.ResetFormAction;
 import net.marcomerli.xpfp.gui.Components.TextInput;
@@ -90,6 +89,7 @@ public class MainContent extends JPanel {
 	public MainContent(MainWindow win) {
 
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		this.win = win;
 
 		add(data = new FlightPlaneData());
@@ -107,7 +107,7 @@ public class MainContent extends JPanel {
 		};
 
 		private final int[] columnWidths = new int[] {
-			25, 60, 40, 50, 115, 115, 70, 55, 55, 80, 60
+			30, 100, 80, 80, 170, 170, 100, 100, 100, 170, 150
 		};
 
 		private JTable table;
@@ -116,7 +116,7 @@ public class MainContent extends JPanel {
 
 		public FlightPlaneData() {
 
-			super(new BorderLayout());
+			setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
 			FlightPlan flightPlan = Context.getFlightPlan();
 			setBorder(BorderFactory.createCompoundBorder(
@@ -133,12 +133,14 @@ public class MainContent extends JPanel {
 			pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			pane.setViewportView(table);
 
-			DesignGridLayout layout = new DesignGridLayout(this);
-			layout.row().grid().add(pane);
-			layout.row().bar()
-				.add(distance = new ValueLabel("Distance", "-"), Tag.RIGHT).gap()
-				.add(ete = new ValueLabel("ETE", "-"), Tag.RIGHT);
+			JPanel info = new JPanel();
+			info.setLayout(new BoxLayout(info, BoxLayout.LINE_AXIS));
+			info.add(distance = new ValueLabel("Distance", "-"));
+			info.add(new JLabel(" | "));
+			info.add(ete = new ValueLabel("ETE", "-"));
 
+			add(pane);
+			add(info);
 			render();
 		}
 
@@ -291,6 +293,7 @@ public class MainContent extends JPanel {
 
 		public FlightPlaneProcessor() {
 
+			super(new FlowLayout(FlowLayout.LEFT));
 			Preferences prefs = Context.getPreferences();
 
 			crzLevel = new NumberInput(3);
@@ -311,6 +314,7 @@ public class MainContent extends JPanel {
 				clbRate, clbSpeed, desRate, desSpeed));
 
 			filename = new TextInput();
+			filename.setColumns(15);
 			filename.setText(Context.getFlightPlan().getFilename());
 
 			JButton reset = new JButton("Reset");
@@ -321,38 +325,39 @@ public class MainContent extends JPanel {
 			export.setEnabled(false);
 			export.addActionListener(new OnExport(filename));
 
-			JPanel left = new JPanel(new BorderLayout());
+			FormPanel left = new FormPanel();
 			left.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder("Cruise Navigation"),
-				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
+				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
-			DesignGridLayout leftLayout = new DesignGridLayout(left);
-			leftLayout.row().grid().add(new JLabel("Flight level (FL)", SwingConstants.RIGHT)).add(crzLevel);
-			leftLayout.row().grid().add(new JLabel("Cruising speed (GS kn)", SwingConstants.RIGHT)).add(crzSpeed);
+			left.addLabel("Flight level (FL)").setLabelFor(crzLevel);
+			left.addLast(crzLevel);
+			left.addLabel("Cruising speed (GS kn)").setLabelFor(crzSpeed);
+			left.addLast(crzSpeed);
 
 			vnavPanel = new EnableablePanel("Vertical Navigation");
 
-			DesignGridLayout centerLayout = new DesignGridLayout(vnavPanel);
-			centerLayout.row().grid()
-				.add(new JLabel("Rate of climb (ft/min)", SwingConstants.RIGHT)).add(clbRate)
-				.add(new JLabel("Climbing speed (GS kn)", SwingConstants.RIGHT)).add(clbSpeed);
-			centerLayout.row().grid()
-				.add(new JLabel("Rate of descent (ft/min)", SwingConstants.RIGHT)).add(desRate)
-				.add(new JLabel("Descenting speed (GS kn)", SwingConstants.RIGHT)).add(desSpeed);
-
+			vnavPanel.addLabel("Rate of climb (ft/min)").setLabelFor(clbRate);
+			vnavPanel.addLast(clbRate);
+			vnavPanel.addLabel("Climbing speed (GS kn)").setLabelFor(clbSpeed);
+			vnavPanel.addLast(clbSpeed);
+			vnavPanel.addLabel("Rate of descent (ft/min)").setLabelFor(desRate);
+			vnavPanel.addLast(desRate);
+			vnavPanel.addLabel("Descenting speed (GS kn)").setLabelFor(desSpeed);
+			vnavPanel.addLast(desSpeed);
 			vnavPanel.setEnabled(prefs.getProperty(Preferences.FP_VNAV, Boolean.class));
 
-			JPanel right = new JPanel();
-			DesignGridLayout rightLayout = new DesignGridLayout(right);
-			rightLayout.row().grid().add(calculate);
-			rightLayout.row().grid().add(reset);
+			FormPanel right = new FormPanel();
+			right.addLast(calculate);
+			right.addLast(reset);
+			right.addLast(new JSeparator(JSeparator.HORIZONTAL));
+			right.addLabel("Filename").setLabelFor(filename);
+			right.addLast(filename);
+			right.addLast(export);
 
-			DesignGridLayout mainLayout = new DesignGridLayout(this);
-			mainLayout.row().grid().add(left, 2).add(vnavPanel, 4).add(right);
-			mainLayout.row().grid().empty(3)
-				.add(new JLabel("Filename", SwingConstants.RIGHT))
-				.add(filename, 2)
-				.add(export);
+			add(left);
+			add(vnavPanel);
+			add(right);
 		}
 
 		public JButton getCalculate()

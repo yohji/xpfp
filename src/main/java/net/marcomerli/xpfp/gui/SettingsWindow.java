@@ -33,6 +33,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Settings;
@@ -49,6 +50,8 @@ import net.marcomerli.xpfp.gui.Components.FormPanel;
 public class SettingsWindow extends Window {
 
 	private static final long serialVersionUID = 5454273820569518074L;
+	private static final Border CREATE_EMPTY_BORDER = BorderFactory
+		.createEmptyBorder(10, 10, 10, 10);
 
 	private JTextField fmsDirText;
 	private JButton fmsDirBtn;
@@ -88,7 +91,7 @@ public class SettingsWindow extends Window {
 		// Main
 		JPanel mainPane = new JPanel();
 		mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.PAGE_AXIS));
-		mainPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		mainPane.setBorder(CREATE_EMPTY_BORDER);
 
 		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
 		mainPane.add(fmsDirPanel());
@@ -113,7 +116,7 @@ public class SettingsWindow extends Window {
 		FormPanel form = new FormPanel();
 		form.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createTitledBorder("Export Directory"),
-			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+			CREATE_EMPTY_BORDER));
 
 		fmsDirText = new JTextField();
 		fmsDirText.setEnabled(false);
@@ -123,10 +126,9 @@ public class SettingsWindow extends Window {
 		fmsDirBtn = new JButton("Choose");
 		fmsDirBtn.addActionListener(new OnChooseDir());
 
-		form.addFullField(fmsDirText);
-		form.addSpace(30);
-		form.addMiddleField(fmsDirBtn);
-		form.addSpace(30);
+		form.addLast(fmsDirText);
+		form.addSpace(50);
+		form.addLast(fmsDirBtn, .25);
 
 		return form;
 	}
@@ -136,11 +138,11 @@ public class SettingsWindow extends Window {
 		FormPanel form = new FormPanel();
 		form.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createTitledBorder("Google GeoApi"),
-			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+			CREATE_EMPTY_BORDER));
 
 		geoApiText = new JTextField(23);
 		geoApiText.setText(Context.getSettings().getProperty(Settings.GEOAPI_KEY));
-		form.addFullField(geoApiText);
+		form.addLast(geoApiText);
 
 		return form;
 	}
@@ -148,33 +150,33 @@ public class SettingsWindow extends Window {
 	private JPanel proxyPanel()
 	{
 		Settings settings = Context.getSettings();
-		proxyForm = new EnableablePanel("Proxy",
-			settings.getProperty(Settings.PROXY_ACTIVE, Boolean.class));
+		proxyForm = new EnableablePanel("Proxy");
 
 		proxyHostnameText = new JTextField();
 		proxyHostnameText.setText(settings.getProperty(Settings.PROXY_HOSTNAME));
-		proxyForm.addLabel("Hostname").setLabelFor(proxyHostnameText);
-		proxyForm.addLastField(proxyHostnameText);
+		proxyForm.addLabel("Hostname", .25).setLabelFor(proxyHostnameText);
+		proxyForm.addLast(proxyHostnameText, 1);
 
 		proxyPortText = new JTextField();
 		proxyPortText.setText(settings.getProperty(Settings.PROXY_PORT));
-		proxyForm.addLabel("Port").setLabelFor(proxyPortText);
-		proxyForm.addLastField(proxyPortText);
+		proxyForm.addLabel("Port", .25).setLabelFor(proxyPortText);
+		proxyForm.addLast(proxyPortText, 1);
 
-		authForm = new EnableablePanel("Authentication",
-			settings.getProperty(Settings.PROXY_AUTH, Boolean.class));
+		proxyForm.setEnabled(settings.getProperty(Settings.PROXY_ACTIVE, Boolean.class));
+		authForm = new EnableablePanel("Authentication");
 
 		proxyAuthUsername = new JTextField();
 		proxyAuthUsername.setText(settings.getProperty(Settings.PROXY_AUTH_USERNAME));
-		authForm.addLabel("Username").setLabelFor(proxyAuthUsername);
-		authForm.addLastField(proxyAuthUsername);
+		authForm.addLabel("Username", .25).setLabelFor(proxyAuthUsername);
+		authForm.addLast(proxyAuthUsername, 1);
 
 		proxyAuthPassword = new JTextField();
 		proxyAuthPassword.setText(settings.getProperty(Settings.PROXY_AUTH_PASSWORD));
-		authForm.addLabel("Password").setLabelFor(proxyAuthPassword);
-		authForm.addLastField(proxyAuthPassword);
+		authForm.addLabel("Password", .25).setLabelFor(proxyAuthPassword);
+		authForm.addLast(proxyAuthPassword, 1);
 
-		proxyForm.addFullField(authForm);
+		authForm.setEnabled(settings.getProperty(Settings.PROXY_AUTH, Boolean.class));
+		proxyForm.addLast(authForm);
 
 		return proxyForm;
 	}
