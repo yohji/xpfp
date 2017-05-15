@@ -24,6 +24,8 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -56,7 +58,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.java.dev.designgridlayout.DesignGridLayoutManager;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.gui.Window.TextPopup;
 
@@ -68,7 +69,84 @@ public class Components {
 
 	protected static final Logger logger = LoggerFactory.getLogger(Components.class);
 
-	protected static class EnableablePanel extends JPanel {
+	/**
+	 * @author Philip Isenhour
+	 * @author Marco Merli
+	 */
+	protected static class FormPanel extends JPanel {
+
+		private static final long serialVersionUID = - 4777808857168558526L;
+
+		private GridBagConstraints cLast = null;
+		private GridBagConstraints cFull = null;
+		private GridBagConstraints cMiddle = null;
+		private GridBagConstraints cLabel = null;
+
+		public FormPanel() {
+
+			super(new GridBagLayout());
+
+			cLast = new GridBagConstraints();
+			cLast.fill = GridBagConstraints.HORIZONTAL;
+			cLast.anchor = GridBagConstraints.NORTHWEST;
+			cLast.weightx = 1.0;
+			cLast.gridwidth = GridBagConstraints.REMAINDER;
+			cLast.insets = new Insets(1, 1, 1, 1);
+
+			cFull = (GridBagConstraints) cLast.clone();
+			cFull.gridwidth = GridBagConstraints.REMAINDER;
+
+			cMiddle = (GridBagConstraints) cLast.clone();
+			cMiddle.gridwidth = GridBagConstraints.RELATIVE;
+
+			cLabel = (GridBagConstraints) cLast.clone();
+			cLabel.weightx = 0.5;
+			cLabel.gridwidth = 1;
+		}
+
+		public JLabel addLabel(String s)
+		{
+			JLabel label = new JLabel(s);
+			addLabel(label);
+
+			return label;
+		}
+
+		public void addLabel(Component label)
+		{
+			GridBagLayout gbl = (GridBagLayout) getLayout();
+			gbl.setConstraints(label, cLabel);
+			add(label);
+		}
+
+		public void addSpace(Number space)
+		{
+			addLabel(StringUtils.repeat(' ', space.intValue()));
+		}
+
+		public void addLastField(Component field)
+		{
+			GridBagLayout gbl = (GridBagLayout) getLayout();
+			gbl.setConstraints(field, cLast);
+			add(field);
+		}
+
+		public void addMiddleField(Component field)
+		{
+			GridBagLayout gbl = (GridBagLayout) getLayout();
+			gbl.setConstraints(field, cMiddle);
+			add(field);
+		}
+
+		public void addFullField(Component field)
+		{
+			GridBagLayout gbl = (GridBagLayout) getLayout();
+			gbl.setConstraints(field, cFull);
+			add(field);
+		}
+	}
+
+	protected static class EnableablePanel extends FormPanel {
 
 		private static final long serialVersionUID = 1478891565610026831L;
 
@@ -99,7 +177,8 @@ public class Components {
 			super.setEnabled(enabled);
 
 			for (Component comp : getComponents())
-				comp.setEnabled(enabled);
+				if (! EnableablePanel.class.isAssignableFrom(comp.getClass()))
+					comp.setEnabled(enabled);
 		}
 	}
 
@@ -350,11 +429,7 @@ public class Components {
 				}
 			});
 
-			if (container.getLayout().getClass().equals(DesignGridLayoutManager.class)) {
-				; // FIXME: resolve for good the conflict with DesignGridLayout
-			}
-			else
-				SwingUtilities.paintComponent(g, _checkBox, container, rectangle);
+			SwingUtilities.paintComponent(g, _checkBox, container, rectangle);
 		}
 
 		@Override

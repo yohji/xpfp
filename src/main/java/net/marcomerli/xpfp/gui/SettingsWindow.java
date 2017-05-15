@@ -18,7 +18,6 @@
 
 package net.marcomerli.xpfp.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,19 +29,18 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import net.java.dev.designgridlayout.DesignGridLayout;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Settings;
 import net.marcomerli.xpfp.error.DataException;
 import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.fn.GuiFn;
+import net.marcomerli.xpfp.gui.Components.EnableablePanel;
+import net.marcomerli.xpfp.gui.Components.FormPanel;
 
 /**
  * @author Marco Merli
@@ -56,10 +54,10 @@ public class SettingsWindow extends Window {
 	private JButton fmsDirBtn;
 	private JFileChooser fmsDirFileChooser;
 	private JTextField geoApiText;
+	private EnableablePanel proxyForm;
 	private JTextField proxyHostnameText;
 	private JTextField proxyPortText;
-	private JCheckBox proxyActive;
-	private JCheckBox proxyAuth;
+	private EnableablePanel authForm;
 	private JTextField proxyAuthUsername;
 	private JTextField proxyAuthPassword;
 
@@ -103,7 +101,7 @@ public class SettingsWindow extends Window {
 		mainPane.add(Box.createGlue());
 
 		setContentPane(mainPane);
-		setSize(360, 460);
+		pack();
 
 		setResizable(false);
 		setLocationByPlatform(true);
@@ -112,12 +110,10 @@ public class SettingsWindow extends Window {
 
 	private JPanel fmsDirPanel()
 	{
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.setBorder(BorderFactory.createCompoundBorder(
+		FormPanel form = new FormPanel();
+		form.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createTitledBorder("Export Directory"),
 			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-
-		DesignGridLayout layout = new DesignGridLayout(panel);
 
 		fmsDirText = new JTextField();
 		fmsDirText.setEnabled(false);
@@ -127,62 +123,60 @@ public class SettingsWindow extends Window {
 		fmsDirBtn = new JButton("Choose");
 		fmsDirBtn.addActionListener(new OnChooseDir());
 
-		layout.row().grid().add(fmsDirText, 2).add(fmsDirBtn);
+		form.addFullField(fmsDirText);
+		form.addSpace(30);
+		form.addMiddleField(fmsDirBtn);
+		form.addSpace(30);
 
-		return panel;
+		return form;
 	}
 
 	private JPanel geoApiKey()
 	{
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.setBorder(BorderFactory.createCompoundBorder(
+		FormPanel form = new FormPanel();
+		form.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createTitledBorder("Google GeoApi"),
 			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
-		geoApiText = new JTextField();
+		geoApiText = new JTextField(23);
 		geoApiText.setText(Context.getSettings().getProperty(Settings.GEOAPI_KEY));
+		form.addFullField(geoApiText);
 
-		DesignGridLayout layout = new DesignGridLayout(panel);
-		layout.row().grid(new JLabel("Key", JLabel.TRAILING)).add(geoApiText);
-
-		return panel;
+		return form;
 	}
 
 	private JPanel proxyPanel()
 	{
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createTitledBorder("Proxy"),
-			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-
-		DesignGridLayout layout = new DesignGridLayout(panel);
 		Settings settings = Context.getSettings();
-
-		proxyActive = new JCheckBox();
-		proxyActive.setSelected(settings.getProperty(Settings.PROXY_ACTIVE, Boolean.class));
-		layout.row().grid(new JLabel("Active", JLabel.TRAILING)).add(proxyActive);
+		proxyForm = new EnableablePanel("Proxy",
+			settings.getProperty(Settings.PROXY_ACTIVE, Boolean.class));
 
 		proxyHostnameText = new JTextField();
 		proxyHostnameText.setText(settings.getProperty(Settings.PROXY_HOSTNAME));
-		layout.row().grid(new JLabel("Hostname", JLabel.TRAILING)).add(proxyHostnameText);
+		proxyForm.addLabel("Hostname").setLabelFor(proxyHostnameText);
+		proxyForm.addLastField(proxyHostnameText);
 
 		proxyPortText = new JTextField();
 		proxyPortText.setText(settings.getProperty(Settings.PROXY_PORT));
-		layout.row().grid(new JLabel("Port", JLabel.TRAILING)).add(proxyPortText);
+		proxyForm.addLabel("Port").setLabelFor(proxyPortText);
+		proxyForm.addLastField(proxyPortText);
 
-		proxyAuth = new JCheckBox();
-		proxyAuth.setSelected(settings.getProperty(Settings.PROXY_AUTH, Boolean.class));
-		layout.row().grid(new JLabel("Authentication", JLabel.TRAILING)).add(proxyAuth);
+		authForm = new EnableablePanel("Authentication",
+			settings.getProperty(Settings.PROXY_AUTH, Boolean.class));
 
 		proxyAuthUsername = new JTextField();
 		proxyAuthUsername.setText(settings.getProperty(Settings.PROXY_AUTH_USERNAME));
-		layout.row().grid(new JLabel("Username", JLabel.TRAILING)).add(proxyAuthUsername);
+		authForm.addLabel("Username").setLabelFor(proxyAuthUsername);
+		authForm.addLastField(proxyAuthUsername);
 
 		proxyAuthPassword = new JTextField();
 		proxyAuthPassword.setText(settings.getProperty(Settings.PROXY_AUTH_PASSWORD));
-		layout.row().grid(new JLabel("Password", JLabel.TRAILING)).add(proxyAuthPassword);
+		authForm.addLabel("Password").setLabelFor(proxyAuthPassword);
+		authForm.addLastField(proxyAuthPassword);
 
-		return panel;
+		proxyForm.addFullField(authForm);
+
+		return proxyForm;
 	}
 
 	private class OnChooseDir implements ActionListener {
@@ -208,10 +202,10 @@ public class SettingsWindow extends Window {
 				Settings settings = Context.getSettings();
 				settings.setProperty(Settings.DIR_EXPORT, fmsDirText.getText());
 				settings.setProperty(Settings.GEOAPI_KEY, geoApiText.getText());
-				settings.setProperty(Settings.PROXY_ACTIVE, String.valueOf(proxyActive.isSelected()));
+				settings.setProperty(Settings.PROXY_ACTIVE, String.valueOf(proxyForm.isEnabled()));
 				settings.setProperty(Settings.PROXY_HOSTNAME, proxyHostnameText.getText());
 				settings.setProperty(Settings.PROXY_PORT, proxyPortText.getText());
-				settings.setProperty(Settings.PROXY_AUTH, String.valueOf(proxyAuth.isSelected()));
+				settings.setProperty(Settings.PROXY_AUTH, String.valueOf(authForm.isEnabled()));
 				settings.setProperty(Settings.PROXY_AUTH_USERNAME, proxyAuthUsername.getText());
 				settings.setProperty(Settings.PROXY_AUTH_PASSWORD, proxyAuthPassword.getText());
 
