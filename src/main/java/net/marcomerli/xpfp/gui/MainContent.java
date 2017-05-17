@@ -31,6 +31,7 @@ import java.util.Iterator;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -99,6 +100,7 @@ public class MainContent extends JPanel {
 	private class FlightPlaneData extends JPanel {
 
 		private static final long serialVersionUID = - 2408834160839600983L;
+		private static final int TABLE_HEIGHT = 223;
 
 		private final String[] columnNames = new String[] {
 			"#", "Identifier", "Type", "Country", "Latitude",
@@ -107,7 +109,7 @@ public class MainContent extends JPanel {
 		};
 
 		private final int[] columnWidths = new int[] {
-			30, 100, 80, 80, 170, 170, 100, 100, 100, 170, 150
+			25, 65, 50, 50, 115, 115, 60, 55, 55, 90, 65
 		};
 
 		private JTable table;
@@ -123,8 +125,12 @@ public class MainContent extends JPanel {
 				BorderFactory.createTitledBorder(flightPlan.getName()),
 				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 
+			int width = 0;
+			for (int i = 0; i < columnWidths.length; i++)
+				width += columnWidths[i];
+
 			table = new JTable();
-			table.setPreferredScrollableViewportSize(new Dimension(600, 250));
+			table.setPreferredScrollableViewportSize(new Dimension(width, TABLE_HEIGHT));
 			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			table.addMouseListener(new TablePopup());
 
@@ -325,15 +331,15 @@ public class MainContent extends JPanel {
 			export.setEnabled(false);
 			export.addActionListener(new OnExport(filename));
 
-			FormPanel left = new FormPanel();
-			left.setBorder(BorderFactory.createCompoundBorder(
+			FormPanel cruisePanel = new FormPanel();
+			cruisePanel.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder("Cruise Navigation"),
-				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+				BorderFactory.createEmptyBorder()));
 
-			left.addLabel("Flight level (FL)").setLabelFor(crzLevel);
-			left.addLast(crzLevel);
-			left.addLabel("Cruising speed (GS kn)").setLabelFor(crzSpeed);
-			left.addLast(crzSpeed);
+			cruisePanel.addLabel("Flight level (FL)").setLabelFor(crzLevel);
+			cruisePanel.addLast(crzLevel);
+			cruisePanel.addLabel("Cruising speed (GS kn)").setLabelFor(crzSpeed);
+			cruisePanel.addLast(crzSpeed);
 
 			vnavPanel = new EnableablePanel("Vertical Navigation");
 
@@ -347,17 +353,26 @@ public class MainContent extends JPanel {
 			vnavPanel.addLast(desSpeed);
 			vnavPanel.setEnabled(prefs.getProperty(Preferences.FP_VNAV, Boolean.class));
 
-			FormPanel right = new FormPanel();
-			right.addLast(calculate);
-			right.addLast(reset);
-			right.addLast(new JSeparator(JSeparator.HORIZONTAL));
-			right.addLabel("Filename").setLabelFor(filename);
-			right.addLast(filename);
-			right.addLast(export);
+			JPanel divPanel = new JPanel();
+			divPanel.setLayout(new BoxLayout(divPanel, BoxLayout.PAGE_AXIS));
+			divPanel.add(Box.createRigidArea(new Dimension(50, 0)));
+			divPanel.add(new JSeparator(JSeparator.VERTICAL));
+			divPanel.add(Box.createRigidArea(new Dimension(50, 0)));
+			divPanel.add(Box.createGlue());
 
-			add(left);
+			FormPanel actionPanel = new FormPanel();
+			actionPanel.addMiddle(reset);
+			actionPanel.addLast(calculate);
+			actionPanel.addLast(new JSeparator(JSeparator.HORIZONTAL));
+			actionPanel.addLabel("Filename").setLabelFor(filename);
+			actionPanel.addLast(filename);
+			actionPanel.addSpace(1);
+			actionPanel.addLast(export);
+
+			add(cruisePanel);
 			add(vnavPanel);
-			add(right);
+			add(divPanel);
+			add(actionPanel);
 		}
 
 		public JButton getCalculate()

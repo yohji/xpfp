@@ -33,7 +33,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
 
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Settings;
@@ -50,8 +49,6 @@ import net.marcomerli.xpfp.gui.Components.FormPanel;
 public class SettingsWindow extends Window {
 
 	private static final long serialVersionUID = 5454273820569518074L;
-	private static final Border CREATE_EMPTY_BORDER = BorderFactory
-		.createEmptyBorder(10, 10, 10, 10);
 
 	private JTextField fmsDirText;
 	private JButton fmsDirBtn;
@@ -91,7 +88,6 @@ public class SettingsWindow extends Window {
 		// Main
 		JPanel mainPane = new JPanel();
 		mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.PAGE_AXIS));
-		mainPane.setBorder(CREATE_EMPTY_BORDER);
 
 		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
 		mainPane.add(fmsDirPanel());
@@ -116,7 +112,7 @@ public class SettingsWindow extends Window {
 		FormPanel form = new FormPanel();
 		form.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createTitledBorder("Export Directory"),
-			CREATE_EMPTY_BORDER));
+			BorderFactory.createEmptyBorder()));
 
 		fmsDirText = new JTextField();
 		fmsDirText.setEnabled(false);
@@ -138,7 +134,7 @@ public class SettingsWindow extends Window {
 		FormPanel form = new FormPanel();
 		form.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createTitledBorder("Google GeoApi"),
-			CREATE_EMPTY_BORDER));
+			BorderFactory.createEmptyBorder()));
 
 		geoApiText = new JTextField(23);
 		geoApiText.setText(Context.getSettings().getProperty(Settings.GEOAPI_KEY));

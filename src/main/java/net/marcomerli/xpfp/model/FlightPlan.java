@@ -210,7 +210,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			if (! clbWpAdd && sumDistance > clbDistance) {
 
 				Waypoint clbWp = new Waypoint();
-				clbWp.setIdentifier("ʌʌʌ");
+				clbWp.setIdentifier(">>>>>");
 				clbWp.setCalculated(true);
 				clbWp.setType(WaypointType.POS);
 				clbWp.setLocation(GeoFn.point(prev.getLocation(),
@@ -262,7 +262,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			if (sumDistance > desDistance) {
 
 				Waypoint desWp = new Waypoint();
-				desWp.setIdentifier("ṿṿṿ");
+				desWp.setIdentifier("<<<<<");
 				desWp.setCalculated(true);
 				desWp.setType(WaypointType.POS);
 				desWp.setLocation(GeoFn.point(next.getLocation(), (desDistance - lastDistance),
