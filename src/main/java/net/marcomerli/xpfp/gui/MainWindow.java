@@ -20,7 +20,6 @@ package net.marcomerli.xpfp.gui;
 
 import java.awt.Dimension;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -59,7 +58,7 @@ public class MainWindow extends Window {
 		public Home() {
 
 			new BoxLayout(this, BoxLayout.PAGE_AXIS);
-			setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			setBorder(PADDING_BORDER);
 
 			add(Box.createRigidArea(new Dimension(0, 100)));
 			add(new JLabel("No flight plan; import one from the menu File -> Import..."));

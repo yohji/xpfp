@@ -29,9 +29,11 @@ import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
+import javax.swing.border.Border;
 import javax.swing.text.JTextComponent;
 
 import org.slf4j.Logger;
@@ -48,6 +50,7 @@ public abstract class Window extends JFrame {
 
 	public static final String TITLE_FULL = "X-Plane Flight Planner";
 	public static final String TITLE_COMPACT = "XPFP";
+	protected static final Border PADDING_BORDER = BorderFactory.createEmptyBorder(5, 5, 5, 5);
 
 	public Window(String title) throws HeadlessException {
 

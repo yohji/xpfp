@@ -88,6 +88,7 @@ public class SettingsWindow extends Window {
 		// Main
 		JPanel mainPane = new JPanel();
 		mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.PAGE_AXIS));
+		mainPane.setBorder(PADDING_BORDER);
 
 		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
 		mainPane.add(fmsDirPanel());

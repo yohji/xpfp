@@ -28,7 +28,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -87,7 +86,7 @@ public class AboutWindow extends Window {
 	{
 		JPanel pane = new JPanel();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
-		pane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		pane.setBorder(PADDING_BORDER);
 
 		pane.add(Box.createRigidArea(new Dimension(0, 50)));
 		pane.add(new JLabel(TITLE_FULL));

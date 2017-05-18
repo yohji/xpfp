@@ -31,7 +31,6 @@ import java.util.Iterator;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -90,7 +89,7 @@ public class MainContent extends JPanel {
 	public MainContent(MainWindow win) {
 
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		setBorder(Window.PADDING_BORDER);
 		this.win = win;
 
 		add(data = new FlightPlaneData());
@@ -100,7 +99,7 @@ public class MainContent extends JPanel {
 	private class FlightPlaneData extends JPanel {
 
 		private static final long serialVersionUID = - 2408834160839600983L;
-		private static final int TABLE_HEIGHT = 223;
+		private static final int TABLE_HEIGHT = 240;
 
 		private final String[] columnNames = new String[] {
 			"#", "Identifier", "Type", "Country", "Latitude",
@@ -123,7 +122,7 @@ public class MainContent extends JPanel {
 			FlightPlan flightPlan = Context.getFlightPlan();
 			setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder(flightPlan.getName()),
-				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
+				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
 			int width = 0;
 			for (int i = 0; i < columnWidths.length; i++)
@@ -299,7 +298,7 @@ public class MainContent extends JPanel {
 
 		public FlightPlaneProcessor() {
 
-			super(new FlowLayout(FlowLayout.LEFT));
+			setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 			Preferences prefs = Context.getPreferences();
 
 			crzLevel = new NumberInput(3);
@@ -320,7 +319,7 @@ public class MainContent extends JPanel {
 				clbRate, clbSpeed, desRate, desSpeed));
 
 			filename = new TextInput();
-			filename.setColumns(15);
+			filename.setColumns(25);
 			filename.setText(Context.getFlightPlan().getFilename());
 
 			JButton reset = new JButton("Reset");
@@ -344,35 +343,37 @@ public class MainContent extends JPanel {
 			vnavPanel = new EnableablePanel("Vertical Navigation");
 
 			vnavPanel.addLabel("Rate of climb (ft/min)").setLabelFor(clbRate);
-			vnavPanel.addLast(clbRate);
+			vnavPanel.addMiddle(clbRate);
 			vnavPanel.addLabel("Climbing speed (GS kn)").setLabelFor(clbSpeed);
 			vnavPanel.addLast(clbSpeed);
+
 			vnavPanel.addLabel("Rate of descent (ft/min)").setLabelFor(desRate);
-			vnavPanel.addLast(desRate);
+			vnavPanel.addMiddle(desRate);
 			vnavPanel.addLabel("Descenting speed (GS kn)").setLabelFor(desSpeed);
 			vnavPanel.addLast(desSpeed);
 			vnavPanel.setEnabled(prefs.getProperty(Preferences.FP_VNAV, Boolean.class));
 
-			JPanel divPanel = new JPanel();
-			divPanel.setLayout(new BoxLayout(divPanel, BoxLayout.PAGE_AXIS));
-			divPanel.add(Box.createRigidArea(new Dimension(50, 0)));
-			divPanel.add(new JSeparator(JSeparator.VERTICAL));
-			divPanel.add(Box.createRigidArea(new Dimension(50, 0)));
-			divPanel.add(Box.createGlue());
-
 			FormPanel actionPanel = new FormPanel();
-			actionPanel.addMiddle(reset);
 			actionPanel.addLast(calculate);
-			actionPanel.addLast(new JSeparator(JSeparator.HORIZONTAL));
-			actionPanel.addLabel("Filename").setLabelFor(filename);
-			actionPanel.addLast(filename);
-			actionPanel.addSpace(1);
-			actionPanel.addLast(export);
+			actionPanel.addLast(reset);
 
-			add(cruisePanel);
-			add(vnavPanel);
-			add(divPanel);
-			add(actionPanel);
+			FormPanel exportPanel = new FormPanel();
+			exportPanel.addSpace(95);
+			exportPanel.addLabel("Filename").setLabelFor(filename);
+			exportPanel.addMiddle(filename);
+			exportPanel.addLast(export);
+
+			JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			top.add(cruisePanel);
+			top.add(vnavPanel);
+			top.add(actionPanel);
+
+			JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			bottom.add(exportPanel);
+
+			add(top);
+			add(new JSeparator(JSeparator.HORIZONTAL));
+			add(bottom);
 		}
 
 		public JButton getCalculate()

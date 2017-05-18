@@ -76,6 +76,7 @@ public class Components {
 	protected static class FormPanel extends JPanel {
 
 		private static final long serialVersionUID = - 4777808857168558526L;
+		private static final double DEFAULT_WEIGHT = 1.0;
 
 		private final GridBagConstraints cLast;
 		private final GridBagConstraints cMiddle;
@@ -87,16 +88,16 @@ public class Components {
 			cLast = new GridBagConstraints();
 			cLast.fill = GridBagConstraints.HORIZONTAL;
 			cLast.anchor = GridBagConstraints.NORTHWEST;
-			cLast.insets = new Insets(1, 1, 1, 1);
+			cLast.insets = new Insets(5, 5, 5, 5);
 			cLast.gridwidth = GridBagConstraints.REMAINDER;
 
 			cMiddle = (GridBagConstraints) cLast.clone();
-			cMiddle.gridwidth = GridBagConstraints.RELATIVE;
+			cMiddle.gridwidth = 1;
 		}
 
 		public JLabel addLabel(String label)
 		{
-			return addLabel(label, 0);
+			return addLabel(label, DEFAULT_WEIGHT);
 		}
 
 		public JLabel addLabel(String label, double weight)
@@ -114,13 +115,14 @@ public class Components {
 
 		public void addLast(Component field)
 		{
-			addLast(field, 0);
+			addLast(field, DEFAULT_WEIGHT);
 		}
 
 		public void addLast(Component field, double weight)
 		{
-			GridBagLayout gbl = (GridBagLayout) getLayout();
 			cLast.weightx = weight;
+
+			GridBagLayout gbl = (GridBagLayout) getLayout();
 			gbl.setConstraints(field, cLast);
 
 			add(field);
@@ -128,13 +130,14 @@ public class Components {
 
 		public void addMiddle(Component field)
 		{
-			addMiddle(field, 0);
+			addMiddle(field, DEFAULT_WEIGHT);
 		}
 
 		public void addMiddle(Component field, double weight)
 		{
-			GridBagLayout gbl = (GridBagLayout) getLayout();
 			cMiddle.weightx = weight;
+
+			GridBagLayout gbl = (GridBagLayout) getLayout();
 			gbl.setConstraints(field, cMiddle);
 
 			add(field);
