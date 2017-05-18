@@ -4,7 +4,7 @@
 	<groupId>net.marcomerli</groupId>
 	<artifactId>xpfp</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0-alpha</version>
+	<version>1.0-beta</version>
 	<name>X-Plane Flight Planner</name>
 
 	<build>

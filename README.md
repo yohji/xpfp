@@ -27,6 +27,8 @@ Import a file of the supported format to load a flight plan.
 
 ### Settings
 
+![Settings](doc/images/settings.png)
+
 #### Export Directory
 
 Select the directory where every files will be exported.
