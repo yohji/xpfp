@@ -19,6 +19,12 @@
 
 **IT IS ONLY FOR FLIGHT SIMULATION! DO NOT USE IT FOR REAL FLIGHT!**
 
+## Google API
+
+<img border="2" style="width: 60%; height: 60%;" src="doc/images/google-1.png">
+<img border="2" style="width: 60%; height: 60%;" src="doc/images/google-2.png">
+<img border="2" style="width: 60%; height: 60%;" src="doc/images/google-3.png">
+
 ## Menu
 
 ### Import...
