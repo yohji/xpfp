@@ -18,8 +18,10 @@
 
 package net.marcomerli.xpfp.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
@@ -47,6 +49,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +61,7 @@ import net.marcomerli.xpfp.error.FlightPlanException;
 import net.marcomerli.xpfp.error.GeoException;
 import net.marcomerli.xpfp.file.write.FMSWriter;
 import net.marcomerli.xpfp.fn.FormatFn;
+import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.fn.UnitFn;
 import net.marcomerli.xpfp.gui.Components.EnableablePanel;
@@ -83,20 +87,23 @@ public class MainContent extends JPanel {
 	private static final String SKYVECTOR_AIRPORT_URL = "https://skyvector.com/airport/";
 
 	private MainWindow win;
-	private FlightPlaneData data;
-	private FlightPlaneProcessor processor;
+	private Table tablePanel;
+	private Graph graphPanel;
+	private Data dataPanel;
 
 	public MainContent(MainWindow win) {
 
-		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		setBorder(Window.PADDING_BORDER);
 		this.win = win;
 
-		add(data = new FlightPlaneData());
-		add(processor = new FlightPlaneProcessor());
+		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		setBorder(Window.PADDING_BORDER);
+
+		add(tablePanel = new Table());
+		add(graphPanel = new Graph());
+		add(dataPanel = new Data());
 	}
 
-	private class FlightPlaneData extends JPanel {
+	private class Table extends JPanel {
 
 		private static final long serialVersionUID = - 2408834160839600983L;
 		private static final int TABLE_HEIGHT = 240;
@@ -115,7 +122,7 @@ public class MainContent extends JPanel {
 		private ValueLabel distance;
 		private ValueLabel ete;
 
-		public FlightPlaneData() {
+		public Table() {
 
 			setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
@@ -215,7 +222,7 @@ public class MainContent extends JPanel {
 							return;
 
 						Context.getFlightPlan().remove(row);
-						processor.getCalculate().doClick();
+						dataPanel.getCalculate().doClick();
 						refresh();
 					}
 				};
@@ -281,7 +288,100 @@ public class MainContent extends JPanel {
 		}
 	}
 
-	private class FlightPlaneProcessor extends JPanel {
+	private class Graph extends JPanel {
+
+		private static final long serialVersionUID = - 2346452225583534510L;
+		private static final int GRAPH_HEIGHT = 150;
+
+		private int[][] borders;
+		private int[] size;
+
+		public Graph() {
+
+			setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createTitledBorder("Elevation profile"),
+				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		}
+
+		@Override
+		protected void paintComponent(Graphics g)
+		{
+			super.paintComponent(g);
+
+			try {
+				setup(g);
+
+				Location[] path = new Location[Context.getFlightPlan().size()];
+				int iLoc = 0;
+				for (Waypoint wp : Context.getFlightPlan())
+					path[iLoc++] = wp.getLocation();
+
+				double[] elevs = GeoFn.elevations(path);
+				double max = NumberUtils.max(elevs);
+				double xFactor = (double) size[0] / elevs.length;
+				double yFactor = size[1] / max; // (max + (max * 0.05));
+
+				int lx = 0;
+				double ly = 0;
+				for (int x = 0; x < elevs.length; x++) {
+					double y = elevs[x];
+
+					g.drawLine(
+						x(lx, xFactor), y(ly, yFactor),
+						x(x, xFactor), y(y, yFactor));
+
+					lx = x;
+					ly = y;
+				}
+			}
+			catch (Exception ee) {
+				logger.error("onGraph", ee);
+				GuiFn.fatalDialog(ee, win);
+			}
+		}
+
+		private int x(int x, double factor)
+		{
+			return (int) (x * factor) + borders[0][0];
+		}
+
+		private int y(double y, double factor)
+		{
+			return borders[1][1] - (int) (y * factor) + borders[1][0];
+		}
+
+		private void setup(Graphics g)
+		{
+			borders = new int[][] {
+				{ 10, (tablePanel.getWidth() - 20) },
+				{ 20, (GRAPH_HEIGHT - 30) }
+			};
+
+			size = new int[] {
+				(borders[0][1] - borders[0][0]),
+				(borders[1][1] - borders[1][0]),
+			};
+
+			g.setColor(Color.WHITE);
+			g.fillRect(borders[0][0], borders[1][0], borders[0][1], borders[1][1]);
+			g.setColor(Color.BLACK);
+			g.drawRect(borders[0][0], borders[1][0], borders[0][1], borders[1][1]);
+		}
+
+		public void refresh()
+		{
+			revalidate();
+			repaint();
+		}
+
+		@Override
+		public Dimension getPreferredSize()
+		{
+			return new Dimension(tablePanel.getWidth(), GRAPH_HEIGHT);
+		}
+	}
+
+	private class Data extends JPanel {
 
 		private static final long serialVersionUID = - 7914800898847981824L;
 
@@ -296,7 +396,7 @@ public class MainContent extends JPanel {
 		private JButton export;
 		private JButton calculate;
 
-		public FlightPlaneProcessor() {
+		public Data() {
 
 			setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 			Preferences prefs = Context.getPreferences();
@@ -419,7 +519,8 @@ public class MainContent extends JPanel {
 					prefs.setProperty(Preferences.FP_DES_SPEED, desSpeed.getText());
 					prefs.save();
 
-					data.refresh();
+					tablePanel.refresh();
+					graphPanel.refresh();
 					export.setEnabled(true);
 				}
 				catch (FlightPlanException | GeoException ee) {

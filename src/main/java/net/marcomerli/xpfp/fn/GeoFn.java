@@ -49,6 +49,8 @@ import net.marcomerli.xpfp.model.Location;
  */
 public class GeoFn {
 
+	private static final int GEOAPI_MAX_SAMPLES = 512;
+
 	protected static final TSAGeoMag geoMag = new TSAGeoMag();
 	protected static final GeoApiContext context;
 	static {
@@ -113,13 +115,11 @@ public class GeoFn {
 		}
 	}
 
-	public static double[] elevations(Location from, Location to) throws GeoException
+	public static double[] elevations(Location... path) throws GeoException
 	{
 		try {
-			int sample = (int) (distance(from, to) / 750);
-			ElevationResult[] res = ElevationApi.getByPath(context, sample, new Location[] {
-				from, to
-			}).await();
+			ElevationResult[] res = ElevationApi.getByPath(context,
+				GEOAPI_MAX_SAMPLES, path).await();
 
 			double[] elevs = new double[res.length];
 			for (int i = 0; i < res.length; i++)
