@@ -38,6 +38,8 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	private String filename;
 	private Double distance = 0.0;
 	private Long ete = 0L;
+
+	private boolean calculated;
 	private boolean valid;
 
 	public FlightPlan(String name) {
@@ -77,6 +79,8 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			distance += wp.getDistance();
 			ete += wp.getEte();
 		}
+
+		calculated = true;
 	}
 
 	public void calculate(final double crzAlt, final double crzSpeed)
@@ -109,6 +113,8 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		Waypoint arr = getArrival();
 		Location arrLoc = arr.getLocation();
 		GeoFn.elevation(arrLoc);
+
+		calculated = true;
 	}
 
 	public void validate() throws FlightPlanException
@@ -142,6 +148,11 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	public Waypoint getArrival()
 	{
 		return getLast();
+	}
+
+	public boolean isCalculated()
+	{
+		return calculated;
 	}
 
 	public boolean isValid()

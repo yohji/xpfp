@@ -291,81 +291,15 @@ public class MainContent extends JPanel {
 	private class Graph extends JPanel {
 
 		private static final long serialVersionUID = - 2346452225583534510L;
-		private static final int GRAPH_HEIGHT = 150;
-
-		private int[][] borders;
-		private int[] size;
 
 		public Graph() {
 
+			setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 			setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder("Elevation profile"),
 				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-		}
 
-		@Override
-		protected void paintComponent(Graphics g)
-		{
-			super.paintComponent(g);
-
-			try {
-				setup(g);
-
-				Location[] path = new Location[Context.getFlightPlan().size()];
-				int iLoc = 0;
-				for (Waypoint wp : Context.getFlightPlan())
-					path[iLoc++] = wp.getLocation();
-
-				double[] elevs = GeoFn.elevations(path);
-				double max = NumberUtils.max(elevs);
-				double xFactor = (double) size[0] / elevs.length;
-				double yFactor = size[1] / max; // (max + (max * 0.05));
-
-				int lx = 0;
-				double ly = 0;
-				for (int x = 0; x < elevs.length; x++) {
-					double y = elevs[x];
-
-					g.drawLine(
-						x(lx, xFactor), y(ly, yFactor),
-						x(x, xFactor), y(y, yFactor));
-
-					lx = x;
-					ly = y;
-				}
-			}
-			catch (Exception ee) {
-				logger.error("onGraph", ee);
-				GuiFn.fatalDialog(ee, win);
-			}
-		}
-
-		private int x(int x, double factor)
-		{
-			return (int) (x * factor) + borders[0][0];
-		}
-
-		private int y(double y, double factor)
-		{
-			return borders[1][1] - (int) (y * factor) + borders[1][0];
-		}
-
-		private void setup(Graphics g)
-		{
-			borders = new int[][] {
-				{ 10, (tablePanel.getWidth() - 20) },
-				{ 20, (GRAPH_HEIGHT - 30) }
-			};
-
-			size = new int[] {
-				(borders[0][1] - borders[0][0]),
-				(borders[1][1] - borders[1][0]),
-			};
-
-			g.setColor(Color.WHITE);
-			g.fillRect(borders[0][0], borders[1][0], borders[0][1], borders[1][1]);
-			g.setColor(Color.BLACK);
-			g.drawRect(borders[0][0], borders[1][0], borders[0][1], borders[1][1]);
+			add(new Profile());
 		}
 
 		public void refresh()
@@ -374,10 +308,137 @@ public class MainContent extends JPanel {
 			repaint();
 		}
 
-		@Override
-		public Dimension getPreferredSize()
-		{
-			return new Dimension(tablePanel.getWidth(), GRAPH_HEIGHT);
+		private class Profile extends JPanel {
+
+			private static final long serialVersionUID = 3533883565773413594L;
+
+			private static final int GRAPH_HEIGHT = 150;
+			private static final int SEA_LEVEL = 10;
+
+			private Dimension size;
+
+			@Override
+			protected void paintComponent(Graphics g)
+			{
+				super.paintComponent(g);
+
+				try {
+					FlightPlan plan = Context.getFlightPlan();
+					setup(g);
+
+					Location[] path = new Location[Context.getFlightPlan().size()];
+					int iLoc = 0;
+					for (Waypoint wp : plan)
+						path[iLoc++] = wp.getLocation();
+
+					double[] elevs = GeoFn.elevations(path);
+					for (int iElev = 0; iElev < elevs.length; iElev++)
+						if (elevs[iElev] < 0)
+							elevs[iElev] = 0;
+
+					double fl = 0;
+					double max = NumberUtils.max(elevs);
+					if (plan.isCalculated()) {
+						fl = new Integer(dataPanel.crzLevel.getText()) * 100.0;
+						fl = UnitFn.ftToM(fl);
+
+						if (fl > max)
+							max = fl;
+					}
+
+					double xFactor = (double) size.width / elevs.length;
+					double yFactor = size.height / (max + (max * 0.20));
+
+					g.setColor(Color.BLACK);
+
+					// Profile
+					int lx = 0;
+					double ly = 0;
+					for (int x = 0; x < elevs.length; x++) {
+						double y = elevs[x];
+
+						g.drawLine(
+							x(lx, xFactor), y(ly, yFactor),
+							x(x, xFactor), y(y, yFactor));
+
+						lx = x;
+						ly = y;
+					}
+
+					// Sea Level
+					g.setColor(Color.BLUE);
+					g.drawLine(
+						0, size.height,
+						size.width, size.height);
+
+					// Flight plan
+					if (plan.isCalculated()) {
+						g.setColor(Color.RED);
+
+						if (dataPanel.vnavPanel.isEnabled()) {
+
+							double dist = 0;
+							int[] dists = new int[plan.size()];
+
+							for (int iWp = 0; iWp < plan.size(); iWp++) {
+								Waypoint wp = plan.get(iWp);
+
+								dist += wp.getDistance();
+								dists[iWp] = (int) dist;
+							}
+
+							xFactor = (double) size.width / dist;
+
+							for (int iWp = 0; iWp < (plan.size() - 1); iWp++) {
+
+								g.drawLine(
+									x(dists[iWp], xFactor),
+									y(plan.get(iWp).getLocation().alt, yFactor),
+									x(dists[iWp + 1], xFactor),
+									y(plan.get(iWp + 1).getLocation().alt, yFactor));
+							}
+						}
+						else {
+							g.drawLine(
+								0, y(fl, yFactor),
+								size.width, y(fl, yFactor));
+						}
+					}
+				}
+				catch (Exception ee) {
+					logger.error("onGraph", ee);
+					GuiFn.fatalDialog(ee, win);
+				}
+			}
+
+			private int x(int x, double factor)
+			{
+				return (int) (x * factor);
+			}
+
+			private int y(double y, double factor)
+			{
+				return size.height - (int) (y * factor);
+			}
+
+			private void setup(Graphics g)
+			{
+				size = getPreferredSize();
+				size.setSize(size.width - 15, size.height - 5);
+
+				g.setColor(Color.WHITE);
+				g.fillRect(0, 0, size.width, size.height);
+				g.setColor(Color.BLACK);
+				g.drawRect(0, 0, size.width, size.height);
+
+				size.setSize(size.width, size.height - SEA_LEVEL);
+			}
+
+			@Override
+			public Dimension getPreferredSize()
+			{
+				return new Dimension(tablePanel.getWidth() - 10, GRAPH_HEIGHT);
+			}
 		}
 	}
 
