@@ -39,8 +39,8 @@ import net.marcomerli.xpfp.core.data.Settings;
 import net.marcomerli.xpfp.error.DataException;
 import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.fn.GuiFn;
-import net.marcomerli.xpfp.gui.Components.EnableablePanel;
-import net.marcomerli.xpfp.gui.Components.FormPanel;
+import net.marcomerli.xpfp.gui.comp.EnableablePanel;
+import net.marcomerli.xpfp.gui.comp.FormPanel;
 
 /**
  * @author Marco Merli
@@ -134,10 +134,10 @@ public class SettingsWindow extends Window {
 	{
 		FormPanel form = new FormPanel();
 		form.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createTitledBorder("Google GeoApi"),
+			BorderFactory.createTitledBorder("Google API"),
 			BorderFactory.createEmptyBorder()));
 
-		geoApiText = new JTextField(23);
+		geoApiText = new JTextField(25);
 		geoApiText.setText(Context.getSettings().getProperty(Settings.GEOAPI_KEY));
 		form.addLast(geoApiText);
 

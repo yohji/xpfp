@@ -1,9 +1,6 @@
-package net.marcomerli.xpfp.gui;
+package net.marcomerli.xpfp.gui.comp;
 
 import javax.swing.JFrame;
-
-import net.marcomerli.xpfp.gui.Components.FormPanel;
-import net.marcomerli.xpfp.gui.Components.NumberInput;
 
 public class FormPanelTest {
 

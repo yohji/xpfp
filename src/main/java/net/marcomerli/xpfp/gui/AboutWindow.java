@@ -40,7 +40,7 @@ import javax.swing.JTextArea;
 import org.slf4j.LoggerFactory;
 
 import net.marcomerli.xpfp.Version;
-import net.marcomerli.xpfp.gui.Components.LinkLabel;
+import net.marcomerli.xpfp.gui.comp.LinkLabel;
 
 /**
  * @author Marco Merli

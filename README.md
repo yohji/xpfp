@@ -50,9 +50,9 @@ You can use [SkyVector](https://skyvector.com/) to plan the flight over the map,
 
 Select the directory where every files will be exported. You can set the *X-Plane* Output FMS plans folder;
 
-#### Google GeoApi
+#### Google API
 
-Insert the *Google* GeoApi key as explained in the [Google API Key](#google-api-key) section.
+Insert the *Google* API key as explained in the [Google API Key](#google-api-key) section.
 
 #### Proxy
 
