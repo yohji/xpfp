@@ -34,6 +34,14 @@ public class FormatFn {
 		return NumberFn.format(UnitFn.mToNm(distance), 2) + " nm";
 	}
 
+	public static String altitude(Double altitude)
+	{
+		if (altitude == null)
+			return "-";
+
+		return String.format("%d ft", altitude.longValue());
+	}
+
 	public static String time(Long time)
 	{
 		if (time == null || time.longValue() == 0)

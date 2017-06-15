@@ -25,7 +25,7 @@ import org.apache.sis.measure.Longitude;
 
 import com.google.maps.model.LatLng;
 
-import net.marcomerli.xpfp.fn.UnitFn;
+import net.marcomerli.xpfp.fn.FormatFn;
 
 /**
  * @author Marco Merli
@@ -86,6 +86,6 @@ public class Location extends LatLng implements Serializable {
 
 	public String getAltitude()
 	{
-		return (alt >= 0 ? String.format("%d ft", (long) UnitFn.mToFt(alt)) : "-");
+		return FormatFn.altitude(alt);
 	}
 }

@@ -21,11 +21,16 @@ package net.marcomerli.xpfp.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Ellipse2D.Double;
 import java.io.File;
 import java.net.URL;
 import java.util.Iterator;
@@ -44,6 +49,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.ToolTipManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -312,10 +318,19 @@ public class MainContent extends JPanel {
 
 			private static final long serialVersionUID = 3533883565773413594L;
 
-			private static final int GRAPH_HEIGHT = 150;
+			private static final int GRAPH_HEIGHT = 145;
 			private static final int SEA_LEVEL = 10;
 
+			private FlightPlan plan = Context.getFlightPlan();
+			private Ellipse2D.Double[] waypoints;
 			private Dimension size;
+
+			public Profile() {
+
+				ToolTipManager toolTip = ToolTipManager.sharedInstance();
+				toolTip.registerComponent(this);
+				toolTip.setInitialDelay(100);
+			}
 
 			@Override
 			protected void paintComponent(Graphics g)
@@ -323,7 +338,6 @@ public class MainContent extends JPanel {
 				super.paintComponent(g);
 
 				try {
-					FlightPlan plan = Context.getFlightPlan();
 					setup(g);
 
 					Location[] path = new Location[Context.getFlightPlan().size()];
@@ -337,73 +351,24 @@ public class MainContent extends JPanel {
 							elevs[iElev] = 0;
 
 					double fl = 0;
-					double max = NumberUtils.max(elevs);
+					double yMax = NumberUtils.max(elevs);
 					if (plan.isCalculated()) {
 						fl = new Integer(dataPanel.crzLevel.getText()) * 100.0;
 						fl = UnitFn.ftToM(fl);
 
-						if (fl > max)
-							max = fl;
+						if (fl > yMax)
+							yMax = fl;
 					}
 
 					double xFactor = (double) size.width / elevs.length;
-					double yFactor = size.height / (max + (max * 0.20));
+					double yFactor = size.height / (yMax + (yMax * 0.15));
 
-					g.setColor(Color.BLACK);
+					elevationMarker(g, yFactor);
+					elevationProfile(g, elevs, xFactor, yFactor);
+					seaLevel(g);
 
-					// Profile
-					int lx = 0;
-					double ly = 0;
-					for (int x = 0; x < elevs.length; x++) {
-						double y = elevs[x];
-
-						g.drawLine(
-							x(lx, xFactor), y(ly, yFactor),
-							x(x, xFactor), y(y, yFactor));
-
-						lx = x;
-						ly = y;
-					}
-
-					// Sea Level
-					g.setColor(Color.BLUE);
-					g.drawLine(
-						0, size.height,
-						size.width, size.height);
-
-					// Flight plan
-					if (plan.isCalculated()) {
-						g.setColor(Color.RED);
-
-						if (dataPanel.vnavPanel.isEnabled()) {
-
-							double dist = 0;
-							int[] dists = new int[plan.size()];
-
-							for (int iWp = 0; iWp < plan.size(); iWp++) {
-								Waypoint wp = plan.get(iWp);
-
-								dist += wp.getDistance();
-								dists[iWp] = (int) dist;
-							}
-
-							xFactor = (double) size.width / dist;
-
-							for (int iWp = 0; iWp < (plan.size() - 1); iWp++) {
-
-								g.drawLine(
-									x(dists[iWp], xFactor),
-									y(plan.get(iWp).getLocation().alt, yFactor),
-									x(dists[iWp + 1], xFactor),
-									y(plan.get(iWp + 1).getLocation().alt, yFactor));
-							}
-						}
-						else {
-							g.drawLine(
-								0, y(fl, yFactor),
-								size.width, y(fl, yFactor));
-						}
-					}
+					if (plan.isCalculated())
+						flightPlan(g, fl, yFactor);
 				}
 				catch (Exception ee) {
 					logger.error("onGraph", ee);
@@ -411,14 +376,105 @@ public class MainContent extends JPanel {
 				}
 			}
 
-			private int x(int x, double factor)
+			private void flightPlan(Graphics g, double fl, double yFactor)
 			{
-				return (int) (x * factor);
+				double xFactor;
+				g.setColor(Color.RED);
+
+				if (dataPanel.vnavPanel.isEnabled()) {
+
+					double dist = 0;
+					int[] dists = new int[plan.size()];
+
+					for (int iWp = 0; iWp < plan.size(); iWp++) {
+						Waypoint wp = plan.get(iWp);
+
+						dist += wp.getDistance();
+						dists[iWp] = (int) dist;
+					}
+
+					xFactor = (double) size.width / dist;
+
+					for (int iWp = 0; iWp < (plan.size() - 1); iWp++) {
+
+						g.drawLine(
+							x(dists[iWp], xFactor),
+							y(plan.get(iWp).getLocation().alt, yFactor),
+							x(dists[iWp + 1], xFactor),
+							y(plan.get(iWp + 1).getLocation().alt, yFactor));
+					}
+
+					Graphics2D g2 = (Graphics2D) g;
+					waypoints = new Ellipse2D.Double[plan.size()];
+
+					for (int iWp = 0; iWp < plan.size(); iWp++) {
+						int px = x(dists[iWp], xFactor);
+						int py = y(plan.get(iWp).getLocation().alt, yFactor);
+
+						g2.fill(new Ellipse2D.Double(px, py - 2, 5, 5));
+						waypoints[iWp] = new Ellipse2D.Double(px, py - 6, 12, 12);
+					}
+				}
+				else {
+					g.drawLine(
+						0, y(fl, yFactor),
+						size.width, y(fl, yFactor));
+				}
 			}
 
-			private int y(double y, double factor)
+			@Override
+			public String getToolTipText(MouseEvent event)
 			{
-				return size.height - (int) (y * factor);
+				if (waypoints != null) {
+					Point p = new Point(event.getX(), event.getY());
+
+					for (int iWp = 0; iWp < waypoints.length; iWp++) {
+						Double mark = waypoints[iWp];
+						if (mark.contains(p))
+							return plan.get(iWp).getIdentifier();
+					}
+				}
+
+				return super.getToolTipText(event);
+			}
+
+			private void seaLevel(Graphics g)
+			{
+				g.setColor(new Color(0, 0, 255, 170));
+				g.drawLine(
+					0, size.height,
+					size.width, size.height);
+			}
+
+			private void elevationProfile(Graphics g, double[] elevs,
+				double xFactor, double yFactor)
+			{
+				g.setColor(Color.BLACK);
+				int lx = 0;
+				double ly = 0;
+				for (int x = 0; x < elevs.length; x++) {
+					double y = elevs[x];
+
+					g.drawLine(
+						x(lx, xFactor), y(ly, yFactor),
+						x(x, xFactor), y(y, yFactor));
+
+					lx = x;
+					ly = y;
+				}
+			}
+
+			private void elevationMarker(Graphics g, double yFactor)
+			{
+				g.setColor(new Color(128, 128, 128, 128));
+				g.setFont(new Font(Font.DIALOG, Font.PLAIN, 10));
+				for (int y = 0; y < size.height; y += 20) {
+					int dy = size.height - y;
+
+					g.drawLine(0, dy, size.width, dy);
+					g.drawString(FormatFn.altitude(
+						UnitFn.mToFt(y / yFactor)), 5, dy);
+				}
 			}
 
 			private void setup(Graphics g)
@@ -432,6 +488,16 @@ public class MainContent extends JPanel {
 				g.drawRect(0, 0, size.width, size.height);
 
 				size.setSize(size.width, size.height - SEA_LEVEL);
+			}
+
+			private int x(int x, double factor)
+			{
+				return (int) (x * factor);
+			}
+
+			private int y(double y, double factor)
+			{
+				return size.height - (int) (y * factor);
 			}
 
 			@Override
