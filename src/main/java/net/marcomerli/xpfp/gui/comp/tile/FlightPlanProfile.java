@@ -114,7 +114,7 @@ public class FlightPlanProfile extends JPanel {
 
 				double fl = 0;
 				double yMax = NumberUtils.max(elevs);
-				if (plan.isCalculated()) {
+				if (plan.isValid()) {
 					fl = new Integer(parent.getCrzLevel()) * 100.0;
 					fl = UnitFn.ftToM(fl);
 
@@ -129,7 +129,7 @@ public class FlightPlanProfile extends JPanel {
 				elevationProfile(g, elevs, xFactor, yFactor);
 				seaLevel(g);
 
-				if (plan.isCalculated())
+				if (plan.isValid())
 					flightPlan(g, fl, yFactor);
 			}
 			catch (Exception ee) {

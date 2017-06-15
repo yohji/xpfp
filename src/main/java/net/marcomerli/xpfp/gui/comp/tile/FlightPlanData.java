@@ -155,9 +155,9 @@ public class FlightPlanData extends JPanel {
 		add(bottom);
 	}
 
-	public JButton getCalculate()
+	public void calculate()
 	{
-		return calculate;
+		calculate.doClick();
 	}
 
 	public String getCrzLevel()
@@ -208,15 +208,18 @@ public class FlightPlanData extends JPanel {
 				prefs.setProperty(Preferences.FP_DES_SPEED, desSpeed.getText());
 				prefs.save();
 
-				parent.refresh();
 				export.setEnabled(true);
 			}
 			catch (FlightPlanException | GeoException ee) {
+				export.setEnabled(false);
 				GuiFn.errorDialog(ee, parent.getWin());
 			}
 			catch (Exception ee) {
 				logger.error("onCalculate", ee);
 				GuiFn.fatalDialog(ee, parent.getWin());
+			}
+			finally {
+				parent.refresh();
 			}
 		}
 	}

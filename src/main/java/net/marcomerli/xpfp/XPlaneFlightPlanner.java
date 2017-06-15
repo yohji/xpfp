@@ -22,9 +22,6 @@ import java.awt.Toolkit;
 import java.lang.reflect.Field;
 
 import javax.swing.JFrame;
-
-// FIXME: error handling and issue notify
-
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.SystemUtils;

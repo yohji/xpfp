@@ -48,14 +48,16 @@ public class GuiFn {
 
 	public static void errorDialog(Throwable e, Component component)
 	{
-		JOptionPane.showMessageDialog(component, ExceptionUtils.getRootCauseMessage(e),
+		Throwable err = ExceptionUtils.getRootCause(e);
+		if (err == null)
+			err = e;
+
+		JOptionPane.showMessageDialog(component, err.getMessage(),
 			MainWindow.TITLE_COMPACT + " :: Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	public static void fatalDialog(Throwable e, Component component)
 	{
-		// FIXME: notify the issue on GitHub
-
 		errorDialog(e, component);
 	}
 

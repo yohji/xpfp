@@ -38,8 +38,6 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	private String filename;
 	private Double distance = 0.0;
 	private Long ete = 0L;
-
-	private boolean calculated;
 	private boolean valid;
 
 	public FlightPlan(String name) {
@@ -52,11 +50,11 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		double clbRate, double clbSpeed, double desRate, double desSpeed)
 		throws FlightPlanException, GeoException
 	{
-		validate();
-
 		for (Iterator<Waypoint> it = iterator(); it.hasNext();)
 			if (it.next().isCalculated())
 				it.remove();
+
+		validate();
 
 		Waypoint dep = getDeparture();
 		Location depLoc = dep.getLocation();
@@ -80,17 +78,17 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			ete += wp.getEte();
 		}
 
-		calculated = true;
+		validateVNav();
 	}
 
 	public void calculate(final double crzAlt, final double crzSpeed)
 		throws FlightPlanException, GeoException
 	{
-		validate();
-
 		for (Iterator<Waypoint> it = iterator(); it.hasNext();)
 			if (it.next().isCalculated())
 				it.remove();
+
+		validate();
 
 		Waypoint dep = getDeparture();
 		Location depLoc = dep.getLocation();
@@ -113,8 +111,6 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		Waypoint arr = getArrival();
 		Location arrLoc = arr.getLocation();
 		GeoFn.elevation(arrLoc);
-
-		calculated = true;
 	}
 
 	public void validate() throws FlightPlanException
@@ -140,6 +136,37 @@ public class FlightPlan extends LinkedList<Waypoint> {
 		}
 	}
 
+	public void validateVNav() throws FlightPlanException
+	{
+		try {
+			Waypoint asc = null;
+			Waypoint desc = null;
+			for (int iWp = 0; iWp < size(); iWp++) {
+				Waypoint wp = get(iWp);
+
+				if (wp.getType().equals(WaypointType.DESC)) {
+					desc = wp;
+
+					if (asc == null)
+						throw new FlightPlanException("Descent waypoint is before the ascent waypoint.");
+				}
+				else if (wp.getType().equals(WaypointType.ASC))
+					asc = wp;
+			}
+
+			if (asc != null && desc == null)
+				throw new FlightPlanException("Descent waypoint is out of the plan.");
+			else if (asc == null && desc != null)
+				throw new FlightPlanException("Ascent waypoint is out of the plan.");
+			else if (asc == null && desc == null)
+				throw new FlightPlanException("Ascent and Descent waypoints are out of the plan.");
+		}
+		catch (FlightPlanException e) {
+			valid = false;
+			throw e;
+		}
+	}
+
 	public Waypoint getDeparture()
 	{
 		return getFirst();
@@ -148,11 +175,6 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	public Waypoint getArrival()
 	{
 		return getLast();
-	}
-
-	public boolean isCalculated()
-	{
-		return calculated;
 	}
 
 	public boolean isValid()
@@ -221,9 +243,9 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			if (! clbWpAdd && sumDistance > clbDistance) {
 
 				Waypoint clbWp = new Waypoint();
-				clbWp.setIdentifier(">>>>>");
+				clbWp.setIdentifier(WaypointType.ASC.getFplCode());
 				clbWp.setCalculated(true);
-				clbWp.setType(WaypointType.POS);
+				clbWp.setType(WaypointType.ASC);
 				clbWp.setLocation(GeoFn.point(prev.getLocation(),
 					(clbDistance - lastDistance), curr.getBearing()));
 
@@ -273,9 +295,9 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			if (sumDistance > desDistance) {
 
 				Waypoint desWp = new Waypoint();
-				desWp.setIdentifier("<<<<<");
+				desWp.setIdentifier(WaypointType.DESC.getFplCode());
 				desWp.setCalculated(true);
-				desWp.setType(WaypointType.POS);
+				desWp.setType(WaypointType.DESC);
 				desWp.setLocation(GeoFn.point(next.getLocation(), (desDistance - lastDistance),
 					GeoFn.bearing(next.getLocation(), curr.getLocation())));
 

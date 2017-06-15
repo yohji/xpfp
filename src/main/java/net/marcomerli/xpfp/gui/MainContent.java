@@ -63,7 +63,7 @@ public class MainContent extends JPanel {
 
 	public void calculate()
 	{
-		data.getCalculate().doClick();
+		data.calculate();
 	}
 
 	public String getCrzLevel()

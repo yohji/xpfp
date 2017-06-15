@@ -28,7 +28,9 @@ public enum WaypointType {
 	VOR("VOR", 3),
 	NDB("NDB", 2),
 	INT("INT", 11),
-	POS("USER WAYPOINT", 28);
+	POS("USER WAYPOINT", 28),
+	ASC(">>>>>", 28),
+	DESC("<<<<<", 28);
 
 	public static WaypointType get(String fplCode)
 	{
@@ -55,6 +57,11 @@ public enum WaypointType {
 
 		this.fplCode = fplCode;
 		this.fmsCode = fmsCode;
+	}
+
+	public boolean isPosition()
+	{
+		return (this == POS || this == ASC || this == DESC);
 	}
 
 	public String getFplCode()

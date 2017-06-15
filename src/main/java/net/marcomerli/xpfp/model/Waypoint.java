@@ -64,7 +64,7 @@ public class Waypoint implements Serializable {
 
 	public String getFMSIdentifier()
 	{
-		if (type.equals(WaypointType.POS))
+		if (type.isPosition())
 			return String.format("%s%s_%s%s",
 				(location.lat > 0 ? "+" : "-"),
 				NumberFn.format(location.lat, 3),
