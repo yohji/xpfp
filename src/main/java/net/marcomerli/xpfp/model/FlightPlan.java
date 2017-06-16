@@ -314,7 +314,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 				sumDistance = 0;
 				for (int iFix = (size() - 2); iFix > iWpNext; iFix--) {
 					Waypoint fixWp = get(iFix);
-					sumDistance += fixWp.getDistance();
+					sumDistance += get(iFix + 1).getDistance();
 
 					fixWp.getLocation().alt = ((sumDistance * desRate) / desSpeed) + arrLoc.alt;
 					fixWp.setEte(desSpeed);
