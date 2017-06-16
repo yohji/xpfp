@@ -16,7 +16,7 @@
  *   along with XPFP.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.marcomerli.xpfp.gui.comp.tile;
+package net.marcomerli.xpfp.gui.tile;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;

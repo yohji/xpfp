@@ -21,9 +21,9 @@ package net.marcomerli.xpfp.gui;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.marcomerli.xpfp.gui.comp.tile.FlightPlanData;
-import net.marcomerli.xpfp.gui.comp.tile.FlightPlanProfile;
-import net.marcomerli.xpfp.gui.comp.tile.FlightPlanTable;
+import net.marcomerli.xpfp.gui.tile.FlightPlanData;
+import net.marcomerli.xpfp.gui.tile.FlightPlanProfile;
+import net.marcomerli.xpfp.gui.tile.FlightPlanTable;
 
 /**
  * @author Marco Merli
