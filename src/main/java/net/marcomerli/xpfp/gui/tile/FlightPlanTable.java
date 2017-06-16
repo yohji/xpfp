@@ -64,7 +64,7 @@ public class FlightPlanTable extends JPanel {
 	private static final long serialVersionUID = - 2408834160839600983L;
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	private static final String SKYVECTOR_AIRPORT_URL = "https://skyvector.com/airport/";
-	private static final int TABLE_HEIGHT = 240;
+	private static final int TABLE_HEIGHT = 160;
 
 	private final String[] columnNames = new String[] {
 		"#", "Identifier", "Type", "Country", "Latitude",

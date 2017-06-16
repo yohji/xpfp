@@ -144,7 +144,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			for (int iWp = 0; iWp < size(); iWp++) {
 				Waypoint wp = get(iWp);
 
-				if (wp.getType().equals(WaypointType.DESC)) {
+				if (wp.getType().equals(WaypointType.DSC)) {
 					desc = wp;
 
 					if (asc == null)
@@ -295,9 +295,9 @@ public class FlightPlan extends LinkedList<Waypoint> {
 			if (sumDistance > desDistance) {
 
 				Waypoint desWp = new Waypoint();
-				desWp.setIdentifier(WaypointType.DESC.getFplCode());
+				desWp.setIdentifier(WaypointType.DSC.getFplCode());
 				desWp.setCalculated(true);
-				desWp.setType(WaypointType.DESC);
+				desWp.setType(WaypointType.DSC);
 				desWp.setLocation(GeoFn.point(next.getLocation(), (desDistance - lastDistance),
 					GeoFn.bearing(next.getLocation(), curr.getLocation())));
 
