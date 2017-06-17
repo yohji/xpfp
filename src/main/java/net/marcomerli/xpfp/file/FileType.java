@@ -18,20 +18,50 @@
 
 package net.marcomerli.xpfp.file;
 
+import java.io.File;
+
+import net.marcomerli.xpfp.file.read.FMSReader;
+import net.marcomerli.xpfp.file.read.FPLReader;
+import net.marcomerli.xpfp.file.read.Reader;
+
 /**
  * @author Marco Merli
  * @since 1.0
  */
 public enum FileType {
 
-	FMS, // X-Plane
-	FPL, // Garmin
-	GPX, // GPS eXchange
-	KML, // Google
-	GML; // Geography Markup Language
+	FMS(FMSReader.class), // X-Plane
+	FPL(FPLReader.class), // Garmin
+	GPX(null), // GPS eXchange
+	KML(null), // Google
+	GML(null); // Geography Markup Language
+
+	public static FileType get(File file)
+	{
+		String n = file.getName();
+		String ext = n.substring(n.lastIndexOf('.') + 1);
+
+		for (FileType ft : values())
+			if (ft.extension().equalsIgnoreCase(ext))
+				return ft;
+
+		throw new IllegalArgumentException("File not supported: " + ext);
+	}
+
+	private Class<? extends Reader> reader;
+
+	private FileType(Class<? extends Reader> reader) {
+
+		this.reader = reader;
+	}
 
 	public String extension()
 	{
 		return name().toLowerCase();
+	}
+
+	public Class<? extends Reader> getReader()
+	{
+		return reader;
 	}
 }

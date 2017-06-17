@@ -37,8 +37,7 @@ import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.error.DataException;
 import net.marcomerli.xpfp.error.ReaderException;
-import net.marcomerli.xpfp.file.read.FMSReader;
-import net.marcomerli.xpfp.file.read.FPLReader;
+import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.file.read.Reader;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.model.FlightPlan;
@@ -53,15 +52,15 @@ public class MenuBar extends JMenuBar {
 	private static final Logger logger = LoggerFactory.getLogger(MenuBar.class);
 
 	private MainWindow win;
-	private JFileChooser fcFPL;
+	private JFileChooser fcImport;
 
 	public MenuBar(MainWindow win) {
 
 		this.win = win;
 
-		fcFPL = new JFileChooser();
-		fcFPL.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		fcFPL.setCurrentDirectory(Context.getPreferences()
+		fcImport = new JFileChooser();
+		fcImport.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		fcImport.setCurrentDirectory(Context.getPreferences()
 			.getProperty(Preferences.DIR_IMPORT, File.class));
 	}
 
@@ -72,16 +71,10 @@ public class MenuBar extends JMenuBar {
 		menu.setMnemonic(KeyEvent.VK_F);
 		add(menu);
 
-		JMenuItem menuItem = new JMenuItem("Import FPL file", KeyEvent.VK_G);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(
-			KeyEvent.VK_G, ActionEvent.CTRL_MASK));
-		menuItem.addActionListener(new OnImportFPL(menuItem, FPLReader.class));
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem("Import FMS file", KeyEvent.VK_F);
+		JMenuItem menuItem = new JMenuItem("Import file", KeyEvent.VK_F);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
 			KeyEvent.VK_F, ActionEvent.CTRL_MASK));
-		menuItem.addActionListener(new OnImportFPL(menuItem, FMSReader.class));
+		menuItem.addActionListener(new OnImport(menuItem));
 		menu.add(menuItem);
 
 		menu.addSeparator();
@@ -114,32 +107,30 @@ public class MenuBar extends JMenuBar {
 		return this;
 	}
 
-	private class OnImportFPL implements ActionListener {
+	private class OnImport implements ActionListener {
 
 		private JMenuItem menuItem;
-		private Class<? extends Reader> readerClass;
 
-		public OnImportFPL(JMenuItem menuItem, Class<? extends Reader> reader) {
+		public OnImport(JMenuItem menuItem) {
 
 			this.menuItem = menuItem;
-			this.readerClass = reader;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			int returnVal = fcFPL.showOpenDialog(menuItem);
+			int returnVal = fcImport.showOpenDialog(menuItem);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				File fpl = fcFPL.getSelectedFile();
-
+				File file = fcImport.getSelectedFile();
 				try {
 					Preferences preferences = Context.getPreferences();
 					preferences.setProperty(Preferences.DIR_IMPORT,
-						fcFPL.getCurrentDirectory().getAbsolutePath());
+						fcImport.getCurrentDirectory().getAbsolutePath());
 					preferences.save();
 
-					Constructor<? extends Reader> constr = readerClass.getConstructor(File.class);
-					Reader reader = constr.newInstance(fpl);
+					FileType type = FileType.get(file);
+					Constructor<? extends Reader> constr = type.getReader().getConstructor(File.class);
+					Reader reader = constr.newInstance(file);
 					FlightPlan flightPlan = reader.read();
 
 					Context.setFlightPlan(flightPlan);
