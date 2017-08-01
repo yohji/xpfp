@@ -36,10 +36,12 @@ import org.slf4j.LoggerFactory;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Preferences;
 import net.marcomerli.xpfp.error.DataException;
+import net.marcomerli.xpfp.error.NetworkException;
 import net.marcomerli.xpfp.error.ReaderException;
 import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.file.read.Reader;
 import net.marcomerli.xpfp.fn.GuiFn;
+import net.marcomerli.xpfp.fn.NetworkFn;
 import net.marcomerli.xpfp.model.FlightPlan;
 
 /**
@@ -128,6 +130,8 @@ public class MenuBar extends JMenuBar {
 						fcImport.getCurrentDirectory().getAbsolutePath());
 					preferences.save();
 
+					NetworkFn.requireInternet();
+
 					FileType type = FileType.get(file);
 					Constructor<? extends Reader> constr = type.getReader().getConstructor(File.class);
 					Reader reader = constr.newInstance(file);
@@ -138,7 +142,7 @@ public class MenuBar extends JMenuBar {
 					win.pack();
 					win.validate();
 				}
-				catch (DataException | ReaderException ee) {
+				catch (DataException | ReaderException | NetworkException ee) {
 					GuiFn.errorDialog(ee, win);
 				}
 				catch (Exception ee) {

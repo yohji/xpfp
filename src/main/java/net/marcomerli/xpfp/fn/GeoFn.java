@@ -39,6 +39,7 @@ import com.google.maps.model.ElevationResult;
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.core.data.Settings;
 import net.marcomerli.xpfp.error.GeoException;
+import net.marcomerli.xpfp.error.NetworkException;
 import net.marcomerli.xpfp.model.Location;
 
 /**
@@ -102,8 +103,10 @@ public class GeoFn {
 		return (Math.toDegrees(Math.atan2(y, x)) + 360) % 360;
 	}
 
-	public static void elevation(Location location) throws GeoException
+	public static void elevation(Location location) throws GeoException, NetworkException
 	{
+		NetworkFn.requireInternet();
+		
 		try {
 			double elev = ElevationApi.getByPoint(context, location)
 				.await().elevation;
@@ -115,8 +118,10 @@ public class GeoFn {
 		}
 	}
 
-	public static double[] elevations(Location... path) throws GeoException
+	public static double[] elevations(Location... path) throws GeoException, NetworkException
 	{
+		NetworkFn.requireInternet();
+		
 		try {
 			ElevationResult[] res = ElevationApi.getByPath(context,
 				GEOAPI_MAX_SAMPLES, path).await();

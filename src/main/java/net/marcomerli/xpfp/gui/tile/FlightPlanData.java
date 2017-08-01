@@ -39,6 +39,7 @@ import net.marcomerli.xpfp.core.data.Settings;
 import net.marcomerli.xpfp.error.DataException;
 import net.marcomerli.xpfp.error.FlightPlanException;
 import net.marcomerli.xpfp.error.GeoException;
+import net.marcomerli.xpfp.error.NetworkException;
 import net.marcomerli.xpfp.file.write.FMSWriter;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.fn.UnitFn;
@@ -210,7 +211,7 @@ public class FlightPlanData extends JPanel {
 
 				export.setEnabled(true);
 			}
-			catch (FlightPlanException | GeoException ee) {
+			catch (FlightPlanException | GeoException | NetworkException ee) {
 				export.setEnabled(false);
 				GuiFn.errorDialog(ee, parent.getWin());
 			}

@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import net.marcomerli.xpfp.core.Context;
@@ -57,7 +58,7 @@ public class SettingsWindow extends Window {
 	private JTextField proxyPortText;
 	private EnableablePanel authForm;
 	private JTextField proxyAuthUsername;
-	private JTextField proxyAuthPassword;
+	private JPasswordField proxyAuthPassword;
 
 	public SettingsWindow() {
 
@@ -155,7 +156,7 @@ public class SettingsWindow extends Window {
 		authForm.addLabel("Username", .25).setLabelFor(proxyAuthUsername);
 		authForm.addLast(proxyAuthUsername, 1);
 
-		proxyAuthPassword = new JTextField();
+		proxyAuthPassword = new JPasswordField();
 		proxyAuthPassword.setText(settings.getProperty(Settings.PROXY_AUTH_PASSWORD));
 		authForm.addLabel("Password", .25).setLabelFor(proxyAuthPassword);
 		authForm.addLast(proxyAuthPassword, 1);
@@ -194,7 +195,7 @@ public class SettingsWindow extends Window {
 				settings.setProperty(Settings.PROXY_PORT, proxyPortText.getText());
 				settings.setProperty(Settings.PROXY_AUTH, String.valueOf(authForm.isEnabled()));
 				settings.setProperty(Settings.PROXY_AUTH_USERNAME, proxyAuthUsername.getText());
-				settings.setProperty(Settings.PROXY_AUTH_PASSWORD, proxyAuthPassword.getText());
+				settings.setProperty(Settings.PROXY_AUTH_PASSWORD, new String(proxyAuthPassword.getPassword()));
 
 				settings.save();
 				Context.refresh();

@@ -23,6 +23,7 @@ import java.util.LinkedList;
 
 import net.marcomerli.xpfp.error.FlightPlanException;
 import net.marcomerli.xpfp.error.GeoException;
+import net.marcomerli.xpfp.error.NetworkException;
 import net.marcomerli.xpfp.file.FileType;
 import net.marcomerli.xpfp.fn.GeoFn;
 
@@ -48,7 +49,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 
 	public void calculate(final double crzAlt, final double crzSpeed,
 		double clbRate, double clbSpeed, double desRate, double desSpeed)
-		throws FlightPlanException, GeoException
+		throws FlightPlanException, GeoException, NetworkException
 	{
 		for (Iterator<Waypoint> it = iterator(); it.hasNext();)
 			if (it.next().isCalculated())
@@ -82,7 +83,7 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	}
 
 	public void calculate(final double crzAlt, final double crzSpeed)
-		throws FlightPlanException, GeoException
+		throws FlightPlanException, GeoException, NetworkException
 	{
 		for (Iterator<Waypoint> it = iterator(); it.hasNext();)
 			if (it.next().isCalculated())
@@ -222,7 +223,8 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	//
 
 	private void calculateClimb(final double crzAlt, final double crzSpeed,
-		final double clbRate, final double clbSpeed, Location depLoc) throws GeoException
+		final double clbRate, final double clbSpeed, Location depLoc)
+		throws GeoException
 	{
 		boolean clbWpAdd = false;
 		double lastDistance = 0;
@@ -277,7 +279,8 @@ public class FlightPlan extends LinkedList<Waypoint> {
 	}
 
 	private void calculateDescent(final double crzAlt, final double crzSpeed,
-		final double desRate, final double desSpeed, Location arrLoc) throws GeoException
+		final double desRate, final double desSpeed, Location arrLoc)
+		throws GeoException
 	{
 		double lastDistance = 0;
 

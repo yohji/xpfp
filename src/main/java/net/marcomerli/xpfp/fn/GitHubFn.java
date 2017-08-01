@@ -57,6 +57,7 @@ public class GitHubFn {
 	{
 		Validate.notBlank(title, "title cannot be null");
 		Validate.notBlank(body, "body cannot be null");
+		NetworkFn.requireInternet();
 
 		String json = String.format("{\"title\":\"%s\",\"body\":\"%s\"}",
 			title, body);
