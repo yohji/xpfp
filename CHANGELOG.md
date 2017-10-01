@@ -1,4 +1,4 @@
-# X-Plane Flight Planner
+# Change log
 
 ## 1.0
 
