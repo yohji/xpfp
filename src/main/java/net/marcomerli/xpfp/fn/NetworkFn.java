@@ -21,6 +21,7 @@ package net.marcomerli.xpfp.fn;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URL;
+import java.net.URLConnection;
 
 import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.error.NetworkException;
@@ -31,11 +32,18 @@ import net.marcomerli.xpfp.error.NetworkException;
  */
 public class NetworkFn {
 
-	private static final String TEST_ADDRESS = "www.google.com";
-	private static final int TEST_TIMEOUT = 1000;
+	private static final String INTERNET_ADDRESS_TEST = "www.google.com";
+	private static final int DEFAULT_ACCESS_TIME = 1000;
+	private static long LAST_INTERNET_ACCESS = 0;
 
 	public static void requireInternet() throws NetworkException
 	{
+		long now = System.currentTimeMillis();
+		if ((now - LAST_INTERNET_ACCESS) < DEFAULT_ACCESS_TIME) {
+			LAST_INTERNET_ACCESS = now;
+			return;
+		}
+
 		if (! hasInternet())
 			throw new NetworkException("No internet connection available.");
 	}
@@ -43,14 +51,16 @@ public class NetworkFn {
 	public static boolean hasInternet()
 	{
 		try {
-			InetAddress[] addresses = InetAddress.getAllByName(TEST_ADDRESS);
-			if (addresses[0].isReachable(TEST_TIMEOUT))
+			InetAddress[] addresses = InetAddress.getAllByName(INTERNET_ADDRESS_TEST);
+			if (addresses[0].isReachable(DEFAULT_ACCESS_TIME))
 				return true;
 
-			new URL("https://" + TEST_ADDRESS)
-				.openConnection(Context.getProxy())
-				.connect();
+			URLConnection conn = new URL("https://" + INTERNET_ADDRESS_TEST)
+				.openConnection(Context.getProxy());
+			conn.setConnectTimeout(DEFAULT_ACCESS_TIME);
+			conn.connect();
 
+			LAST_INTERNET_ACCESS = System.currentTimeMillis();
 			return true;
 		}
 		catch (IOException e) {
