@@ -32,8 +32,9 @@ public class TextInput extends JTextField {
 
 	private static final long serialVersionUID = 3513321511037094181L;
 
-	public TextInput() {
+	public TextInput(int columns) {
 
+		super(columns);
 		addMouseListener(new TextPopup(this));
 
 		setVerifyInputWhenFocusTarget(false);
@@ -46,5 +47,10 @@ public class TextInput extends JTextField {
 				return StringUtils.isNoneEmpty(text);
 			}
 		});
+	}
+
+	public TextInput() {
+
+		this(0);
 	}
 }

@@ -229,7 +229,7 @@ public class FlightPlanData extends JPanel {
 
 		public OnReset(JComponent... fields) {
 
-			super(fields);
+			super(parent.getWin(), fields);
 		}
 
 		@Override

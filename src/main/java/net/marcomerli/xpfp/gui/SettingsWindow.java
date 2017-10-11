@@ -27,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -40,6 +41,8 @@ import net.marcomerli.xpfp.fn.GeoFn;
 import net.marcomerli.xpfp.fn.GuiFn;
 import net.marcomerli.xpfp.gui.comp.EnableablePanel;
 import net.marcomerli.xpfp.gui.comp.FormPanel;
+import net.marcomerli.xpfp.gui.comp.TextInput;
+import net.marcomerli.xpfp.gui.comp.ValidateFormAction;
 
 /**
  * @author Marco Merli
@@ -52,7 +55,7 @@ public class SettingsWindow extends Window {
 	private JTextField fmsDirText;
 	private JButton fmsDirBtn;
 	private JFileChooser fmsDirFileChooser;
-	private JTextField geoApiText;
+	private TextInput geoApiText;
 	private EnableablePanel proxyForm;
 	private JTextField proxyHostnameText;
 	private JTextField proxyPortText;
@@ -68,12 +71,6 @@ public class SettingsWindow extends Window {
 		fmsDirFileChooser = new JFileChooser();
 		fmsDirFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-		// Save
-		JPanel savePanel = new JPanel();
-		JButton save = new JButton("Save");
-		save.addActionListener(new OnSave());
-		savePanel.add(save);
-
 		// Main
 		JPanel mainPane = new JPanel();
 		mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.PAGE_AXIS));
@@ -86,6 +83,13 @@ public class SettingsWindow extends Window {
 		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
 		mainPane.add(proxyPanel());
 		mainPane.add(Box.createRigidArea(new Dimension(0, 5)));
+
+		// Save
+		JPanel savePanel = new JPanel();
+		JButton save = new JButton("Save");
+		save.addActionListener(new OnSave(geoApiText));
+		savePanel.add(save);
+
 		mainPane.add(savePanel);
 		mainPane.add(Box.createGlue());
 
@@ -126,7 +130,7 @@ public class SettingsWindow extends Window {
 			BorderFactory.createTitledBorder("Google API"),
 			BorderFactory.createEmptyBorder()));
 
-		geoApiText = new JTextField(25);
+		geoApiText = new TextInput(25);
 		geoApiText.setText(Context.getSettings().getProperty(Settings.GEOAPI_KEY));
 		form.addLast(geoApiText);
 
@@ -181,10 +185,15 @@ public class SettingsWindow extends Window {
 		}
 	}
 
-	private class OnSave implements ActionListener {
+	private class OnSave extends ValidateFormAction {
+
+		public OnSave(JComponent... fields) {
+
+			super(fields);
+		}
 
 		@Override
-		public void actionPerformed(ActionEvent e)
+		public void perform(ActionEvent e)
 		{
 			try {
 				Settings settings = Context.getSettings();

@@ -20,6 +20,7 @@ package net.marcomerli.xpfp.fn;
 
 import java.awt.Component;
 import java.awt.Desktop;
+import java.awt.EventQueue;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
@@ -46,14 +47,21 @@ public class GuiFn {
 			MainWindow.TITLE_COMPACT + " :: Warning", JOptionPane.WARNING_MESSAGE);
 	}
 
-	public static void errorDialog(Throwable e, Component component)
+	public static void errorDialog(final Throwable e, final Component component)
 	{
-		Throwable err = ExceptionUtils.getRootCause(e);
-		if (err == null)
-			err = e;
+		EventQueue.invokeLater(new Runnable() {
 
-		JOptionPane.showMessageDialog(component, err.getMessage(),
-			MainWindow.TITLE_COMPACT + " :: Error", JOptionPane.ERROR_MESSAGE);
+			@Override
+			public void run()
+			{
+				Throwable err = ExceptionUtils.getRootCause(e);
+				if (err == null)
+					err = e;
+
+				JOptionPane.showMessageDialog(component, err.getMessage(),
+					MainWindow.TITLE_COMPACT + " :: Error", JOptionPane.ERROR_MESSAGE);
+			}
+		});
 	}
 
 	public static void fatalDialog(Throwable e, Component component)

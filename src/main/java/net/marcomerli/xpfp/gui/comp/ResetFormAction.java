@@ -18,13 +18,17 @@
 
 package net.marcomerli.xpfp.gui.comp;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.text.JTextComponent;
+
+import net.marcomerli.xpfp.fn.GuiFn;
 
 /**
  * @author Marco Merli
@@ -32,16 +36,22 @@ import javax.swing.text.JTextComponent;
  */
 public class ResetFormAction implements ActionListener {
 
+	private Component parent;
 	private JComponent[] fields;
 
-	public ResetFormAction(JComponent... fields) {
+	public ResetFormAction(Component parent, JComponent... fields) {
 
+		this.parent = parent;
 		this.fields = fields;
 	}
 
 	@Override
 	public final void actionPerformed(ActionEvent e)
 	{
+		int select = GuiFn.selectDialog("Do you really want to reset it?", parent);
+		if (select == JOptionPane.NO_OPTION || select == JOptionPane.CLOSED_OPTION)
+			return;
+
 		if (fields != null && fields.length > 0) {
 			for (JComponent comp : fields) {
 
