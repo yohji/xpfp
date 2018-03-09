@@ -73,9 +73,9 @@ public class MenuBar extends JMenuBar {
 		menu.setMnemonic(KeyEvent.VK_F);
 		add(menu);
 
-		JMenuItem menuItem = new JMenuItem("Import file", KeyEvent.VK_F);
+		JMenuItem menuItem = new JMenuItem("Import file", KeyEvent.VK_O);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
-			KeyEvent.VK_F, ActionEvent.CTRL_MASK));
+			KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new OnImport(menuItem));
 		menu.add(menuItem);
 
@@ -100,9 +100,9 @@ public class MenuBar extends JMenuBar {
 		menu.setMnemonic(KeyEvent.VK_H);
 		add(menu);
 
-		menuItem = new JMenuItem("About", KeyEvent.VK_P);
+		menuItem = new JMenuItem("About", KeyEvent.VK_A);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
-			KeyEvent.VK_P, ActionEvent.CTRL_MASK));
+			KeyEvent.VK_A, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new OnAbout());
 		menu.add(menuItem);
 
