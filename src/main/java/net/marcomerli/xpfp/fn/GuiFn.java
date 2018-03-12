@@ -47,6 +47,23 @@ public class GuiFn {
 			MainWindow.TITLE_COMPACT + " :: Warning", JOptionPane.WARNING_MESSAGE);
 	}
 
+	public static void warnDialog(final Throwable e, final Component component)
+	{
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run()
+			{
+				Throwable err = ExceptionUtils.getRootCause(e);
+				if (err == null)
+					err = e;
+
+				JOptionPane.showMessageDialog(component, err.getMessage(),
+					MainWindow.TITLE_COMPACT + " :: Warning", JOptionPane.WARNING_MESSAGE);
+			}
+		});
+	}
+
 	public static void errorDialog(final Throwable e, final Component component)
 	{
 		EventQueue.invokeLater(new Runnable() {

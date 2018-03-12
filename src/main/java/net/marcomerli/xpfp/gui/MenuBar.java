@@ -125,6 +125,11 @@ public class MenuBar extends JMenuBar {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fcImport.getSelectedFile();
 				try {
+					// FIXME: repaint window with spinner in the right moment
+					win.setContentPane(new SpinnerContent());
+					win.pack();
+					win.validate();
+
 					Preferences preferences = Context.getPreferences();
 					preferences.setProperty(Preferences.DIR_IMPORT,
 						fcImport.getCurrentDirectory().getAbsolutePath());
@@ -136,18 +141,29 @@ public class MenuBar extends JMenuBar {
 					Constructor<? extends Reader> constr = type.getReader().getConstructor(File.class);
 					Reader reader = constr.newInstance(file);
 					FlightPlan flightPlan = reader.read();
-
 					Context.setFlightPlan(flightPlan);
+
 					win.setContentPane(new MainContent(win));
 					win.pack();
 					win.validate();
 				}
-				catch (DataException | ReaderException | NetworkException ee) {
+				catch (DataException ee) {
+					GuiFn.warnDialog(ee, win);
+				}
+				catch (ReaderException | NetworkException ee) {
 					GuiFn.errorDialog(ee, win);
+
+					win.setContentPane(new HomeContent());
+					win.setSize(Window.DEFAULT_WIN_SIZE);
+					win.validate();
 				}
 				catch (Exception ee) {
 					logger.error("onImport", ee);
 					GuiFn.errorDialog(ee, win);
+
+					win.setContentPane(new HomeContent());
+					win.setSize(Window.DEFAULT_WIN_SIZE);
+					win.validate();
 				}
 			}
 		}

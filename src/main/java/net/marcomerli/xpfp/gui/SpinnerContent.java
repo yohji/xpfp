@@ -18,27 +18,35 @@
 
 package net.marcomerli.xpfp.gui;
 
-import javax.swing.JFrame;
+import java.net.URL;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public class MainWindow extends Window {
+public class SpinnerContent extends JPanel {
 
-	private static final long serialVersionUID = 109257433124133997L;
+	private static final long serialVersionUID = 1115688377888163553L;
 
-	public MainWindow() {
+	public SpinnerContent() {
 
-		super(TITLE_FULL);
+		new BoxLayout(this, BoxLayout.PAGE_AXIS);
+		setBorder(BorderFactory.createEmptyBorder(75, 75, 75, 75));
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setJMenuBar(new MenuBar(this).init());
-		setContentPane(new HomeContent());
+		ClassLoader cldr = this.getClass().getClassLoader();
+		URL gif = cldr.getResource("spinner.gif");
+		ImageIcon icon = new ImageIcon(gif);
 
-		setSize(DEFAULT_WIN_SIZE);
-		setLocationByPlatform(true);
-		setResizable(false);
-		setVisible(true);
+		JLabel label = new JLabel();
+		label.setIcon(icon);
+		icon.setImageObserver(label);
+
+		add(label);
 	}
 }

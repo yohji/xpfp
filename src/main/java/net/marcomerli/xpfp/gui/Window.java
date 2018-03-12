@@ -18,6 +18,7 @@
 
 package net.marcomerli.xpfp.gui;
 
+import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.net.URL;
 
@@ -40,7 +41,8 @@ public abstract class Window extends JFrame {
 
 	public static final String TITLE_FULL = "X-Plane Flight Planner";
 	public static final String TITLE_COMPACT = "XPFP";
-	protected static final Border PADDING_BORDER = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+	public static final Border PADDING_BORDER = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+	public static final Dimension DEFAULT_WIN_SIZE = new Dimension(400, 200);
 
 	public Window(String title) throws HeadlessException {
 

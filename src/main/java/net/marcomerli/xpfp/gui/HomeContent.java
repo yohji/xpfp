@@ -18,27 +18,34 @@
 
 package net.marcomerli.xpfp.gui;
 
-import javax.swing.JFrame;
+import java.awt.Dimension;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import net.marcomerli.xpfp.core.Context;
+import net.marcomerli.xpfp.core.data.Settings;
 
 /**
  * @author Marco Merli
  * @since 1.0
  */
-public class MainWindow extends Window {
+public class HomeContent extends JPanel {
 
-	private static final long serialVersionUID = 109257433124133997L;
+	private static final long serialVersionUID = - 1307131782278478525L;
 
-	public MainWindow() {
+	public HomeContent() {
 
-		super(TITLE_FULL);
+		new BoxLayout(this, BoxLayout.PAGE_AXIS);
+		setBorder(Window.PADDING_BORDER);
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setJMenuBar(new MenuBar(this).init());
-		setContentPane(new HomeContent());
+		add(Box.createRigidArea(new Dimension(0, 100)));
+		add(new JLabel("No flight plan; import one from the menu File -> Import..."));
+		add(Box.createGlue());
 
-		setSize(DEFAULT_WIN_SIZE);
-		setLocationByPlatform(true);
-		setResizable(false);
-		setVisible(true);
+		if (! Context.getSettings().hasProperty(Settings.GEOAPI_KEY))
+			new SettingsWindow();
 	}
 }
