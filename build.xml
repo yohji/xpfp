@@ -4,7 +4,7 @@
 	<xmlproperty file="pom.xml" prefix="pom" />
 
 	<property name="version" value="${pom.project.version}" />
-	<property name="mvn-args" value="mvn clean compile jar:jar war:exploded" />
+	<property name="mvn-args" value="mvn clean compile jar:jar war:exploded package" />
 
 	<property name="project" value="${ant.project.name}" />
 	<property name="root" value="target/${project}" />
