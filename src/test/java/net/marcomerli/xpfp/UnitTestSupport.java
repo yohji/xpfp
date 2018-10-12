@@ -35,6 +35,8 @@ import org.junit.runner.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.marcomerli.xpfp.core.Context;
+
 /**
  * @author Marco Merli
  * @since 1.0
@@ -42,20 +44,9 @@ import org.slf4j.LoggerFactory;
 public abstract class UnitTestSupport extends Assert {
 
 	private static final DateFormat df = new SimpleDateFormat("yyyyMMdd");
-	protected Logger logger = LoggerFactory.getLogger(getClass());
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-	//
-	// Support
-	//
-
-	protected static final Result run(Class<? extends UnitTestSupport> test)
-	{
-		return new JUnitCore().run(test);
-	}
-
-	protected static final Proxy proxy()
-	{
-		Proxy proxy = Proxy.NO_PROXY;
+	public UnitTestSupport() {
 
 		String proxyHost = System.getProperty("http.proxyHost");
 		String proxyPort = System.getProperty("http.proxyPort");
@@ -64,11 +55,21 @@ public abstract class UnitTestSupport extends Assert {
 			proxyPort = System.getProperty("https.proxyPort");
 		}
 
+		Proxy proxy = Proxy.NO_PROXY;
 		if (StringUtils.isNotEmpty(proxyHost))
 			proxy = new Proxy(Type.HTTP, new InetSocketAddress(
 				proxyHost, Integer.valueOf(proxyPort)));
 
-		return proxy;
+		Context.setProxy(proxy);
+	}
+
+	//
+	// Support
+	//
+
+	protected static final Result run(Class<? extends UnitTestSupport> test)
+	{
+		return new JUnitCore().run(test);
 	}
 
 	//

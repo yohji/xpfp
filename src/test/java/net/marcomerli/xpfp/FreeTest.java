@@ -22,14 +22,13 @@ import org.junit.Test;
 
 /**
  * Test for free coding.
- * 
  * DO NOT COMMIT ANY CHANGES EVER!
  * REVERT IT BEFORE COMMIT!
  * 
  * @author Marco Merli
  * @since 1.0
  */
-public class FreeTest {
+public class FreeTest extends UnitTestSupport {
 
 	@Test
 	public void test()

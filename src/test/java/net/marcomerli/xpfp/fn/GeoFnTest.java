@@ -1,18 +1,19 @@
 package net.marcomerli.xpfp.fn;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import net.marcomerli.xpfp.UnitTestSupport;
+import net.marcomerli.xpfp.core.Context;
 import net.marcomerli.xpfp.model.Location;
 
 public class GeoFnTest extends UnitTestSupport {
 
-	@BeforeClass
-	public static void before() throws Exception
+	@Before
+	public void before() throws Exception
 	{
 		GeoFn.context.setApiKey("AIzaSyC96Ww5A-wNmGFLfVpbr61eLr_JZv9cjuQ");
-		GeoFn.context.setProxy(proxy());
+		GeoFn.context.setProxy(Context.getProxy());
 	}
 
 	@Test

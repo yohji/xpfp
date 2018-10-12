@@ -90,6 +90,11 @@ public class Context {
 		return proxy;
 	}
 
+	public static void setProxy(Proxy proxy)
+	{
+		Context.proxy = proxy;
+	}
+
 	public static Settings getSettings()
 	{
 		return settings;
